@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:lyc_clinic/ui/home/fragment/home_fragment.dart';
 import 'package:lyc_clinic/ui/doctors/fragment/doctor_list_fragment.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:lyc_clinic/ui/home/fragment/health_education_fragment.dart';
 
 class HomeContainerFragment extends StatefulWidget {
 
@@ -18,13 +19,13 @@ class _HomeContainerFragmentState extends State<HomeContainerFragment> with Sing
 
   HomeContainerFragment() {
     controller?.dispose();
-    controller = new TabController(length: 2, vsync: this, initialIndex: 1);
+    controller = new TabController(length: 2, vsync: this, initialIndex: 0);
   }
 
   @override
   void initState() {
     super.initState();
-    controller = new TabController(length: 2, vsync: this, initialIndex: 1);
+    controller = new TabController(length: 2, vsync: this, initialIndex: 0);
   }
 
   @override
@@ -77,7 +78,7 @@ class _HomeContainerFragmentState extends State<HomeContainerFragment> with Sing
         body: new TabBarView(
           children: <Widget>[
             new HomeFragment(),
-            new DoctorListFragment()
+            new HealthEducationFragment()
           ],
           controller: controller,
         )

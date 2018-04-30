@@ -4,6 +4,7 @@ import 'package:lyc_clinic/ui/home/model/drawer_item.dart';
 import 'package:lyc_clinic/base/base_menu.dart';
 import 'package:lyc_clinic/ui/home/fragment/home_container_fragment.dart';
 import 'package:lyc_clinic/ui/doctors/fragment/doctor_list_fragment.dart';
+import 'package:lyc_clinic/ui/home/fragment/health_education_fragment.dart';
 import 'home_fragment.dart';
 
 class HomePage extends StatefulWidget {
@@ -14,7 +15,7 @@ class HomePage extends StatefulWidget {
         "ျပသေဆြးေႏြးႏိုင္ေသာဆရာဝန္မ်ား", FontAwesomeIcons.stethoscope),
     new DrawerItem("BOOKINGS", Icons.event_available),
     new DrawerItem("MY PROFILE", Icons.account_box),
-    new DrawerItem("Login", Icons.account_box),
+    //new DrawerItem("Login", Icons.account_box),
   ];
 
   @override
@@ -33,7 +34,7 @@ class HomePageState extends State<HomePage> {
       case 0:
         return new HomeContainerFragment();
       case 1:
-        return new HomeFragment();
+        return new HealthEducationFragment();
       case 2:
         return new DoctorListFragment ();
       case 3:
@@ -53,7 +54,7 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    var drawerOptions = [];
+    List<Widget> drawerOptions=new List<Widget>();
     for (var i = 0; i < widget.draweritems.length; i++) {
       var d = widget.draweritems[i];
       drawerOptions.add(
@@ -65,6 +66,8 @@ class HomePageState extends State<HomePage> {
                 _onSelectedItem(i);
               }));
     }
+
+
 
     Row buildButtonColumn(IconData icon, String label, Color color) {
       return new Row(
