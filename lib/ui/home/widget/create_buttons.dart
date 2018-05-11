@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lyc_clinic/ui/comment/page/comment_page.dart';
 
 class CreateButton extends StatefulWidget {
 
@@ -37,16 +38,6 @@ class _CreateButtonState extends State<CreateButton> {
       ),
       child: new Icon(ic, color: icColor,),
     );
-    /*return new RaisedButton.icon(
-      shape: new CircleBorder(
-          side: new BorderSide(
-              color: Colors.white
-          )
-      ),
-      color: Colors.white,
-      onPressed: _clickLikeButton,
-      icon: new Icon(Icons.add),
-      label: new Text(""),);*/
   }
 
   void _clickLikeButton() {
@@ -68,6 +59,8 @@ class _CreateButtonState extends State<CreateButton> {
         _isCommented = true;
       }
     });
+    Navigator.push(
+        context, new MaterialPageRoute(builder: (_) => new CommentPage()));
   }
 
   _clickShareButton() {
@@ -120,12 +113,6 @@ class _CreateButtonState extends State<CreateButton> {
                     top: 10.0, left: 10.0, right: 0.0),
                 child: _getFloatButton(
                     _commentIcon, _commentbgcolor, _commenticColor),
-                /*new FloatingActionButton(
-                    onPressed: _clickCommentButton,
-                    child: new Icon(
-                        _commentIcon, size: 20.0, color: _commenticColor),
-                    mini: true,
-                    backgroundColor: _commentbgcolor,)*/
               ),
               onTap: _clickCommentButton,
             ),
@@ -135,12 +122,6 @@ class _CreateButtonState extends State<CreateButton> {
                   padding: const EdgeInsets.only(
                       top: 10.0, left: 10.0, right: 0.0),
                   child: _getFloatButton(Icons.share, Colors.white, Colors.grey)
-                /*new FloatingActionButton(
-                    onPressed: _clickShareButton,
-                    child: new Icon(
-                        Icons.share, size: 20.0, color: Colors.grey),
-                    mini: true,
-                    backgroundColor: Colors.white,)*/
               ),
               onTap: _clickShareButton,
             ),

@@ -1,18 +1,23 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:lyc_clinic/base/mystyle.dart';
 
 final ThemeData themeData = new ThemeData(
     brightness: Brightness.light,
+    primaryColorDark: MyStyle.colorPrimaryDark,
+    textSelectionColor: MyStyle.colorAccent,
+    textSelectionHandleColor:Colors.blue,
     cardColor: Colors.white,
     dividerColor: Colors.grey[300],
     backgroundColor: Colors.grey[100],
-    primaryColor: _MyColors.theme[500],
+    primaryColor: MyStyle.colorPrimary,
     primaryColorBrightness: Brightness.light,
     secondaryHeaderColor: Colors.white,
-    accentColor: _MyColors.accent[500],
+    accentColor: MyStyle.colorAccent,
     primaryTextTheme: new Typography(platform: defaultTargetPlatform).white,
     primaryIconTheme: const IconThemeData(color: Colors.white),
+    highlightColor: Colors.red,
     accentIconTheme: const IconThemeData(color: Colors.white));
 
 class _MyColors {

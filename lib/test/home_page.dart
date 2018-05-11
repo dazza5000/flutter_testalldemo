@@ -2,10 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lyc_clinic/ui/home/model/drawer_item.dart';
 import 'package:lyc_clinic/base/base_menu.dart';
-import 'package:lyc_clinic/ui/home/fragment/home_container_fragment.dart';
-import 'package:lyc_clinic/ui/doctors/fragment/doctor_list_fragment.dart';
-import 'package:lyc_clinic/ui/home/fragment/health_education_fragment.dart';
+import 'package:lyc_clinic/ui/home/page/home_container_fragment.dart';
+import 'package:lyc_clinic/ui/doctors/page/doctor_list_page.dart';
+import 'package:lyc_clinic/ui/home/page/health_education_fragment.dart';
 import 'home_fragment.dart';
+import 'package:lyc_clinic/ui/notification/page/notification_list_page.dart';
+import 'package:lyc_clinic/ui/home/page/profile_data_page.dart';
+import 'package:lyc_clinic/base/mystyle.dart';
+import 'package:flutter_search_bar/flutter_search_bar.dart';
+//import 'package:material_search/material_search.dart';
+
 
 class HomePage extends StatefulWidget {
   final List<DrawerItem> draweritems = [
@@ -28,17 +34,35 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> {
   int selectedDrawerIndex = 0;
   String imageUrl = "https://avatars3.githubusercontent.com/u/16825392?s=460&v=4";
+  SearchBar searchBar;
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  /*final _names =  [
+    'Igor Minar',
+    'Brad Green',
+    'Dave Geddes',
+    'Naomi Black',
+    'Greg Weber',
+    'Dean Sofer',
+    'Wes Alvaro',
+    'John Scott',
+    'Daniel Nadasi',
+  ];
+  String _name = 'No one';
+  final _formKey = new GlobalKey<FormState>();*/
 
   _getDrawerItemWidgets(int position) {
+    print('Drawer Item $position');
     switch (position) {
       case 0:
         return new HomeContainerFragment();
       case 1:
         return new HealthEducationFragment();
       case 2:
-        return new DoctorListFragment ();
+        return new DoctorListPage();
       case 3:
         return new HomeFragment();
+      case 4:
+        return new ProfileDataPage();
       default:
         return new Text("Eror");
     }
@@ -52,9 +76,97 @@ class HomePageState extends State<HomePage> {
     _getDrawerItemWidgets(selectedDrawerIndex);
   }
 
+  _clickNoti(BuildContext context) {
+    Navigator.push(context,
+        new MaterialPageRoute(builder: (_) => new NotifiacationListPage()));
+  }
+
+ /* _buildMaterialSearchPage(BuildContext context) {
+    return new MaterialPageRoute<String>(
+        settings: new RouteSettings(
+          name: 'material_search',
+          isInitialRoute: true,
+        ),
+        builder: (BuildContext context) {
+          return new Material(
+            child: new MaterialSearch<String>(
+              placeholder: 'Search',
+              results: _names.map((String v) => new MaterialSearchResult<String>(
+                icon: Icons.person,
+                value: v,
+                text: "Mr(s). $v",
+              )).toList(),
+              filter: (dynamic value, String criteria) {
+                return value.toLowerCase().trim()
+                    .contains(new RegExp(r'' + criteria.toLowerCase().trim() + ''));
+              },
+              onSelect: (dynamic value) => Navigator.of(context).pop(value),
+            ),
+          );
+        }
+    );
+  }*/
+
+  /*_clickSearch(BuildContext context) {
+    Navigator.of(context)
+        .push(_buildMaterialSearchPage(context))
+        .then((dynamic value) {
+      setState(() => _name = value as String);
+    });
+  }*/
+
+  AppBar _buildAppBar(BuildContext context) {
+    if (selectedDrawerIndex == 2) {
+      return new AppBar(
+        title: new Text(widget.draweritems[selectedDrawerIndex].title,
+          style: MyStyle.appbarTitleStyle(),),
+        backgroundColor: MyStyle.colorWhite,
+        iconTheme: new IconThemeData(color: Colors.grey),
+        actions: <Widget>[
+          searchBar.getSearchAction(context)
+          /*new IconButton(
+            icon: new Icon(Icons.search, color: MyStyle.colorBlack,),
+            onPressed: () => _clickSearch(context),)*/
+        ],
+        elevation: 2.0,
+      );
+    }
+    else {
+      return new AppBar(
+        title: new Text(widget.draweritems[selectedDrawerIndex].title),
+        backgroundColor: Colors.transparent,
+        iconTheme: new IconThemeData(color: Colors.grey),
+        actions: <Widget>[new IconButton(icon: new Icon(Icons.notifications),
+          onPressed: () => _clickNoti(context),)
+        ],
+        elevation: 0.0,
+      );
+    }
+  }
+
+  void onSubmitted(String value) {
+    Scaffold.of(context).showSnackBar(
+        new SnackBar(
+            content: new Text('You wrote $value!')
+        )
+    );
+    /*setState(() =>
+        _scaffoldKey.currentState
+            .showSnackBar(
+            new SnackBar(content: new Text('You wrote $value!'))));*/
+  }
+
+  HomePageState () {
+    searchBar = new SearchBar(
+        inBar: false,
+        buildDefaultAppBar: _buildAppBar,
+        setState: setState,
+        onSubmitted: onSubmitted);
+  }
+
   @override
   Widget build(BuildContext context) {
-    List<Widget> drawerOptions=new List<Widget>();
+    List<Widget> drawerOptions = new List<Widget>();
     for (var i = 0; i < widget.draweritems.length; i++) {
       var d = widget.draweritems[i];
       drawerOptions.add(
@@ -67,9 +179,7 @@ class HomePageState extends State<HomePage> {
               }));
     }
 
-
-
-    Row buildButtonColumn(IconData icon, String label, Color color) {
+    Widget buildBottomColumn(IconData icon, String label, Color color) {
       return new Row(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -92,12 +202,13 @@ class HomePageState extends State<HomePage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          buildButtonColumn(Icons.location_on, 'Address', Colors.white),
-          buildButtonColumn(Icons.phone, 'Phone', Colors.white),
-          buildButtonColumn(Icons.message, 'Chat', Colors.white),
+          buildBottomColumn(Icons.location_on, 'Address', Colors.white),
+          buildBottomColumn(Icons.phone, 'Phone', Colors.white),
+          buildBottomColumn(Icons.message, 'Chat', Colors.white),
         ],
       ),
     );
+
 
     var textTheme = Theme
         .of(context)
@@ -105,13 +216,8 @@ class HomePageState extends State<HomePage> {
 
 
     return new Scaffold(
-      appBar: new AppBar(
-        title: new Text(widget.draweritems[selectedDrawerIndex].title),
-        backgroundColor: Colors.transparent,
-        iconTheme: new IconThemeData(color: Colors.grey),
-        actions: <Widget>[new Icon(Icons.notifications)],
-        elevation:0.0,
-      ),
+      //appBar: _buildAppBar(context),
+      appBar: searchBar.build(context),
       drawer: new Drawer(
           child: new Scaffold(
             bottomNavigationBar: new Stack(
@@ -190,7 +296,7 @@ class HomePageState extends State<HomePage> {
                           new Container(
                             alignment: FractionalOffset.centerLeft,
                             child: new Image.asset(
-                                'images/lyc.png', scale: 2.0,
+                                'assets/images/lyc.png', scale: 2.0,
                                 alignment: FractionalOffset.centerLeft),
                           ),
                           new Text(

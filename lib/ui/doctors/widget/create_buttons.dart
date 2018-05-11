@@ -19,6 +19,24 @@ class _CreateButtonState extends State<CreateButton> {
 
   }
 
+  Widget _getFloatButton(IconData ic, Color bgColor, Color icColor) {
+    return new Container(
+      width: 40.0,
+      height: 40.0,
+      decoration: new BoxDecoration(
+          shape: BoxShape.circle,
+          color: bgColor,
+          boxShadow: [new BoxShadow(
+              color: Colors.grey,
+              blurRadius: 4.0,
+              offset: new Offset(1.0, 4.0)
+          ),
+          ]
+      ),
+      child: new Icon(ic, color: icColor,),
+    );
+  }
+
   void _clickLikeButton() {
     setState(() {
       if (_isFavourite) {
@@ -59,44 +77,42 @@ class _CreateButtonState extends State<CreateButton> {
         .bookmark_border;
     Color _bookbgColor = _isBookMark ? Colors.orangeAccent : Colors.white;
     Color _bookicColor = _isBookMark ? Colors.white : Colors.grey;
+
     return new Container(
         margin: new EdgeInsets.fromLTRB(20.0, 180.0, 10.0, 10.0),
         alignment: FractionalOffset.center,
         child: new Row(
           children: <Widget>[
-            new Padding(
-              padding: const EdgeInsets.only(left: 0.0, right: 10.0),
-              child: new FloatingActionButton(
-                  heroTag: "DoctorLike",
-                  onPressed: _clickLikeButton,
-                  child: new Icon(
-                      _favIcon, size: 20.0, color: _favicColor),
-                  mini: true,
-                  backgroundColor: _favbgColor),
+
+            new InkWell(
+              child: new Padding(
+                padding: const EdgeInsets.only(
+                    top: 0.0, left: 0.0, right: 10.0),
+                child: _getFloatButton(_favIcon, _favbgColor, _favicColor),
+              ),
+              onTap: _clickLikeButton,
             ),
 
-            new Padding(
-                padding: const EdgeInsets.only(left: 10.0, right: 0.0),
-                child: new FloatingActionButton(
-                  heroTag: "DoctorShare",
-                  onPressed: _clickShareButton,
-                  child: new Icon(
-                      Icons.share, size: 20.0, color: Colors.grey),
-                  mini: true,
-                  backgroundColor: Colors.white,)
+            new InkWell(
+              child: new Padding(
+                padding: const EdgeInsets.only(
+                    top: 0.0, left: 0.0, right: 0.0),
+                child: _getFloatButton(Icons.share, Colors.white, Colors.grey),
+              ),
+              onTap: _clickShareButton,
             ),
+
             new Expanded(child: new Row(children: <Widget>[],)),
-            new Padding(
-                padding: const EdgeInsets.only(right: 10.0),
-                child: new FloatingActionButton(
-                  heroTag: "DoctorBookmark",
-                  onPressed: _clickBookMarkButton,
-                  child: new Icon(
-                      _bookMarkIcon, size: 20.0, color: _bookicColor),
-                  mini: true,
-                  backgroundColor: _bookbgColor,)
-            ),
 
+            new InkWell(
+              child: new Padding(
+                padding: const EdgeInsets.only(
+                    top: 0.0, left: 0.0, right: 0.0),
+                child: _getFloatButton(
+                    _bookMarkIcon, _bookbgColor, _bookicColor),
+              ),
+              onTap: _clickBookMarkButton,
+            ),
           ],
         )
     );

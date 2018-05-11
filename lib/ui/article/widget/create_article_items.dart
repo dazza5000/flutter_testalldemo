@@ -22,7 +22,7 @@ class CreateArticleItems extends StatelessWidget {
 
   void _navigateToArticleDetails(BuildContext context) {
     Navigator.push(context,
-        new MaterialPageRoute(builder: (_) => new ArticleDetailsPage()));
+        new MaterialPageRoute(builder: (_) => new ArticleDetailsPage(article.id)));
   }
 
   @override
@@ -64,16 +64,9 @@ class CreateArticleItems extends StatelessWidget {
                 ],
               ),
             ),
-
-            /*new Container(
-            child: null,
-            height: 30.0,
-          )*/
           ],
         ),
       ),
-
-
     );
   }
 

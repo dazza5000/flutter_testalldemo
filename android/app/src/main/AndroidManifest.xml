@@ -14,8 +14,8 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="lyc_clinic"
-        android:icon="@mipmap/ic_launcher">
+        android:label="LYC"
+        android:icon="@drawable/lyc">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

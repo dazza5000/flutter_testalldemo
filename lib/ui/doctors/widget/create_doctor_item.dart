@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lyc_clinic/ui/doctors/model/doctor.dart';
+import 'package:lyc_clinic/ui/doctors/page/doctor_details_page.dart';
 
 class CreateDoctorItem extends StatelessWidget {
 
@@ -9,34 +10,44 @@ class CreateDoctorItem extends StatelessWidget {
   List<String> scheduleArr = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   List<Widget> widgets;
 
+  _navigatorToDoctorDetails(BuildContext context) {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (_) => new DoctorDetailsPage()));
+  }
 
   @override
   Widget build(BuildContext context) {
-    return new Card(
-        color: Colors.white,
-        child: new Column(
-          children: <Widget>[
-            new Container(
-              color: Colors.grey,
-              child: new Center(
-                child: new Text(doctor.role, style: new TextStyle(
-                    fontSize: 16.0)),
+    return new Container(
+        child: new InkWell(
+            onTap: () => _navigatorToDoctorDetails(context),
+            child: new Card(
+              color: Colors.white,
+              child: new Column(
+                children: <Widget>[
+                  new Container(
+                    color: Colors.grey,
+                    child: new Center(
+                      child: new Text(doctor.role, style: new TextStyle(
+                          fontSize: 16.0)),
+                    ),
+                    height: 30.0,
+                  ),
+                  new Text(doctor.name,
+                      style: new TextStyle(
+                          fontSize: 16.0)
+                  ),
+                  new Text(doctor.degree, style: new TextStyle(
+                      fontSize: 14.0, fontWeight: FontWeight.bold)),
+                  new Divider(
+                    height: 2.0, color: Colors.grey, indent: 3.0,),
+                  _scheduleWidget(),
+                  new Container(
+                      child: new Padding(
+                          padding: const EdgeInsets.only(top: 20.0))
+                  ),
+                ],
               ),
-              height: 30.0,
-            ),
-            new Text(doctor.name,
-                style: new TextStyle(
-                    fontSize: 16.0)
-            ),
-            new Text(doctor.degree, style: new TextStyle(
-                fontSize: 14.0, fontWeight: FontWeight.bold)),
-            new Divider(height: 2.0, color: Colors.grey, indent: 3.0,),
-            _scheduleWidget(),
-            new Container(
-                child: new Padding(
-                    padding: const EdgeInsets.only(top: 20.0))
-            ),
-          ],
+            )
         )
     );
   }

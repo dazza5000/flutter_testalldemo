@@ -35,6 +35,7 @@ class ArticleLists extends StatelessWidget {
             itemBuilder: _buildArticleList,
             itemCount: articles.length,
             shrinkWrap: true,
+            controller: new ScrollController(),
             scrollDirection: Axis.vertical
         ),
       ),

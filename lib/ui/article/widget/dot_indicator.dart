@@ -42,7 +42,6 @@ class DotsIndicator extends AnimatedWidget {
     );
     double zoom = 1.0 + (_kMaxZoom - 1.0) * selectedness;
     var circleSize = (_kDotSize * zoom).floor().toDouble();
-    print("Circle Size$circleSize");
     return new Container(
       width: _kDotSpacing,
       child: new Center(

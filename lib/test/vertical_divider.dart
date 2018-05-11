@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+
 class VerticalDivider extends StatelessWidget {
   final Color color;
   final double height;
-  VerticalDivider({Color this.color, double this.height});
+  final double width;
+  final double left_margin;
+  final double right_margin;
+
+  VerticalDivider(
+      {Color this.color, double this.height, double this.width, double this.left_margin, double this.right_margin});
 
   /*
   static BorderSide createBorderSide(BuildContext context, { Color color, double width: 0.0 }) {
@@ -34,10 +40,10 @@ class VerticalDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new Container(
-      height:height,
-      width: 1.0,
+      height: height,
+      width: width != null ? width : 1.0,
       color: color,
-      margin: const EdgeInsets.only(left: 10.0, right: 10.0),
+      margin: new EdgeInsets.only(left: left_margin, right: right_margin),
     );
   }
 }
