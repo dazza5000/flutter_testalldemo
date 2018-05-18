@@ -28,7 +28,7 @@ class CreateArticleItems extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new Container(
-      height: 350.0,
+      height: 360.0,
       child: new InkWell(
         onTap: () => _navigateToArticleDetails(context),
         child: new Column(
@@ -56,7 +56,7 @@ class CreateArticleItems extends StatelessWidget {
                         fontSize: 18.0, fontWeight: FontWeight.bold),),
                   new Text(
                     article.content, style: new TextStyle(fontSize: 12.0),
-                    maxLines: 2,),
+                    maxLines: 2),
                   new Container(
                       child: new Padding(
                           padding: const EdgeInsets.only(top: 20.0))

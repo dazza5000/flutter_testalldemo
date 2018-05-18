@@ -56,6 +56,7 @@ class _HomeContainerFragmentState extends State<HomeContainerFragment> with Sing
 
     return new Scaffold(
         appBar: new PreferredSize(
+
           preferredSize: new Size.fromHeight(kTextTabBarHeight),
           child: new Material(
             color: Colors.white,

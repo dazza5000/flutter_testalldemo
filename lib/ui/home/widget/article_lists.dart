@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lyc_clinic/ui/article/widget/create_article_items.dart';
-import 'package:lyc_clinic/ui/home/widget/create_buttons.dart';
+import 'package:lyc_clinic/ui/home/widget/create_article_buttons.dart';
 import 'package:lyc_clinic/ui/article/model/article.dart';
 
 class ArticleLists extends StatelessWidget {
@@ -15,7 +15,7 @@ class ArticleLists extends StatelessWidget {
       children: <Widget>[
         new CreateArticleItems(article),
         new Positioned(
-          child: new CreateButton(),
+          child: new CreateArticleButton(article),
           bottom: 20.0,
           right: 10.0,
           top: 0.0,

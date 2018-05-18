@@ -10,6 +10,8 @@ import 'package:lyc_clinic/ui/notification/page/notification_list_page.dart';
 import 'package:lyc_clinic/ui/home/page/profile_data_page.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
 import 'package:flutter_search_bar/flutter_search_bar.dart';
+import 'package:lyc_clinic/ui/chat/page/chat_list_page.dart';
+import 'package:url_launcher/url_launcher.dart';
 //import 'package:material_search/material_search.dart';
 
 
@@ -36,19 +38,6 @@ class HomePageState extends State<HomePage> {
   String imageUrl = "https://avatars3.githubusercontent.com/u/16825392?s=460&v=4";
   SearchBar searchBar;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  /*final _names =  [
-    'Igor Minar',
-    'Brad Green',
-    'Dave Geddes',
-    'Naomi Black',
-    'Greg Weber',
-    'Dean Sofer',
-    'Wes Alvaro',
-    'John Scott',
-    'Daniel Nadasi',
-  ];
-  String _name = 'No one';
-  final _formKey = new GlobalKey<FormState>();*/
 
   _getDrawerItemWidgets(int position) {
     print('Drawer Item $position');
@@ -60,9 +49,9 @@ class HomePageState extends State<HomePage> {
       case 2:
         return new DoctorListPage();
       case 3:
-        return new HomeFragment();
+        return new ProfileDataPage(tabIndex: 2);
       case 4:
-        return new ProfileDataPage();
+        return new ProfileDataPage(tabIndex: 3);
       default:
         return new Text("Eror");
     }
@@ -81,7 +70,38 @@ class HomePageState extends State<HomePage> {
         new MaterialPageRoute(builder: (_) => new NotifiacationListPage()));
   }
 
- /* _buildMaterialSearchPage(BuildContext context) {
+  _clickEditProfilel(BuildContext context) {
+    setState(() {
+      selectedDrawerIndex = 4;
+      Navigator.pop(context);
+    });
+  }
+
+  _clickBottomMenuItem(int index, BuildContext context) {
+    switch (index) {
+      case 0:
+        break;
+      case 1:
+        _callPhone();
+        break;
+      case 2:
+        Navigator.push(
+            context, new MaterialPageRoute(builder: (_) => new ChatListPage()));
+        break;
+    }
+  }
+
+  _callPhone() async {
+    const phoneNo = 'tel:09421234567';
+    if (await canLaunch(phoneNo)) {
+      await launch(phoneNo);
+    }
+    else {
+      throw 'Colud not call $phoneNo';
+    }
+  }
+
+  /* _buildMaterialSearchPage(BuildContext context) {
     return new MaterialPageRoute<String>(
         settings: new RouteSettings(
           name: 'material_search',
@@ -133,11 +153,13 @@ class HomePageState extends State<HomePage> {
     }
     else {
       return new AppBar(
-        title: new Text(widget.draweritems[selectedDrawerIndex].title),
+        title: new Image.asset('assets/images/lyc.png', scale: 2.0,
+            alignment: FractionalOffset.centerLeft),
         backgroundColor: Colors.transparent,
         iconTheme: new IconThemeData(color: Colors.grey),
-        actions: <Widget>[new IconButton(icon: new Icon(Icons.notifications),
-          onPressed: () => _clickNoti(context),)
+        actions: <Widget>[
+          new IconButton(icon: new Icon(Icons.notifications),
+            onPressed: () => _clickNoti(context),)
         ],
         elevation: 0.0,
       );
@@ -156,7 +178,7 @@ class HomePageState extends State<HomePage> {
             new SnackBar(content: new Text('You wrote $value!'))));*/
   }
 
-  HomePageState () {
+  HomePageState() {
     searchBar = new SearchBar(
         inBar: false,
         buildDefaultAppBar: _buildAppBar,
@@ -179,21 +201,25 @@ class HomePageState extends State<HomePage> {
               }));
     }
 
-    Widget buildBottomColumn(IconData icon, String label, Color color) {
-      return new Row(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          new Icon(icon, color: color),
-          new Text(
-            label,
-            style: new TextStyle(
-              fontSize: 12.0,
-              fontWeight: FontWeight.w400,
-              color: color,
-            ),
-          ),
-        ],
+    Widget buildBottomColumn(IconData icon, String label, Color color,
+        int index) {
+      return new InkWell(
+          onTap: () => _clickBottomMenuItem(index, context),
+          child: new Row(
+            //mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              new Icon(icon, color: color),
+              new Text(
+                label,
+                style: new TextStyle(
+                  fontSize: 12.0,
+                  fontWeight: FontWeight.w400,
+                  color: color,
+                ),
+              ),
+            ],
+          )
       );
     }
 
@@ -202,9 +228,9 @@ class HomePageState extends State<HomePage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          buildBottomColumn(Icons.location_on, 'Address', Colors.white),
-          buildBottomColumn(Icons.phone, 'Phone', Colors.white),
-          buildBottomColumn(Icons.message, 'Chat', Colors.white),
+          buildBottomColumn(Icons.location_on, 'Address', Colors.white, 0),
+          buildBottomColumn(Icons.phone, 'Phone', Colors.white, 1),
+          buildBottomColumn(Icons.message, 'Chat', Colors.white, 2),
         ],
       ),
     );
@@ -269,11 +295,12 @@ class HomePageState extends State<HomePage> {
                             new Padding(
                               padding: const EdgeInsets.all(3.0),
                               child: new RaisedButton.icon(
-                                  onPressed: () {},
+                                  onPressed: () => _clickEditProfilel(context),
                                   color: Colors.white70,
                                   textColor: Colors.grey,
                                   icon: new Icon(
-                                    Icons.edit, color: Colors.grey,),
+                                    Icons.edit,
+                                    color: Colors.grey,),
                                   label: new Text("Edit Profile",
                                     style: new TextStyle(
                                         fontWeight: FontWeight.bold),)),

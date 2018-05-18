@@ -1,19 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:lyc_clinic/ui/chat/page/chat_list_page.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:map_view/map_view.dart';
+import 'dart:async';
 
-class CustomBottomNavigationBar extends StatelessWidget {
+var API_KEY = "AIzaSyC5b4ygf2aPikhkstqxTgme891YjorFKg4";
+class CustomBottomNavigationBar extends StatefulWidget {
+
+  @override
+  CustomBottomNavigationBarState createState() {
+    return new CustomBottomNavigationBarState();
+  }
+}
+
+class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
+
+  MapView mapView = new MapView();
+  CameraPosition cameraPosition;
+  var compositeSubscription = new CompositeSubscription() ;
+  var staticMapProvider = new StaticMapProvider(API_KEY);
+  Uri staticMapUri;
 
   _addressClick(BuildContext context) {
-
+    showMap();
   }
 
   _phoneClick(BuildContext context) {
-
+    _callPhone();
   }
 
   _chatClick(BuildContext context) {
     Navigator.push(
         context, new MaterialPageRoute(builder: (_) => new ChatListPage()));
+  }
+
+  _callPhone() async {
+    print('Custom Bottom Nav Phone call');
+    const phoneNo = 'tel:09421234567';
+    if (await canLaunch(phoneNo)) {
+      await launch(phoneNo);
+    }
+    else {
+      throw 'Colud not call $phoneNo';
+    }
   }
 
   _clickButton(int id, BuildContext context) {
@@ -30,8 +59,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
     }
   }
 
-  Widget buildButtonColumn(BuildContext context, IconData icon, String label,
-      Color color, int id) {
+  Widget buildButtonColumn(BuildContext context, IconData icon, String label, Color color, int id) {
     return new InkWell(
       highlightColor: Colors.red,
       child: new Row(
@@ -54,6 +82,15 @@ class CustomBottomNavigationBar extends StatelessWidget {
     );
   }
 
+
+  @override
+  void initState() {
+    super.initState();
+    MapView.setApiKey(API_KEY);
+    cameraPosition = new CameraPosition(Locations.portland, 12.0);
+    staticMapUri = staticMapProvider.getStaticUri(Locations.portland, 12,
+        width: 900, height: 400);
+  }
   @override
   Widget build(BuildContext context) {
     return new Container(
@@ -78,5 +115,101 @@ class CustomBottomNavigationBar extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  showMap() {
+    mapView.show(
+        new MapOptions(
+            mapViewType: MapViewType.normal,
+            showUserLocation: true,
+            initialCameraPosition: new CameraPosition(
+                new Location(45.5235258, -122.6732493), 14.0),
+            title: "Recently Visited"),
+        toolbarActions: [new ToolbarAction("Close", 1)]);
+
+    var sub = mapView.onMapReady.listen((_) {
+      mapView.setMarkers(<Marker>[
+        new Marker("1", "Work", 45.523970, -122.663081, color: Colors.blue),
+        new Marker("2", "Nossa Familia Coffee", 45.528788, -122.684633),
+      ]);
+      mapView.addMarker(new Marker("3", "10 Barrel", 45.5259467, -122.687747,
+          color: Colors.purple));
+
+      mapView.zoomToFit(padding: 100);
+    });
+    compositeSubscription.add(sub);
+
+    sub = mapView.onLocationUpdated
+        .listen((location) => print("Location updated $location"));
+    compositeSubscription.add(sub);
+
+    sub = mapView.onTouchAnnotation
+        .listen((annotation) => print("annotation tapped"));
+    compositeSubscription.add(sub);
+
+    sub = mapView.onMapTapped
+        .listen((location) => print("Touched location $location"));
+    compositeSubscription.add(sub);
+
+    sub = mapView.onCameraChanged.listen((cameraPosition) =>
+        this.setState(() => this.cameraPosition = cameraPosition));
+    compositeSubscription.add(sub);
+
+    sub = mapView.onToolbarAction.listen((id) {
+      if (id == 1) {
+        _handleDismiss();
+      }
+    });
+    compositeSubscription.add(sub);
+
+    sub = mapView.onInfoWindowTapped.listen((marker) {
+      print("Info Window Tapped for ${marker.title}");
+    });
+    compositeSubscription.add(sub);
+  }
+
+  _handleDismiss() async {
+    double zoomLevel = await mapView.zoomLevel;
+    Location centerLocation = await mapView.centerLocation;
+    List<Marker> visibleAnnotations = await mapView.visibleAnnotations;
+    print("Zoom Level: $zoomLevel");
+    print("Center: $centerLocation");
+    print("Visible Annotation Count: ${visibleAnnotations.length}");
+    var uri = await staticMapProvider.getImageUriFromMap(mapView,
+        width: 900, height: 400);
+    setState(() => staticMapUri = uri);
+    mapView.dismiss();
+    compositeSubscription.cancel();
+  }
+}
+
+class CompositeSubscription {
+  Set<StreamSubscription> _subscriptions = new Set();
+
+  void cancel() {
+    for (var n in this._subscriptions) {
+      n.cancel();
+    }
+    this._subscriptions = new Set();
+  }
+
+  void add(StreamSubscription subscription) {
+    this._subscriptions.add(subscription);
+  }
+
+  void addAll(Iterable<StreamSubscription> subs) {
+    _subscriptions.addAll(subs);
+  }
+
+  bool remove(StreamSubscription subscription) {
+    return this._subscriptions.remove(subscription);
+  }
+
+  bool contains(StreamSubscription subscription) {
+    return this._subscriptions.contains(subscription);
+  }
+
+  List<StreamSubscription> toList() {
+    return this._subscriptions.toList();
   }
 }

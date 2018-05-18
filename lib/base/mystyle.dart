@@ -34,17 +34,25 @@ class MyStyle {
     return new TextStyle(color: colorBlack, fontSize: medium_fontSize);
   }
 
-  static TextStyle buttonTextStyle(){
-    return new TextStyle(color: colorWhite,fontSize: medium_fontSize);
+  static TextStyle buttonTextStyle() {
+    return new TextStyle(color: colorWhite, fontSize: medium_fontSize);
   }
 
-  static TextStyle listItemTextStyle(){
-    return new TextStyle(color: MyStyle.colorBlack,fontSize: medium_fontSize);
+  static TextStyle listItemTextStyle() {
+    return new TextStyle(color: MyStyle.colorBlack, fontSize: medium_fontSize);
   }
 
-  static TextStyle dateTimeTextStyle(){
-    return new TextStyle(color: MyStyle.defaultGrey,fontSize: small_fontSize);
+  static TextStyle dateTimeTextStyle() {
+    return new TextStyle(color: MyStyle.defaultGrey, fontSize: small_fontSize);
   }
 
+  static TextStyle captionTextStyle() {
+    return new TextStyle(
+        fontSize: medium_fontSize, color: MyStyle.colorDarkGrey);
+  }
+
+  static TextStyle customTextStyle(Color txtcolor){
+    return new TextStyle(fontSize: medium_fontSize,color: txtcolor);
+  }
 
 }

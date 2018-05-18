@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+import 'dart:async';
 
 class ChatListPage extends StatefulWidget {
   @override
@@ -11,13 +15,31 @@ class ChatListPage extends StatefulWidget {
 class ChatListPageState extends State<ChatListPage> {
   TextEditingController _textController = new TextEditingController();
   List<String> messages = ['hello', 'hi', 'how are you'];
+  Future<File> _imageFile;
 
   _clickPhone(BuildContext context) {
-    Navigator.pop(context);
+    _callPhone();
+  }
+
+  _callPhone() async {
+    print('Custom Bottom Nav Phone call');
+    const phoneNo = 'tel://09421234567';
+    if (await canLaunch(phoneNo)) {
+      await launch(phoneNo);
+    }
+    else {
+      throw 'Colud not call $phoneNo';
+    }
   }
 
   _sendClick() {
 
+  }
+
+  void _onImageButtonPressed(ImageSource source) {
+    setState(() {
+      _imageFile = ImagePicker.pickImage(source: source);
+    });
   }
 
   Widget _showSendAndSend() {
@@ -78,9 +100,15 @@ class ChatListPageState extends State<ChatListPage> {
                 child: new Row(
                   children: <Widget>[
                     new IconButton(
-                        icon: new Icon(Icons.camera_alt), onPressed: null),
+                        icon: new Icon(
+                          Icons.camera_alt, color: MyStyle.colorGrey,),
+                        onPressed: () =>
+                            _onImageButtonPressed(ImageSource.camera)),
                     new IconButton(
-                        icon: new Icon(Icons.photo_library), onPressed: null),
+                        icon: new Icon(
+                            Icons.photo_library, color: MyStyle.colorGrey),
+                        onPressed: () =>
+                            _onImageButtonPressed(ImageSource.gallery)),
                     new Flexible(
                         child: new TextField(
                           style: MyStyle.listItemTextStyle(),

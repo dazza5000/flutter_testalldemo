@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:lyc_clinic/base/mystyle.dart';
 import 'package:lyc_clinic/ui/comment/page/comment_page.dart';
+import 'package:lyc_clinic/ui/article/model/article.dart';
+import 'package:share/share.dart';
 
-class CreateButton extends StatefulWidget {
+class CreateArticleButton extends StatefulWidget {
+  Article article;
+
+  CreateArticleButton(this.article);
 
   @override
-  _CreateButtonState createState() {
-    return new _CreateButtonState();
+  CreateArticleButtonState createState() {
+    return new CreateArticleButtonState();
   }
 
 }
 
-class _CreateButtonState extends State<CreateButton> {
+class CreateArticleButtonState extends State<CreateArticleButton> {
   bool _isFavourite = false;
   bool _isBookMark = false;
   int _favCount = 0;
@@ -19,7 +25,11 @@ class _CreateButtonState extends State<CreateButton> {
 
   @override
   void initState() {
-
+    _favCount = widget.article.favCount;
+    _isFavourite = widget.article.fav;
+    _commentCount = widget.article.commentCount;
+    _isCommented = widget.article.commentCount > 0 ? true : false;
+    _isBookMark = widget.article.save;
   }
 
   Widget _getFloatButton(IconData ic, Color bgColor, Color icColor) {
@@ -65,7 +75,7 @@ class _CreateButtonState extends State<CreateButton> {
 
   _clickShareButton() {
     setState(() {
-
+      share(widget.article.shareUrl);
     });
   }
 
@@ -78,6 +88,11 @@ class _CreateButtonState extends State<CreateButton> {
         _isBookMark = true;
       }
     });
+  }
+
+  Widget _showActivityCount(String activityCount) {
+    return new Text(activityCount, style: new TextStyle(
+        fontSize: MyStyle.small_fontSize, color: MyStyle.colorGrey),);
   }
 
   @override
@@ -93,7 +108,8 @@ class _CreateButtonState extends State<CreateButton> {
     Color _bookicColor = _isBookMark ? Colors.white : Colors.grey;
     IconData _bookMarkIcon = _isBookMark ? Icons.bookmark : Icons
         .bookmark_border;
-
+    var favCount = _favCount > 0 ? "$_favCount" : " ";
+    var commentCount = _commentCount > 0 ? '$_commentCount' : "";
     return new Container(
         alignment: FractionalOffset.bottomCenter,
         child: new Row(
@@ -107,6 +123,10 @@ class _CreateButtonState extends State<CreateButton> {
               onTap: _clickLikeButton,
             ),
 
+            new Padding(padding: const EdgeInsets.only(
+                top: 0.0, bottom: 10.0, right: 15.0),
+                child: _showActivityCount(favCount)),
+
             new InkWell(
               child: new Padding(
                 padding: const EdgeInsets.only(
@@ -116,6 +136,10 @@ class _CreateButtonState extends State<CreateButton> {
               ),
               onTap: _clickCommentButton,
             ),
+
+            new Padding(padding: const EdgeInsets.only(
+                top: 0.0, bottom: 10.0, right: 15.0),
+                child: _showActivityCount(commentCount)),
 
             new InkWell(
               child: new Padding(

@@ -1,3 +1,42 @@
+import 'package:flutter/material.dart';
+import 'package:lyc_clinic/test/test_widget.dart';
+
+class TestPage extends StatefulWidget {
+  @override
+  TestPageState createState() {
+    // TODO: implement createState
+    return new TestPageState();
+  }
+}
+
+class TestPageState extends State<TestPage> {
+
+  _getDrawerItemWidgets(int position) {
+    return new TestWidget();
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return new DefaultTabController(
+        length: 2, child:
+    new Scaffold(
+      appBar: new AppBar(
+        title: new Text('Test Page'),
+        bottom: new TabBar(
+          tabs: <Tab>[
+            new Tab(text: 'Tab1',),
+            new Tab(text: 'Tab1',)
+          ],
+        ),
+      ),
+      body: _getDrawerItemWidgets(0),
+    )
+    );
+  }
+}
+
 /*
 import 'package:flutter/material.dart';
 

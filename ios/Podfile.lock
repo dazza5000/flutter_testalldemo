@@ -1,26 +1,50 @@
 PODS:
   - Flutter (1.0.0)
+  - image_picker (0.0.1):
+    - Flutter
+  - path_provider (0.0.1):
+    - Flutter
+  - share (0.0.1):
+    - Flutter
   - shared_preferences (0.0.1):
+    - Flutter
+  - url_launcher (0.0.1):
     - Flutter
   - video_player (0.0.1):
     - Flutter
 
 DEPENDENCIES:
   - Flutter (from `Pods/.symlinks/flutter/ios`)
+  - image_picker (from `Pods/.symlinks/plugins/image_picker-0.4.1/ios`)
+  - path_provider (from `Pods/.symlinks/plugins/path_provider-0.4.0/ios`)
+  - share (from `Pods/.symlinks/plugins/share-0.4.0/ios`)
   - shared_preferences (from `Pods/.symlinks/plugins/shared_preferences-0.4.1/ios`)
+  - url_launcher (from `Pods/.symlinks/plugins/url_launcher-3.0.1/ios`)
   - video_player (from `Pods/.symlinks/plugins/video_player-0.3.0/ios`)
 
 EXTERNAL SOURCES:
   Flutter:
     :path: Pods/.symlinks/flutter/ios
+  image_picker:
+    :path: Pods/.symlinks/plugins/image_picker-0.4.1/ios
+  path_provider:
+    :path: Pods/.symlinks/plugins/path_provider-0.4.0/ios
+  share:
+    :path: Pods/.symlinks/plugins/share-0.4.0/ios
   shared_preferences:
     :path: Pods/.symlinks/plugins/shared_preferences-0.4.1/ios
+  url_launcher:
+    :path: Pods/.symlinks/plugins/url_launcher-3.0.1/ios
   video_player:
     :path: Pods/.symlinks/plugins/video_player-0.3.0/ios
 
 SPEC CHECKSUMS:
   Flutter: 9d0fac939486c9aba2809b7982dfdbb47a7b0296
+  image_picker: ee00aab0487cedc80a304085219503cc6d0f2e22
+  path_provider: 09407919825bfe3c2deae39453b7a5b44f467873
+  share: 8d04605548e55f7ce4ebb7b3e933f3c85028c9cf
   shared_preferences: 5a1d487c427ee18fcd3ea1f2a131569481834b53
+  url_launcher: 92b89c1029a0373879933c21642958c874539095
   video_player: 906796a841943c8d370ac7c13b18039aa9b56498
 
 PODFILE CHECKSUM: 70e69985f01fdaffe3180d3ae5e73472304a9371

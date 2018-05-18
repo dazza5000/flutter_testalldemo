@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:lyc_clinic/base/mystyle.dart';
+import 'package:lyc_clinic/ui/doctors/model/doctor.dart';
+import  'package:share/share.dart';
 
-class CreateButton extends StatefulWidget {
+class CreateDoctorButton extends StatefulWidget {
+  Doctor doctor;
+
+  CreateDoctorButton(this.doctor);
 
   @override
   _CreateButtonState createState() {
@@ -9,15 +15,18 @@ class CreateButton extends StatefulWidget {
 
 }
 
-class _CreateButtonState extends State<CreateButton> {
+class _CreateButtonState extends State<CreateDoctorButton> {
   bool _isFavourite = false;
   bool _isBookMark = false;
   int _favCount = 0;
 
   @override
   void initState() {
-
+    _favCount=widget.doctor.favCount;
+    _isFavourite=widget.doctor.fav;
+    _isBookMark=widget.doctor.save;
   }
+
 
   Widget _getFloatButton(IconData ic, Color bgColor, Color icColor) {
     return new Container(
@@ -26,11 +35,12 @@ class _CreateButtonState extends State<CreateButton> {
       decoration: new BoxDecoration(
           shape: BoxShape.circle,
           color: bgColor,
-          boxShadow: [new BoxShadow(
-              color: Colors.grey,
-              blurRadius: 4.0,
-              offset: new Offset(1.0, 4.0)
-          ),
+          boxShadow: [
+            new BoxShadow(
+                color: Colors.grey,
+                blurRadius: 4.0,
+                offset: new Offset(1.0, 4.0)
+            ),
           ]
       ),
       child: new Icon(ic, color: icColor,),
@@ -53,7 +63,7 @@ class _CreateButtonState extends State<CreateButton> {
 
   _clickShareButton() {
     setState(() {
-
+      share(widget.doctor.shareUrl);
     });
   }
 
@@ -68,6 +78,11 @@ class _CreateButtonState extends State<CreateButton> {
     });
   }
 
+  Widget _showActivityCount(String activityCount) {
+    return new Text(activityCount, style: new TextStyle(
+        fontSize: MyStyle.small_fontSize, color: MyStyle.colorGrey),);
+  }
+
   @override
   Widget build(BuildContext context) {
     Color _favbgColor = _isFavourite ? Colors.orangeAccent : Colors.white;
@@ -77,6 +92,7 @@ class _CreateButtonState extends State<CreateButton> {
         .bookmark_border;
     Color _bookbgColor = _isBookMark ? Colors.orangeAccent : Colors.white;
     Color _bookicColor = _isBookMark ? Colors.white : Colors.grey;
+    var favCount = _favCount > 0 ? "$_favCount" : " ";
 
     return new Container(
         margin: new EdgeInsets.fromLTRB(20.0, 180.0, 10.0, 10.0),
@@ -87,11 +103,15 @@ class _CreateButtonState extends State<CreateButton> {
             new InkWell(
               child: new Padding(
                 padding: const EdgeInsets.only(
-                    top: 0.0, left: 0.0, right: 10.0),
+                    top: 0.0, left: 0.0, right: 5.0),
                 child: _getFloatButton(_favIcon, _favbgColor, _favicColor),
               ),
               onTap: _clickLikeButton,
             ),
+
+            new Padding(padding: const EdgeInsets.only(
+                top: 0.0, bottom: 10.0, right: 15.0),
+                child: _showActivityCount(favCount)),
 
             new InkWell(
               child: new Padding(
@@ -101,6 +121,7 @@ class _CreateButtonState extends State<CreateButton> {
               ),
               onTap: _clickShareButton,
             ),
+
 
             new Expanded(child: new Row(children: <Widget>[],)),
 
@@ -113,6 +134,7 @@ class _CreateButtonState extends State<CreateButton> {
               ),
               onTap: _clickBookMarkButton,
             ),
+
           ],
         )
     );

@@ -17,7 +17,8 @@ final ThemeData themeData = new ThemeData(
     accentColor: MyStyle.colorAccent,
     primaryTextTheme: new Typography(platform: defaultTargetPlatform).white,
     primaryIconTheme: const IconThemeData(color: Colors.white),
-    highlightColor: Colors.red,
+    highlightColor: MyStyle.layoutBackground,
+    fontFamily: 'Zawgyi-One',
     accentIconTheme: const IconThemeData(color: Colors.white));
 
 class _MyColors {

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:lyc_clinic/ui/doctors/widget/create_buttons.dart';
+import 'package:lyc_clinic/ui/doctors/widget/create_doctor_buttons.dart';
 import 'package:lyc_clinic/ui/comment/page/comment_page.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
+import 'package:lyc_clinic/test/test_page.dart';
 
 class ReviewListItem extends StatefulWidget {
 
@@ -14,7 +15,7 @@ class ReviewListItem extends StatefulWidget {
 class ReviewListItemState extends State<ReviewListItem> {
 
   _clickReview(BuildContext context) {
-    Navigator.push(context, new MaterialPageRoute(builder: (_) => new CommentPage()));
+    Navigator.push(context, new MaterialPageRoute(builder: (_) => new TestPage()));
   }
 
   Widget _getFloatButton(IconData ic, Color bgColor, Color icColor) {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lyc_clinic/ui/doctors/model/doctors.dart';
 import 'package:lyc_clinic/ui/doctors/model/doctor.dart';
-import 'package:lyc_clinic/ui/doctors/widget/create_buttons.dart';
+import 'package:lyc_clinic/ui/doctors/widget/create_doctor_buttons.dart';
 import 'package:lyc_clinic/ui/doctors/widget/create_doctor_item.dart';
 
 class DoctorLists extends StatelessWidget {
@@ -21,7 +21,7 @@ class DoctorLists extends StatelessWidget {
         new CreateDoctorItem(doctor),
         //Floating Action Button
         new Positioned(
-            child: new CreateButton(),)
+          child: new CreateDoctorButton(doctor),)
 
       ],
     );
@@ -31,7 +31,7 @@ class DoctorLists extends StatelessWidget {
   Widget build(BuildContext context) {
     return new Container(
       child: new Padding(
-          padding: const EdgeInsets.only(top: 15.0),
+          padding: const EdgeInsets.only(top: 10.0),
           child: new ListView.builder(
             shrinkWrap: true,
             controller: new ScrollController(),
