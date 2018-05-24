@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:lyc_clinic/ui/home/model/services.dart';
+import 'package:lyc_clinic/ui/service/data/service.dart';
 import 'package:lyc_clinic/ui/service/page/services_list_page.dart';
 
 class ServicesScroller extends StatelessWidget {
   ServicesScroller(this.services);
 
-  final List<Services> services;
+  final List<Service> services;
 
   _clickServiceItem(BuildContext context) {
     Navigator.push(

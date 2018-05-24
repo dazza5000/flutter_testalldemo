@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lyc_clinic/ui/article/model/article.dart';
+import 'package:lyc_clinic/ui/article/data/article.dart';
 import 'package:lyc_clinic/ui/article/page/article_details_page.dart';
 
 class CreateArticleItems extends StatelessWidget {

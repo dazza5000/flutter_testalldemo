@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
 import 'package:lyc_clinic/ui/comment/page/comment_page.dart';
-import 'package:lyc_clinic/ui/article/model/article.dart';
+import 'package:lyc_clinic/ui/article/data/article.dart';
 import 'package:share/share.dart';
 
 class CreateArticleButton extends StatefulWidget {

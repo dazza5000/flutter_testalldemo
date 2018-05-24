@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lyc_clinic/ui/doctors/model/doctors.dart';
-import 'package:lyc_clinic/ui/doctors/model/doctor.dart';
+import 'package:lyc_clinic/ui/doctors/data/doctor.dart';
 import 'package:lyc_clinic/ui/doctors/widget/create_doctor_buttons.dart';
 import 'package:lyc_clinic/ui/doctors/widget/create_doctor_item.dart';
 
@@ -29,6 +28,7 @@ class DoctorLists extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('Doctor List ${doctors.length}');
     return new Container(
       child: new Padding(
           padding: const EdgeInsets.only(top: 10.0),

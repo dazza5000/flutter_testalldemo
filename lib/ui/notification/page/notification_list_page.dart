@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
-import 'package:lyc_clinic/ui/notification/model/noti.dart';
-import 'package:lyc_clinic/base/model/pagination.dart';
-import 'package:lyc_clinic/ui/notification/model/data.dart';
-import 'package:lyc_clinic/ui/notification/model/booking.dart';
+import 'package:lyc_clinic/ui/notification/data/noti.dart';
+import 'package:lyc_clinic/base/data/pagination.dart';
+import 'package:lyc_clinic/ui/notification/data/data.dart';
+import 'package:lyc_clinic/ui/notification/data/booking.dart';
 import 'package:lyc_clinic/ui/notification/widget/booking_noti_widet.dart';
 import 'package:lyc_clinic/ui/notification/widget/comment_noti_widget.dart';
 import 'package:lyc_clinic/ui/notification/widget/review_noti_widget.dart';

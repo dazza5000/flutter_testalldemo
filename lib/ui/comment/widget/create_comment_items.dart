@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:lyc_clinic/ui/comment/model/review.dart';
-import 'package:lyc_clinic/ui/comment/model/comment.dart';
-import 'package:lyc_clinic/base/model/pagination.dart';
+import 'package:lyc_clinic/ui/comment/data/review.dart';
+import 'package:lyc_clinic/ui/comment/data/comment.dart';
+import 'package:lyc_clinic/base/data/pagination.dart';
 import 'package:lyc_clinic/ui/comment/widget/comment_item_widget.dart';
 
 class CommentItem extends StatefulWidget {

@@ -1,17 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:lyc_clinic/ui/doctors/widget/create_session_items.dart';
 import 'package:lyc_clinic/ui/doctors/widget/create_review_list_item.dart';
-import 'package:lyc_clinic/ui/doctors/model/doctor_profile.dart';
-import 'package:lyc_clinic/ui/home/model/booking.dart';
+import 'package:lyc_clinic/ui/doctors/data/doctor_profile.dart';
 import 'package:lyc_clinic/ui/doctors/widget/create_booking_item.dart';
-import 'package:lyc_clinic/ui/doctors/model/doctor.dart';
-import 'package:lyc_clinic/ui/comment/model/comment.dart';
-import 'package:lyc_clinic/ui/doctors/model/active_booking.dart';
+import 'package:lyc_clinic/ui/doctors/data/doctor.dart';
+import 'package:lyc_clinic/ui/comment/data/comment.dart';
+import 'package:lyc_clinic/ui/doctors/data/active_booking.dart';
 import 'package:lyc_clinic/ui/doctors/page/doctor_booking_page.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
 import 'package:lyc_clinic/test/custom_bottom_navigation_bar.dart';
+import 'package:lyc_clinic/ui/doctors/contract/doctor_profile_contract.dart';
+import 'package:lyc_clinic/ui/doctors/presenter/doctor_profile_presenter.dart';
+import 'package:lyc_clinic/ui/doctors/data/doctor_profile.dart';
+import 'package:lyc_clinic/ui/doctors/data/schedule.dart';
+import 'package:lyc_clinic/ui/home/data/booking.dart';
+import 'package:lyc_clinic/ui/comment/data/review.dart';
+import 'package:lyc_clinic/utils/configs.dart';
+
+
 
 class DoctorDetailsPage extends StatefulWidget {
+  int doctorId;
+
+  DoctorDetailsPage(this.doctorId);
+
   Comment review;
   ActiveBooking activeBooking = new ActiveBooking();
   List<Booking> bookings = [new Booking(
@@ -48,10 +60,28 @@ class DoctorDetailsPage extends StatefulWidget {
 
 }
 
-class DoctorDetailsPageState extends State<DoctorDetailsPage> {
+class DoctorDetailsPageState extends State<DoctorDetailsPage>
+    implements DoctorProfileContract {
+
+  DoctorProfilePresetner mPresenter;
+  DoctorProfile doctorProfile;
+  Doctor doctor;
+
   bool _isFavourite = false;
   bool _isBookMark = false;
   int _favCount = 0;
+
+
+  DoctorDetailsPageState() {
+    mPresenter = new DoctorProfilePresetner(this);
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
+    mPresenter.getDoctorProfile(Configs.GUEST_CODE, widget.doctorId);
+  }
 
   Widget _doctorInfo() {
     return new Container(
@@ -116,7 +146,8 @@ class DoctorDetailsPageState extends State<DoctorDetailsPage> {
                       onPressed: _clickLikeButton,
                       child: new Icon(
                           _isFavourite ? Icons.favorite : Icons.favorite_border,
-                          color: _isFavourite ? MyStyle.colorWhite : MyStyle.colorGrey)),)
+                          color: _isFavourite ? MyStyle.colorWhite : MyStyle
+                              .colorGrey)),)
             )
           ],
         )
@@ -263,4 +294,53 @@ class DoctorDetailsPageState extends State<DoctorDetailsPage> {
       ),
     );
   }
+
+  @override
+  void hideRequestedBooking() {
+
+  }
+
+  @override
+  void showRequestedBooking(ActiveBooking activeBooking) {
+
+  }
+
+  @override
+  void setSaveStatus(bool isSaved) {
+
+  }
+
+  @override
+  void setFavoriteStatus(bool isFav, int favCount) {
+
+  }
+
+  @override
+  void showDoctorInfo(Doctor doctor) {
+    setState((){
+      this.doctor=doctor;
+    });
+  }
+
+  @override
+  void showReviews(Comment comment) {
+
+  }
+
+  @override
+  void showBookings(List<Booking> b) {
+
+  }
+
+  @override
+  void showDoctorSchedules(List<Schedule> schedules) {
+
+  }
+
+  @override
+  void onLoadError() {
+
+  }
+
+
 }

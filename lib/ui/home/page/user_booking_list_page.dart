@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
 import 'package:lyc_clinic/ui/home/widget/create_booking_item.dart';
-import 'package:lyc_clinic/ui/home/model/booking.dart';
+import 'package:lyc_clinic/ui/home/data/booking.dart';
 
 class UserBookingListPage extends StatefulWidget {
 

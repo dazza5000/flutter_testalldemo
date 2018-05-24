@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lyc_clinic/ui/doctors/model/doctor.dart';
+import 'package:lyc_clinic/ui/doctors/data/doctor.dart';
 import 'package:lyc_clinic/ui/doctors/page/doctor_details_page.dart';
 
 class CreateDoctorItem extends StatelessWidget {
@@ -12,7 +12,7 @@ class CreateDoctorItem extends StatelessWidget {
 
   _navigatorToDoctorDetails(BuildContext context) {
     Navigator.push(
-        context, MaterialPageRoute(builder: (_) => new DoctorDetailsPage()));
+        context, MaterialPageRoute(builder: (_) => new DoctorDetailsPage(doctor.id)));
   }
 
   @override

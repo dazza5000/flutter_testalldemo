@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:lyc_clinic/ui/home/model/drawer_item.dart';
+import 'package:lyc_clinic/ui/home/data/drawer_item.dart';
 import 'package:lyc_clinic/base/base_menu.dart';
 import 'package:lyc_clinic/ui/home/page/home_container_fragment.dart';
 import 'package:lyc_clinic/ui/doctors/page/doctor_list_page.dart';
-import 'package:lyc_clinic/ui/home/page/health_education_fragment.dart';
+import 'package:lyc_clinic/ui/home/page/health_education_page.dart';
 import 'home_fragment.dart';
 import 'package:lyc_clinic/ui/notification/page/notification_list_page.dart';
 import 'package:lyc_clinic/ui/home/page/profile_data_page.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
+import 'package:lyc_clinic/ui/about/page/about_page.dart';
 import 'package:flutter_search_bar/flutter_search_bar.dart';
 import 'package:lyc_clinic/ui/chat/page/chat_list_page.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -154,7 +155,8 @@ class HomePageState extends State<HomePage> {
     else {
       return new AppBar(
         title: new Image.asset('assets/images/lyc.png', scale: 2.0,
-            alignment: FractionalOffset.centerLeft),
+            alignment: FractionalOffset.center),
+        centerTitle: true,
         backgroundColor: Colors.transparent,
         iconTheme: new IconThemeData(color: Colors.grey),
         actions: <Widget>[
@@ -329,10 +331,14 @@ class HomePageState extends State<HomePage> {
                           new Text(
                             'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vehicula sem a malesuada rhoncus. Pellentesque ut dolor a dui porttitor porta lacinia non libero. Nunc volutpat arcu quis quam convallis molestie. Etiam ac tristique sem, id commodo justo. Phasellus congue tincidunt lectus, at dignissim ligula maximus eu. Quisque interdum nunc eget tellus bibendum suscipit. Phasellus feugiat ultricies posuere. Nullam porta accumsan velit, ut rutrum massa fermentum eu. Nunc ac bibendum nunc. Mauris eu ultricies ipsum. Ut id dolor dui. Pellentesque dictum dui vel tempus maximus. Vivamus non nisi quis libero scelerisque pretium. Ut eu tristique justo. Sed pellentesque placerat quam, ut ultricies turpis feugiat a. Aliquam a volutpat risus.',
                             maxLines: 3,),
-                          new Text('Learn more about us',
+                          new InkWell(child: new Text('Learn more about us',
                             style: textTheme.subhead.copyWith(
                                 fontSize: 16.0,
-                                fontWeight: FontWeight.bold),)
+                                fontWeight: FontWeight.bold),),
+                              onTap: () =>
+                                  Navigator.push(context, new MaterialPageRoute(
+                                      builder: (_) => new AboutPage())))
+
                         ]
                     ),
                   ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
-import 'package:lyc_clinic/ui/doctors/model/doctor_role.dart';
+import 'package:lyc_clinic/ui/doctors/data/doctor_role.dart';
 
 class DoctorFilterPage extends StatefulWidget {
   List<DoctorRole> doctorRoles = [

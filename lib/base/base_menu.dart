@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lyc_clinic/base/model/bottom_menu.dart';
+import 'package:lyc_clinic/base/data/bottom_menu.dart';
 
 class BaseMenu extends StatelessWidget {
   BaseMenu();

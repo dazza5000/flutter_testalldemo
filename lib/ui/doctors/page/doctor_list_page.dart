@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
 import 'package:lyc_clinic/ui/doctors/widget/doctor_lists.dart';
-import 'package:lyc_clinic/ui/doctors/model/doctor.dart';
+import 'package:lyc_clinic/ui/doctors/data/doctor.dart';
 import 'package:lyc_clinic/ui/doctors/page/doctor_filter_page.dart';
 
 

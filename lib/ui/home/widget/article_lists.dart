@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lyc_clinic/ui/article/widget/create_article_items.dart';
 import 'package:lyc_clinic/ui/home/widget/create_article_buttons.dart';
-import 'package:lyc_clinic/ui/article/model/article.dart';
+import 'package:lyc_clinic/ui/article/data/article.dart';
 
 class ArticleLists extends StatelessWidget {
   ArticleLists(this.articles);

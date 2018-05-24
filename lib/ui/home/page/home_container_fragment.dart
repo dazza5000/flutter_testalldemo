@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:lyc_clinic/ui/home/page/home_fragment.dart';
+import 'package:lyc_clinic/ui/home/page/home_page.dart';
 import 'package:lyc_clinic/ui/doctors/page/doctor_list_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:lyc_clinic/ui/home/page/health_education_fragment.dart';
+import 'package:lyc_clinic/ui/home/page/health_education_page.dart';
 import 'package:lyc_clinic/test/custom_bottom_navigation_bar.dart';
 
 class HomeContainerFragment extends StatefulWidget {
@@ -79,7 +79,7 @@ class _HomeContainerFragmentState extends State<HomeContainerFragment> with Sing
         ),
         body: new TabBarView(
           children: <Widget>[
-            new HomeFragment(),
+            new HomePage(),
             new HealthEducationFragment()
           ],
           controller: controller,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
-import 'package:lyc_clinic/ui/notification/model/booking.dart';
+import 'package:lyc_clinic/ui/notification/data/booking.dart';
 
 class BookingNotificationWidget extends StatelessWidget {
   Booking booking;
