@@ -41,7 +41,9 @@ class CommentItemWidgetState extends State<CommentItemWidget> {
 
   _goToOtherUserPage(BuildContext context) {
     Navigator.push(
-        context, new MaterialPageRoute(builder: (_) => new OtherUserPage(widget.review.user)));
+        context,
+        new MaterialPageRoute(
+            builder: (_) => new OtherUserPage(widget.review.user)));
   }
 
   _goToReplyPage(BuildContext context) {
@@ -63,6 +65,33 @@ class CommentItemWidgetState extends State<CommentItemWidget> {
       ),
       value: val,
     );
+  }
+
+  Widget _showPopupMenu() {
+    if (widget.review.canDelete) {
+      return new PopupMenuButton<popupValue>(
+        icon: new Icon(
+          Icons.more_horiz,
+          color: Colors.grey,
+        ),
+        itemBuilder: (BuildContext context) => <PopupMenuItem<popupValue>>[
+              _buildMenuItem(Icons.edit, "Edit", popupValue.Edit),
+              _buildMenuItem(Icons.delete, "Delete", popupValue.Delete)
+            ],
+        onSelected: (popupValue value) {
+          if (value == popupValue.Edit) {
+            Navigator.push(
+                context,
+                new MaterialPageRoute(
+                    builder: (_) => new CommentEditDialogPage(widget.review)));
+          } else {}
+        },
+      );
+    } else {
+      return new Container(
+        child: null,
+      );
+    }
   }
 
   @override
@@ -134,27 +163,7 @@ class CommentItemWidgetState extends State<CommentItemWidget> {
                     children: <Widget>[],
                   ),
                 ),
-                new PopupMenuButton<popupValue>(
-                  icon: new Icon(
-                    Icons.more_horiz,
-                    color: Colors.grey,
-                  ),
-                  itemBuilder: (BuildContext context) =>
-                      <PopupMenuItem<popupValue>>[
-                        _buildMenuItem(Icons.edit, "Edit", popupValue.Edit),
-                        _buildMenuItem(
-                            Icons.delete, "Delete", popupValue.Delete)
-                      ],
-                  onSelected: (popupValue value) {
-                    if (value == popupValue.Edit) {
-                      Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (_) =>
-                                  new CommentEditDialogPage(widget.review)));
-                    } else {}
-                  },
-                ),
+                _showPopupMenu()
               ],
             )));
   }

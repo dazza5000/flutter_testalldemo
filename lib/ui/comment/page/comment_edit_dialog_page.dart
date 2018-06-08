@@ -1,11 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
 import 'package:lyc_clinic/ui/comment/data/review.dart';
+import 'package:lyc_clinic/ui/comment/presenter/comment_eidt_presenter.dart';
+import 'package:lyc_clinic/ui/comment/contract/comment_edit_contract.dart';
+import 'package:lyc_clinic/ui/comment/data/reply.dart';
+import 'package:lyc_clinic/utils/configs.dart';
 
 class CommentEditDialogPage extends StatefulWidget {
-  Review review;
+  Review mReview;
+  Reply mReply;
+  int mArticleId;
+  int mDoctorId;
+  int mReviewId;
 
-  CommentEditDialogPage(this.review);
+  CommentEditDialogPage(
+      [this.mReview,
+      this.mReply,
+      this.mArticleId,
+      this.mDoctorId,
+      this.mReviewId]);
 
   @override
   CommentEditDialogPageState createState() {
@@ -14,13 +27,45 @@ class CommentEditDialogPage extends StatefulWidget {
   }
 }
 
-class CommentEditDialogPageState extends State<CommentEditDialogPage> {
+class CommentEditDialogPageState extends State<CommentEditDialogPage>
+    implements CommentEditContract {
+  String updateMessage;
+  CommentEditPresenter mPresenter;
+
+  CommentEditDialogPageState() {
+    mPresenter = new CommentEditPresenter(this);
+  }
+
   _cancelClick(BuildContext context) {
     Navigator.pop(context);
   }
 
-  _updateClick(BuildContext context, String val) {
-    setState(() {});
+  _updateClick(BuildContext context) {
+    print('Review${widget.mReview.article
+        .toString()} and Messages is $updateMessage');
+    if (widget.mReview != null) {
+      if (widget.mReview.doctor != null) {
+        mPresenter.updateComment(Configs.TEST_CODE, widget.mReview.doctor,
+            widget.mReview.id, updateMessage);
+      } else if (widget.mReview.article != null) {
+        mPresenter.updateArticleComment(Configs.TEST_CODE,
+            widget.mReview.article, widget.mReview.id, updateMessage);
+      }
+    }
+
+    if (widget.mReply = null) {
+      if (widget.mArticleId != null) {
+        mPresenter.updateArticleCommentReply(
+            Configs.TEST_CODE,
+            widget.mArticleId,
+            widget.mReviewId,
+            widget.mReply.id,
+            updateMessage);
+      } else if (widget.mDoctorId != null) {
+        mPresenter.updateCommentReply(Configs.TEST_CODE, widget.mDoctorId,
+            widget.mReviewId, updateMessage, widget.mReply.id);
+      }
+    }
     Navigator.pop(context);
   }
 
@@ -38,6 +83,7 @@ class CommentEditDialogPageState extends State<CommentEditDialogPage> {
 
   @override
   Widget build(BuildContext context) {
+    print('Comment Edit Dialog');
     return new Scaffold(
       appBar: new AppBar(
         backgroundColor: MyStyle.colorWhite,
@@ -58,9 +104,18 @@ class CommentEditDialogPageState extends State<CommentEditDialogPage> {
           child: new Column(
             children: <Widget>[
               new TextFormField(
-                initialValue: widget.review.mesg,
+                initialValue: widget.mReview.mesg,
                 obscureText: false,
-                controller: new TextEditingController(),
+                decoration: getDecoration(''),
+                onFieldSubmitted: (String val) {
+                  print('Field Submitted');
+                  setState(() {
+                    updateMessage = val;
+                  });
+                },
+                onSaved: (String val) {
+                  print('on Save$val');
+                },
               ),
               new Container(
                   margin: const EdgeInsets.only(top: 15.0),
@@ -81,7 +136,7 @@ class CommentEditDialogPageState extends State<CommentEditDialogPage> {
                       new RaisedButton(
                           shape: new RoundedRectangleBorder(
                               borderRadius: new BorderRadius.circular(5.0)),
-                          onPressed: () => _updateClick(context, 'Hello12345'),
+                          onPressed: () => _updateClick(context),
                           child: new Text('Update',
                               style: new TextStyle(
                                   fontSize: MyStyle.medium_fontSize,
@@ -94,5 +149,13 @@ class CommentEditDialogPageState extends State<CommentEditDialogPage> {
         ),
       ),
     );
+  }
+
+  @override
+  void dismissDialog() {}
+
+  @override
+  void showMessage(String message) {
+    print('Message >>$message');
   }
 }

@@ -38,6 +38,9 @@ import 'package:lyc_clinic/ui/chat/repository/chat_repository.dart';
 import 'package:lyc_clinic/ui/chat/repository/chat_data_repository.dart';
 import 'package:lyc_clinic/ui/otheruser/repository/other_user_repository.dart';
 import 'package:lyc_clinic/ui/otheruser/repository/other_user_data_repository.dart';
+import 'package:lyc_clinic/ui/comment/repository/comment_eidt_data_repository.dart';
+import 'package:lyc_clinic/ui/comment/repository/comment_eidt_repository.dart';
+
 class Injector {
   static final Injector _singleton = new Injector._internal();
 
@@ -126,6 +129,10 @@ class Injector {
 
   OtherUserRepository get otherUserRepository{
     return new OtherUserDataRepository();
+  }
+
+  CommentEditRepository get commentEditRepository{
+    return new CommentEditDataRepository();
   }
 }
 //DI
