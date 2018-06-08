@@ -1,3 +1,8 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'review.g.dart';
+
+@JsonSerializable()
 class Review {
   int id;
   String user;
@@ -11,6 +16,8 @@ class Review {
 
   Review(this.id, this.user, this.userId, this.image, this.mesg, this.doctor,
       this.doctorId, this.createDate, this.timeAgo);
+
+  factory Review.fromJson(Map<String, dynamic> json) => _$ReviewFromJson(json);
 
 
 }

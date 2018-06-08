@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lyc_clinic/ui/article/data/article.dart';
 import 'package:lyc_clinic/ui/article/page/article_details_page.dart';
+import 'package:lyc_clinic/ui/article/page/video_details_page.dart';
 
 class CreateArticleItems extends StatelessWidget {
   CreateArticleItems(this.article);
@@ -20,9 +21,17 @@ class CreateArticleItems extends StatelessWidget {
     }
   }
 
-  void _navigateToArticleDetails(BuildContext context) {
-    Navigator.push(context,
-        new MaterialPageRoute(builder: (_) => new ArticleDetailsPage(article.id)));
+  void _navigateToArticleDetails(BuildContext context,int type) {
+    if(type==1) {
+      Navigator.push(context,
+          new MaterialPageRoute(
+              builder: (_) => new ArticleDetailsPage(article.id)));
+    }
+    else{
+      Navigator.push(context,
+          new MaterialPageRoute(
+              builder: (_) => new VideoDetailsPage(article.id)));
+    }
   }
 
   @override
@@ -30,7 +39,7 @@ class CreateArticleItems extends StatelessWidget {
     return new Container(
       height: 360.0,
       child: new InkWell(
-        onTap: () => _navigateToArticleDetails(context),
+        onTap: () => _navigateToArticleDetails(context,article.type),
         child: new Column(
           children: <Widget>[
             new Card(

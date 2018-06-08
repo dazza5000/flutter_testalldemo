@@ -13,14 +13,6 @@ import 'package:lyc_clinic/utils/configs.dart';
 
 class HomePage extends StatefulWidget {
 
-  List<String> images = [
-    'assets/images/1.png',
-    'assets/images/2.png',
-    'assets/images/3.png',
-    'assets/images/4.png'
-  ];
-
-
   @override
   HomePageState createState() {
     return new HomePageState();

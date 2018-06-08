@@ -4,9 +4,10 @@ import 'package:lyc_clinic/ui/home/widget/create_article_buttons.dart';
 import 'package:lyc_clinic/ui/article/data/article.dart';
 
 class ArticleLists extends StatelessWidget {
-  ArticleLists(this.articles);
+  ArticleLists(this.articles,this.listener);
 
   final List<Article> articles;
+  ArticleClickListener listener;
 
 
   Widget _buildArticleList(BuildContext context, int index) {
@@ -15,7 +16,7 @@ class ArticleLists extends StatelessWidget {
       children: <Widget>[
         new CreateArticleItems(article),
         new Positioned(
-          child: new CreateArticleButton(article),
+          child: new CreateArticleButton(article,listener),
           bottom: 20.0,
           right: 10.0,
           top: 0.0,

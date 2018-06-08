@@ -15,7 +15,6 @@ import 'package:lyc_clinic/ui/chat/page/chat_list_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 //import 'package:material_search/material_search.dart';
 
-
 class HomePage extends StatefulWidget {
   final List<DrawerItem> draweritems = [
     new DrawerItem("HOME", Icons.home),
@@ -31,12 +30,12 @@ class HomePage extends StatefulWidget {
   HomePageState createState() {
     return new HomePageState();
   }
-
 }
 
 class HomePageState extends State<HomePage> {
   int selectedDrawerIndex = 0;
-  String imageUrl = "https://avatars3.githubusercontent.com/u/16825392?s=460&v=4";
+  String imageUrl =
+      "https://avatars3.githubusercontent.com/u/16825392?s=460&v=4";
   SearchBar searchBar;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
@@ -46,7 +45,7 @@ class HomePageState extends State<HomePage> {
       case 0:
         return new HomeContainerFragment();
       case 1:
-        return new HealthEducationFragment();
+        return new HealthEducationPage();
       case 2:
         return new DoctorListPage();
       case 3:
@@ -96,8 +95,7 @@ class HomePageState extends State<HomePage> {
     const phoneNo = 'tel:09421234567';
     if (await canLaunch(phoneNo)) {
       await launch(phoneNo);
-    }
-    else {
+    } else {
       throw 'Colud not call $phoneNo';
     }
   }
@@ -139,10 +137,12 @@ class HomePageState extends State<HomePage> {
   AppBar _buildAppBar(BuildContext context) {
     if (selectedDrawerIndex == 2) {
       return new AppBar(
-        title: new Text(widget.draweritems[selectedDrawerIndex].title,
-          style: MyStyle.appbarTitleStyle(),),
+        title: new Text(
+          widget.draweritems[selectedDrawerIndex].title,
+          style: MyStyle.appbarTitleStyle(),
+        ),
         backgroundColor: MyStyle.colorWhite,
-        iconTheme: new IconThemeData(color: Colors.grey),
+        iconTheme: new IconThemeData(color: MyStyle.colorGrey),
         actions: <Widget>[
           searchBar.getSearchAction(context)
           /*new IconButton(
@@ -151,17 +151,18 @@ class HomePageState extends State<HomePage> {
         ],
         elevation: 2.0,
       );
-    }
-    else {
+    } else {
       return new AppBar(
-        title: new Image.asset('assets/images/lyc.png', scale: 2.0,
-            alignment: FractionalOffset.center),
+        title: new Image.asset('assets/images/lyc.png',
+            scale: 2.0, alignment: FractionalOffset.center),
         centerTitle: true,
         backgroundColor: Colors.transparent,
-        iconTheme: new IconThemeData(color: Colors.grey),
+        iconTheme: new IconThemeData(color: MyStyle.colorGrey),
         actions: <Widget>[
-          new IconButton(icon: new Icon(Icons.notifications),
-            onPressed: () => _clickNoti(context),)
+          new IconButton(
+            icon: new Icon(Icons.notifications),
+            onPressed: () => _clickNoti(context),
+          )
         ],
         elevation: 0.0,
       );
@@ -169,11 +170,9 @@ class HomePageState extends State<HomePage> {
   }
 
   void onSubmitted(String value) {
-    Scaffold.of(context).showSnackBar(
-        new SnackBar(
-            content: new Text('You wrote $value!')
-        )
-    );
+    Scaffold
+        .of(context)
+        .showSnackBar(new SnackBar(content: new Text('You wrote $value!')));
     /*setState(() =>
         _scaffoldKey.currentState
             .showSnackBar(
@@ -188,23 +187,62 @@ class HomePageState extends State<HomePage> {
         onSubmitted: onSubmitted);
   }
 
+  Widget _getNavHeader() {
+    return new Padding(
+      padding: new EdgeInsets.fromLTRB(5.0, 30.0, 5.0, 30.0),
+      child: new Row(
+        children: <Widget>[
+          new GestureDetector(
+            child: new CircleAvatar(
+              backgroundImage: new NetworkImage(imageUrl),
+              radius: 40.0,
+            ),
+          ),
+          new Column(
+            children: <Widget>[
+              new Padding(
+                padding: const EdgeInsets.fromLTRB(15.0, 3.0, 0.0, 3.0),
+                child: new Text('Hnin Nway Nway Hlaing',
+                    textAlign: TextAlign.left),
+              ),
+              new Padding(
+                padding: const EdgeInsets.all(3.0),
+                child: new RaisedButton.icon(
+                    onPressed: () => _clickEditProfilel(context),
+                    color: MyStyle.colorWhite,
+                    textColor: MyStyle.colorGrey,
+                    icon: new Icon(
+                      Icons.edit,
+                      color: MyStyle.colorGrey,
+                    ),
+                    label: new Text(
+                      "Edit Profile",
+                      style: new TextStyle(fontWeight: FontWeight.bold),
+                    )),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     List<Widget> drawerOptions = new List<Widget>();
     for (var i = 0; i < widget.draweritems.length; i++) {
       var d = widget.draweritems[i];
-      drawerOptions.add(
-          new ListTile(
-              leading: new Icon(d.icon),
-              title: new Text(d.title),
-              selected: i == selectedDrawerIndex,
-              onTap: () {
-                _onSelectedItem(i);
-              }));
+      drawerOptions.add(new ListTile(
+          leading: new Icon(d.icon),
+          title: new Text(d.title),
+          selected: i == selectedDrawerIndex,
+          onTap: () {
+            _onSelectedItem(i);
+          }));
     }
 
-    Widget buildBottomColumn(IconData icon, String label, Color color,
-        int index) {
+    Widget buildBottomColumn(
+        IconData icon, String label, Color color, int index) {
       return new InkWell(
           onTap: () => _clickBottomMenuItem(index, context),
           child: new Row(
@@ -221,8 +259,7 @@ class HomePageState extends State<HomePage> {
                 ),
               ),
             ],
-          )
-      );
+          ));
     }
 
     Widget buttonSection = new Container(
@@ -230,126 +267,86 @@ class HomePageState extends State<HomePage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          buildBottomColumn(Icons.location_on, 'Address', Colors.white, 0),
-          buildBottomColumn(Icons.phone, 'Phone', Colors.white, 1),
-          buildBottomColumn(Icons.message, 'Chat', Colors.white, 2),
+          buildBottomColumn(
+              Icons.location_on, 'Address', MyStyle.colorWhite, 0),
+          buildBottomColumn(Icons.phone, 'Phone', MyStyle.colorWhite, 1),
+          buildBottomColumn(Icons.message, 'Chat', MyStyle.colorWhite, 2),
         ],
       ),
     );
 
-
-    var textTheme = Theme
-        .of(context)
-        .textTheme;
-
+    var textTheme = Theme.of(context).textTheme;
 
     return new Scaffold(
-      //appBar: _buildAppBar(context),
       appBar: searchBar.build(context),
       drawer: new Drawer(
-          child: new Scaffold(
-            bottomNavigationBar: new Stack(
-              overflow: Overflow.visible,
-              alignment: new FractionalOffset(.5, 1.0),
-              children: [
-                new Container(
-                  height: 50.0,
-                  color: Colors.green,
-                  child: new Container(
-                    padding: const EdgeInsets.fromLTRB(
-                        0.0, 13.0, 0.0, 13.0),
-                    child: new ListView(
-                      children: <Widget>[
-                        buttonSection
-                      ],
-                    ),
+        child: new Scaffold(
+          bottomNavigationBar: new Stack(
+            overflow: Overflow.visible,
+            alignment: new FractionalOffset(.5, 1.0),
+            children: [
+              new Container(
+                height: 50.0,
+                color: MyStyle.colorGreen,
+                child: new Container(
+                  padding: const EdgeInsets.fromLTRB(0.0, 13.0, 0.0, 13.0),
+                  child: new ListView(
+                    children: <Widget>[buttonSection],
                   ),
                 ),
-                new Padding(
-                  padding: const EdgeInsets.only(bottom: 12.0),
-                ),
-              ],
-            ),
-            body: new Container(
-              color: Colors.white,
-              child: new Column(
+              ),
+            ],
+          ),
+          body: new Container(
+            color: MyStyle.colorWhite,
+            child: new Stack(children: <Widget>[
+              new Column(
                 children: <Widget>[
-                  new Padding(
-                    padding: new EdgeInsets.fromLTRB(
-                        5.0, 30.0, 5.0, 30.0),
-                    child: new Row(
-                      children: <Widget>[
-                        new GestureDetector(
-                          child: new CircleAvatar(
-                            backgroundImage: new NetworkImage(imageUrl),
-                            radius: 40.0,
-                          ),
-                        ),
-
-                        new Column(
-                          children: <Widget>[
-                            new Padding(
-                              padding: const EdgeInsets.fromLTRB(
-                                  15.0, 3.0, 0.0, 3.0),
-                              child: new Text('Hnin Nway Nway Hlaing',
-                                  textAlign: TextAlign.left),
-                            ),
-                            new Padding(
-                              padding: const EdgeInsets.all(3.0),
-                              child: new RaisedButton.icon(
-                                  onPressed: () => _clickEditProfilel(context),
-                                  color: Colors.white70,
-                                  textColor: Colors.grey,
-                                  icon: new Icon(
-                                    Icons.edit,
-                                    color: Colors.grey,),
-                                  label: new Text("Edit Profile",
-                                    style: new TextStyle(
-                                        fontWeight: FontWeight.bold),)),
-                            ),
-
-                          ],
-                        ),
-
-
-                      ],
-                    ),),
+                  _getNavHeader(),
                   new Column(children: drawerOptions),
-                  new Container(
-                    padding: new EdgeInsets.fromLTRB(0.0, 29.0, 0.0, 0.0),
-                    decoration: new BoxDecoration(
-                      color: new Color(0xFFF7F6F6),
-                    ),
-                    child: new Column(
-                        children: <Widget>[
-                          new Container(
-                            alignment: FractionalOffset.centerLeft,
-                            child: new Image.asset(
-                                'assets/images/lyc.png', scale: 2.0,
-                                alignment: FractionalOffset.centerLeft),
-                          ),
-                          new Text(
-                            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vehicula sem a malesuada rhoncus. Pellentesque ut dolor a dui porttitor porta lacinia non libero. Nunc volutpat arcu quis quam convallis molestie. Etiam ac tristique sem, id commodo justo. Phasellus congue tincidunt lectus, at dignissim ligula maximus eu. Quisque interdum nunc eget tellus bibendum suscipit. Phasellus feugiat ultricies posuere. Nullam porta accumsan velit, ut rutrum massa fermentum eu. Nunc ac bibendum nunc. Mauris eu ultricies ipsum. Ut id dolor dui. Pellentesque dictum dui vel tempus maximus. Vivamus non nisi quis libero scelerisque pretium. Ut eu tristique justo. Sed pellentesque placerat quam, ut ultricies turpis feugiat a. Aliquam a volutpat risus.',
-                            maxLines: 3,),
-                          new InkWell(child: new Text('Learn more about us',
-                            style: textTheme.subhead.copyWith(
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.bold),),
-                              onTap: () =>
-                                  Navigator.push(context, new MaterialPageRoute(
-                                      builder: (_) => new AboutPage())))
-
-                        ]
-                    ),
-                  ),
-
                 ],
               ),
-            ),
-          )
+              new Align(
+                  alignment: FractionalOffset.bottomCenter,
+                  child: new Container(
+                    padding: const EdgeInsets.all(8.0),
+                    height: 180.0,
+                    color: MyStyle.layoutBackground,
+                    alignment: FractionalOffset.bottomCenter,
+                    child: new Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        new Container(
+                          alignment: FractionalOffset.centerLeft,
+                          child: new Image.asset('assets/images/lyc.png',
+                              scale: 2.0,
+                              alignment: FractionalOffset.centerLeft),
+                        ),
+                        new Text(
+                          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vehicula sem a malesuada rhoncus. Pellentesque ut dolor a dui porttitor porta lacinia non libero. Nunc volutpat arcu quis quam convallis molestie. Etiam ac tristique sem, id commodo justo. Phasellus congue tincidunt lectus, at dignissim ligula maximus eu. Quisque interdum nunc eget tellus bibendum suscipit. Phasellus feugiat ultricies posuere. Nullam porta accumsan velit, ut rutrum massa fermentum eu. Nunc ac bibendum nunc. Mauris eu ultricies ipsum. Ut id dolor dui. Pellentesque dictum dui vel tempus maximus. Vivamus non nisi quis libero scelerisque pretium. Ut eu tristique justo. Sed pellentesque placerat quam, ut ultricies turpis feugiat a. Aliquam a volutpat risus.',
+                          maxLines: 3,
+                        ),
+                        new InkWell(
+                            child: new Text(
+                              'Learn more about us',
+                              style: textTheme.subhead.copyWith(
+                                  fontSize: MyStyle.medium_fontSize,
+                                  decoration: TextDecoration.underline),
+                            ),
+                            onTap: () => Navigator.push(
+                                context,
+                                new MaterialPageRoute(
+                                    builder: (_) => new AboutPage())))
+                      ],
+                    ),
+                  ))
+            ]),
+          ),
+        ),
       ),
       body: _getDrawerItemWidgets(selectedDrawerIndex),
-      backgroundColor: Colors.white,
+      backgroundColor: MyStyle.colorWhite,
     );
   }
 }

@@ -11,17 +11,14 @@ class DoctorProfilePresetner {
   }
 
   void getDoctorProfile(String accessCode, int doctorId) {
-    _repository.getDoctorProfile(accessCode, doctorId)
-        .then((dp) {
+    _repository.getDoctorProfile(accessCode, doctorId).then((dp) {
       _view.showDoctorInfo(dp.doctor);
       _view.showBookings(dp.booking);
       _view.showDoctorSchedules(dp.doctor.schedule);
       _view.setFavoriteStatus(dp.doctor.fav, dp.doctor.favCount);
       _view.setSaveStatus(dp.doctor.save);
       _view.showReviews(dp.reviews);
-    })
-        .catchError((_) => _view.onLoadError());
+      }).catchError((e) => print('Go To Error ${e.toString()}'));
+
   }
-
-
 }

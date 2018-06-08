@@ -2,41 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:lyc_clinic/ui/comment/data/review.dart';
 import 'package:lyc_clinic/ui/comment/data/comment.dart';
 import 'package:lyc_clinic/base/data/pagination.dart';
+import 'package:lyc_clinic/ui/comment/page/comment_page.dart';
 import 'package:lyc_clinic/ui/comment/widget/comment_item_widget.dart';
+import 'package:lyc_clinic/base/mystyle.dart';
 
 class CommentItem extends StatefulWidget {
-  static final List<Review> review = [new Review(
-      47,
-      "http://api.linyaungchi.com/storage/images/user/tmpphpdsuolp-20180202061947.jpg",
-      903,
-      "Hnin Nway Nway Hlaing",
-      null,
-      2,
-      "test comment",
-      true,
-      false,
-      0,
-      1517988565,
-      7350086),
+  Comment comment;
+  int articleId;
+  bool isArticle;
 
-  new Review(
-      39,
-      "http://api.linyaungchi.com/storage/images/user/tmpphpdsuolp-20180202061947.jpg",
-      903,
-      "Hnin Nway Nway Hlaing",
-      null,
-      2,
-      "test comment1",
-      true,
-      false,
-      0,
-      1517574565,
-      7764086),
-  ];
-
-  Comment comment = new Comment(new Pagination(1, 5, 1, 2), review);
-
-  //CommentItem(this.comments);
+  CommentItem(this.comment, this.articleId, this.isArticle);
 
   @override
   CommentItemState createState() {
@@ -45,16 +20,28 @@ class CommentItem extends StatefulWidget {
 }
 
 class CommentItemState extends State<CommentItem> {
+  List<Review> reviewList;
 
+  @override
+  void initState() {
+    reviewList = widget.comment.data;
+  }
 
   List<Widget> widgets;
 
   Widget _buildCommentItem(BuildContext context, int index) {
-    Review c = widget.comment.data[index];
+    Review c = reviewList[index];
     int commentCount = widget.comment.pagination.total;
-    return new CommentItemWidget(c,commentCount);
+    return new CommentItemWidget(c, commentCount);
   }
 
+  _clickCommentCount(BuildContext context) {
+    Navigator.push(
+        context,
+        new MaterialPageRoute(
+            builder: (_) =>
+                new CommentPage(widget.articleId, widget.isArticle, null)));
+  }
 
   Widget _showSeeCommentWidget(int commentCount) {
     if (commentCount > 0) {
@@ -62,40 +49,60 @@ class CommentItemState extends State<CommentItem> {
           padding: const EdgeInsets.only(left: 10.0, right: 10.0),
           child: new Column(
             children: <Widget>[
-              new Divider(color: Colors.grey,
-                  height: 2.0),
-              new Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: commentCount > 2
-                    ? new Text('See all $commentCount comments',
-                  style: new TextStyle(color: Colors.black, fontSize: 14.0),)
-                    : new Text(""),),
+              new Divider(color: Colors.grey, height: 2.0),
+              new InkWell(
+                onTap: () => _clickCommentCount(context),
+                child: new Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: commentCount > 2
+                      ? new Text(
+                          'See all $commentCount comments',
+                          style: new TextStyle(
+                              color: Colors.black, fontSize: 14.0),
+                        )
+                      : new Text(""),
+                ),
+              )
             ],
           ));
-    }
-    else {
+    } else {
       return null;
+    }
+  }
+
+  Widget _loadNDataError() {
+    if (widget.comment.data.length > 0) {
+      return new Container(
+        //padding: const EdgeInsets.all(0.0),
+        color: MyStyle.layoutBackground,
+        child: new Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            new ListView.builder(
+                padding: const EdgeInsets.only(top: 20.0, bottom: 0.0),
+                itemBuilder: _buildCommentItem,
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                itemCount: widget.comment.data.length > 2
+                    ? 2
+                    : widget.comment.data.length),
+            _showSeeCommentWidget(widget.comment.pagination.total),
+          ],
+        ),
+      );
+    } else {
+      return new Container(
+        color: MyStyle.colorWhite,
+        child: new SizedBox.fromSize(
+          size: new Size.fromHeight(50.0),
+          child: null,
+        ),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return new Container(
-      //padding: const EdgeInsets.all(0.0),
-      color: const Color(0xFFF5F5F5),
-      child: new Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          new ListView.builder(
-              padding: const EdgeInsets.all(0.0),
-              itemBuilder: _buildCommentItem,
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              itemCount: widget.comment.data.length
-          ),
-          _showSeeCommentWidget(widget.comment.pagination.total),
-        ],
-      ),
-    );
+    return new Container(child: _loadNDataError());
   }
 }

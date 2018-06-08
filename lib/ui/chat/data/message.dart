@@ -1,5 +1,8 @@
 import 'package:lyc_clinic/ui/chat/data/image.dart';
+import 'package:json_annotation/json_annotation.dart';
+part 'message.g.dart';
 
+@JsonSerializable()
 class Message {
   int id;
   String mesg;
@@ -16,4 +19,5 @@ class Message {
       this.reply, this.date, this.time, this.rawTime, this.timeAgo);
 
 
+  factory Message.fromJson(Map<String, dynamic> json) => _$MessageFromJson(json);
 }

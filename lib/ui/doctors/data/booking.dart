@@ -1,4 +1,8 @@
-class Booking {
+import 'package:json_annotation/json_annotation.dart';
+part 'booking.g.dart';
+
+@JsonSerializable()
+class Booking extends Object with _$BookingSerializerMixin{
   int doctor;
   String doctorName;
   String status;

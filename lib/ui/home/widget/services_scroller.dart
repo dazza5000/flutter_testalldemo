@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:lyc_clinic/ui/service/data/service.dart';
-import 'package:lyc_clinic/ui/service/page/services_list_page.dart';
+import 'package:lyc_clinic/ui/service/page/sub_services_list_page.dart';
 
 class ServicesScroller extends StatelessWidget {
   ServicesScroller(this.services);
 
   final List<Service> services;
 
-  _clickServiceItem(BuildContext context) {
+  _clickServiceItem(BuildContext context,int catId,String catName) {
     Navigator.push(
-        context, new MaterialPageRoute(builder: (_) => new ServiceListPage()));
+        context, new MaterialPageRoute(builder: (_) => new SubServiceListPage(catId,catName)));
   }
 
   Widget _build_ServiceScroller(BuildContext context, int index) {
@@ -19,7 +19,7 @@ class ServicesScroller extends StatelessWidget {
         child: new ClipRRect(
             borderRadius: new BorderRadius.circular(2.0),
             child: new InkWell(
-                onTap: () => _clickServiceItem(context),
+                onTap: () => _clickServiceItem(context,service.id,service.name),
                 child: new Column(
                   children: <Widget>[
                     new Image.network(service.image,

@@ -1,7 +1,9 @@
 import 'package:lyc_clinic/ui/doctors/data/schedule.dart';
 import 'package:json_annotation/json_annotation.dart';
+part 'doctor.g.dart';
+
 @JsonSerializable()
-class Doctor extends Object with _$DoctorSerializerMixin{
+class Doctor extends Object with  _$DoctorSerializerMixin{
   int id;
   String name;
   String image;
@@ -29,7 +31,7 @@ class Doctor extends Object with _$DoctorSerializerMixin{
         role = map['role'],
         office = map['office'],
         degree=map['degree'],
-        //schedule = map['schedule'],
+        schedule = map['schedule'],
         fav = map['fav'],
         favCount = map['favCount'],
         share = map['share'],
@@ -39,7 +41,7 @@ class Doctor extends Object with _$DoctorSerializerMixin{
 
   @override
   String toString() {
-    return 'Doctor{id: $id, name: $name, image: $image, office: $office, onDuty: $onDuty, role: $role, degree: $degree, schedule: $schedule, fav: $fav, favCount: $favCount, share: $share, shareUrl: $shareUrl, save: $save, canReview: $canReview}';
+    return '{id: $id, name: $name, image: $image, office: $office, onDuty: $onDuty, role: $role, degree: $degree, schedule: $schedule, fav: $fav, favCount: $favCount, share: $share, shareUrl: $shareUrl, save: $save, canReview: $canReview}';
   }
 
 

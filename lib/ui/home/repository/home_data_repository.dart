@@ -28,7 +28,7 @@ class HomeDataRepository implements HomeContractRepository {
     List responseBody = _decoder.convert(jsonBody);
     print("Service Response Data $responseBody");
     //final List servicesItems = data[''];
-    //print('service items${data.toList().toString()}}');
+    print('Service Reslut Data Response${responseBody.map((s) => new Service.fromMap(s)).toList()}');
     return responseBody.map((s) => new Service.fromMap(s)).toList();
   }
 
@@ -59,49 +59,60 @@ class HomeDataRepository implements HomeContractRepository {
     final responseBody = _decoder.convert(jsonBody);
     final List responseDoctor = responseBody['data'];
     print('Doctor Response Data $responseDoctor');
-    return responseDoctor.map((d) => new Doctor.fromMap(d)).toList();
+    return responseDoctor.map((d) => new Doctor.fromJson(d)).toList();
   }
 
   @override
-  void saveDoctor(String accessCode, int doctorId) {
-    // TODO: implement saveDoctor
+  void saveDoctor(String accessCode, int doctorId) async{
+    http.Response response=await http.post(URL+accessCode+'/doctor/'+doctorId.toString()+'/save');
+    final responseBody=response.body;
+    final statusCode=response.statusCode;
+
+    if (statusCode < 200 || statusCode >= 300 || responseBody == null) {
+      //throw new FetchDataException("Error while getting contacts [StatusCode:$statusCode, Error:${response.error}]");
+      print('Doctor Status code$statusCode');
+    }
+    print('Save Doctor Response $responseBody');
   }
 
 
   @override
-  void setDoctorAsFavorite(String accessCode, int doctorId) {
-    // TODO: implement setDoctorAsFavorite
+  void setDoctorAsFavorite(String accessCode, int doctorId) async{
+    http.Response response=await http.post(URL+accessCode+'/doctor/'+doctorId.toString()+'/favorite');
+    final responseBody=response.body;
+    final statusCode=response.statusCode;
+
+    if (statusCode < 200 || statusCode >= 300 || responseBody == null) {
+      //throw new FetchDataException("Error while getting contacts [StatusCode:$statusCode, Error:${response.error}]");
+      print('Doctor Status code$statusCode');
+    }
+    print('Favourite Doctor Response $responseBody');
   }
 
   @override
-  void setBannerLink(String accessCode, int bannerid) {
-    // TODO: implement setBannerLink
+  void setBannerLink(String accessCode, int bannerid) async{
+    http.Response response=await http.post(URL+accessCode+'/banner/'+bannerid.toString());
+    final responseBody=response.body;
+    final statusCode=response.statusCode;
+
+    if (statusCode < 200 || statusCode >= 300 || responseBody == null) {
+      //throw new FetchDataException("Error while getting contacts [StatusCode:$statusCode, Error:${response.error}]");
+      print('Banner Status code$statusCode');
+    }
+    print('Banner Click Response $responseBody');
   }
 
   @override
-  void setShareClick(String accessCode, int doctorid) {
-    // TODO: implement setShareClick
+  void setShareClick(String accessCode, int doctorid) async{
+    http.Response response=await http.post(URL+accessCode+'/doctor/'+doctorid.toString()+'/share');
+    final responseBody=response.body;
+    final statusCode=response.statusCode;
+
+    if (statusCode < 200 || statusCode >= 300 || responseBody == null) {
+      //throw new FetchDataException("Error while getting contacts [StatusCode:$statusCode, Error:${response.error}]");
+      print('Doctor Status code$statusCode');
+    }
+    print('Share Doctor Response $responseBody');
   }
-
-/*@override
-  Future<List<SubServiceDetails>> getServiceDetail(String accessCode,
-      int serviceId, int subServiceId) {
-    return http.get(Configs.LYC_URL + '/' + accessCode).then((
-        http.Response response) {
-      final jsonBody = response.body;
-      final statusCode = response.statusCode;
-
-      if (statusCode < 200 || statusCode >= 300 || jsonBody == null) {
-        //throw new FetchDataException("Error while getting contacts [StatusCode:$statusCode, Error:${response.error}]");
-      }
-
-      final servicesContainer = _decoder.convert(jsonBody);
-      final List servicesItems = servicesContainer['results'];
-      print('service items${servicesItems.toList().toString()}servicesItems}');
-      //return servicesItems.map((servicesdata) => new Service.fromMap(servicedata) ).toList();
-
-    });
-  }*/
-
 
 }

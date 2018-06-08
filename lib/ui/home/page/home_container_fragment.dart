@@ -80,7 +80,7 @@ class _HomeContainerFragmentState extends State<HomeContainerFragment> with Sing
         body: new TabBarView(
           children: <Widget>[
             new HomePage(),
-            new HealthEducationFragment()
+            new HealthEducationPage()
           ],
           controller: controller,
 

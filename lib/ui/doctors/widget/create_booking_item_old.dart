@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:lyc_clinic/test/vertical_divider.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
 import 'package:lyc_clinic/ui/home/data/booking.dart';
-import 'package:square_calendar/square_calendar.dart';
 
 class BookingItems extends StatefulWidget {
   Booking booking;

@@ -1,10 +1,16 @@
 import 'package:lyc_clinic/ui/article/data/article.dart';
 import 'package:lyc_clinic/ui/comment/data/comment.dart';
+import 'package:json_annotation/json_annotation.dart';
 
-class Article_Details{
+part 'article_details.g.dart';
+
+@JsonSerializable()
+class ArticleDetails extends Object with _$ArticleDetailsSerializerMixin{
   Article article;
   Comment comment;
 
-  Article_Details(this.article, this.comment);
+  ArticleDetails(this.article, this.comment);
+
+  factory ArticleDetails.fromJson(Map<String, dynamic> json) => _$ArticleDetailsFromJson(json);
 
 }

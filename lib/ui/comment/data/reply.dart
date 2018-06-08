@@ -1,4 +1,9 @@
-class Reply{
+import 'package:json_annotation/json_annotation.dart';
+
+part 'reply.g.dart';
+
+@JsonSerializable()
+class Reply extends Object with _$ReplySerializerMixin{
    int id;
    String image ;
    int user;
@@ -21,5 +26,6 @@ class Reply{
        this.mention, this.mentionName, this.canDelete, this.createDate,
        this.timeAgo);
 
+   factory Reply.fromJson(Map<String, dynamic> json) => _$ReplyFromJson(json);
 
 }

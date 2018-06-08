@@ -56,7 +56,7 @@ class CommentReplyItemWidgetState extends State<CommentReplyItemWidget> {
 
   _goToOtherUserPage(BuildContext context) {
     Navigator.push(
-        context, new MaterialPageRoute(builder: (_) => new OtherUserPage()));
+        context, new MaterialPageRoute(builder: (_) => new OtherUserPage(widget.reply.user)));
   }
 
 

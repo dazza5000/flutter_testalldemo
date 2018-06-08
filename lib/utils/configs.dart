@@ -3,6 +3,7 @@ class Configs {
   static final String YOUTUBE_API_KEY = "AIzaSyDrpWU3oCQvrDwI-69uyGFJKi2sW9wsewY";
   static final String LYC_URL = "https://api.linyaungchi.com/";
   static final String GUEST_CODE = "a6beec63beb22f1ac2e6ebf78e45a66f";
+  static final String TEST_CODE="0c51e0e4f89c7bf304b9f5161d2d0d5caa169b49b583a2b5af89203c2b78c67c85db0963df4e9046f9e9974deafde5bf903";
   static final String TEMP_ACCESS_CODE = "cb15f863e4307d129057af6fb23b35a6a87ff679a2f3e71d9181a67b7542122c77384a9d63195bb2719ef7e3c59404124";
   static final String PUSHER_APP_ID = "435502";
   static final String PUSHER_KEY = "cfcc76e0fb14e9205439";

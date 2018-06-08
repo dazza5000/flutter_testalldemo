@@ -25,7 +25,7 @@ class MyStyle {
   static headerStyle() {
     return new TextStyle(
       color: Colors.black,
-      fontWeight: FontWeight.bold,
+      fontWeight: FontWeight.normal,
       fontSize: large_fontSize,
     );
   }
@@ -53,6 +53,10 @@ class MyStyle {
 
   static TextStyle customTextStyle(Color txtcolor){
     return new TextStyle(fontSize: medium_fontSize,color: txtcolor);
+  }
+
+  static TextStyle pastRepliesDescStyle(){
+    return new TextStyle(fontSize: medium_fontSize,color: colorAccent);
   }
 
 }

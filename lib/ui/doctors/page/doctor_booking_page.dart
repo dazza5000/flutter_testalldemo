@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lyc_clinic/test/custom_bottom_navigation_bar.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
-import 'package:square_calendar/square_calendar.dart';
 
 class DoctorBookingPage extends StatefulWidget {
 
@@ -13,7 +12,7 @@ class DoctorBookingPage extends StatefulWidget {
 
 class DoctorBookingPageState extends State<DoctorBookingPage> {
   _getSquareCalendar(BuildContext context) {
-    return new SquareCalendar(year: 2018, month: 2);
+    return null;
     /*return new SquareCalendar(
       year: 2018,
       month: 5,

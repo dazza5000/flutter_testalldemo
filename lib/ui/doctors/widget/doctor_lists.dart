@@ -3,7 +3,7 @@ import 'package:lyc_clinic/ui/doctors/data/doctor.dart';
 import 'package:lyc_clinic/ui/doctors/widget/create_doctor_buttons.dart';
 import 'package:lyc_clinic/ui/doctors/widget/create_doctor_item.dart';
 
-class DoctorLists extends StatelessWidget {
+class DoctorLists extends StatelessWidget implements DoctorClickListener{
   DoctorLists(this.doctors);
 
   final List<Doctor> doctors;
@@ -20,8 +20,7 @@ class DoctorLists extends StatelessWidget {
         new CreateDoctorItem(doctor),
         //Floating Action Button
         new Positioned(
-          child: new CreateDoctorButton(doctor),)
-
+          child: new CreateDoctorButton(doctor,this),)
       ],
     );
   }
@@ -40,6 +39,26 @@ class DoctorLists extends StatelessWidget {
             scrollDirection: Axis.vertical,)
       ),
     );
+  }
+
+  @override
+  void onDoctorShareClick(Doctor doctor) {
+
+  }
+
+  @override
+  void onDoctorFavClick(Doctor doctor) {
+
+  }
+
+  @override
+  void onDoctorSaveClick(Doctor doctor) {
+
+  }
+
+  @override
+  void onDoctorItemClick(Doctor doctor) {
+
   }
 
 

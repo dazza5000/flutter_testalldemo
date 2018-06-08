@@ -3,6 +3,7 @@ import 'package:lyc_clinic/ui/comment/data/review.dart';
 import 'package:lyc_clinic/ui/otheruser/page/other_user_page.dart';
 import 'package:lyc_clinic/ui/comment/page/comment_edit_dialog_page.dart';
 import 'package:lyc_clinic/ui/comment/page/comment_reply_dialog_page.dart';
+import 'package:lyc_clinic/base/mystyle.dart';
 
 enum popupValue { Edit, Delete }
 
@@ -23,39 +24,40 @@ class CommentItemWidgetState extends State<CommentItemWidget> {
 
   Widget _showReplyCountDesc(Review c) {
     if (c.hasReply) {
-      return new Text('ပီးခဲ့ေသာ Replies ${c.replyCount}ခုကို ၾကည့္ရန္');
+      return new Text('ပီးခဲ့ေသာ Replies ${c.replyCount}ခုကို ၾကည့္ရန္',
+          style: MyStyle.pastRepliesDescStyle());
     }
     return null;
   }
 
   _clickReply(BuildContext context) {
-
+    Navigator.push(
+        context,
+        new MaterialPageRoute(
+            builder: (_) => new CommentReplyDialogPage(widget.review)));
   }
 
-  _moreInfoClick(BuildContext context) {
-
-  }
+  _moreInfoClick(BuildContext context) {}
 
   _goToOtherUserPage(BuildContext context) {
     Navigator.push(
-        context, new MaterialPageRoute(builder: (_) => new OtherUserPage()));
+        context, new MaterialPageRoute(builder: (_) => new OtherUserPage(widget.review.user)));
   }
 
   _goToReplyPage(BuildContext context) {
-    Navigator.push(context,
+    Navigator.push(
+        context,
         new MaterialPageRoute(
             builder: (_) => new CommentReplyDialogPage(widget.review)));
   }
 
   _buildMenuItem(IconData icon, String label, popupValue val) {
     return new PopupMenuItem<popupValue>(
-
       child: new Row(
         children: <Widget>[
           new Padding(
               padding: const EdgeInsets.only(right: 24.0),
-              child: new Icon(icon, color: Colors.black54)
-          ),
+              child: new Icon(icon, color: Colors.black54)),
           new Text(label),
         ],
       ),
@@ -80,7 +82,6 @@ class CommentItemWidgetState extends State<CommentItemWidget> {
                   ),
                   onTap: () => _goToOtherUserPage(context),
                 ),
-
                 new Padding(
                     padding: const EdgeInsets.only(left: 5.0),
                     child: new Column(
@@ -90,13 +91,14 @@ class CommentItemWidgetState extends State<CommentItemWidget> {
                         new InkWell(
                           child: new Padding(
                             padding: const EdgeInsets.all(3.0),
-                            child: new Text(widget.review.username),),
+                            child: new Text(widget.review.username),
+                          ),
                           onTap: () => _goToOtherUserPage(context),
                         ),
-
                         new Padding(
                           padding: const EdgeInsets.all(3.0),
-                          child: new Text(widget.review.mesg),),
+                          child: new Text(widget.review.mesg),
+                        ),
                         new Padding(
                           padding: const EdgeInsets.all(3.0),
                           child: new Row(
@@ -107,10 +109,11 @@ class CommentItemWidgetState extends State<CommentItemWidget> {
                               new Padding(
                                   padding: const EdgeInsets.only(
                                       left: 5.0, right: 5.0),
-                                  child: new Text('.', style: new TextStyle(
-                                      fontSize: 18.0,
-                                      color: Colors.grey,
-                                      fontWeight: FontWeight.bold))),
+                                  child: new Text('.',
+                                      style: new TextStyle(
+                                          fontSize: 18.0,
+                                          color: Colors.grey,
+                                          fontWeight: FontWeight.bold))),
                               new GestureDetector(
                                 child: new Text('Reply'),
                                 onTap: () => _clickReply(context),
@@ -118,38 +121,41 @@ class CommentItemWidgetState extends State<CommentItemWidget> {
                             ],
                           ),
                         ),
-                        new Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: _showReplyCountDesc(widget.review),
-                        )
+                        new InkWell(
+                            onTap: () => _clickReply(context),
+                            child: new Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: _showReplyCountDesc(widget.review),
+                            ))
                       ],
                     )),
                 new Expanded(
-                  child: new Row(children: <Widget>[],),),
-                /*new GestureDetector(
-              child: new Icon(Icons.more_horiz, color: Colors.grey,),
-              onTap: () => _moreInfoClick(context),
-            ),*/
+                  child: new Row(
+                    children: <Widget>[],
+                  ),
+                ),
                 new PopupMenuButton<popupValue>(
-                  icon: new Icon(Icons.more_horiz, color: Colors.grey,),
+                  icon: new Icon(
+                    Icons.more_horiz,
+                    color: Colors.grey,
+                  ),
                   itemBuilder: (BuildContext context) =>
-                  <PopupMenuItem<popupValue>>[
-                    _buildMenuItem(Icons.edit, "Edit", popupValue.Edit),
-                    _buildMenuItem(Icons.delete, "Delete", popupValue.Delete)
-                  ],
+                      <PopupMenuItem<popupValue>>[
+                        _buildMenuItem(Icons.edit, "Edit", popupValue.Edit),
+                        _buildMenuItem(
+                            Icons.delete, "Delete", popupValue.Delete)
+                      ],
                   onSelected: (popupValue value) {
                     if (value == popupValue.Edit) {
-                      Navigator.push(context, new MaterialPageRoute(
-                          builder: (_) => new CommentEditDialogPage()));
-                    }
-                    else {
-
-                    }
+                      Navigator.push(
+                          context,
+                          new MaterialPageRoute(
+                              builder: (_) =>
+                                  new CommentEditDialogPage(widget.review)));
+                    } else {}
                   },
                 ),
               ],
-            )
-        )
-    );
+            )));
   }
 }
