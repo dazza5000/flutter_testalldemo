@@ -2,56 +2,58 @@ import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MySharedPreferences {
-  Future<SharedPreferences> mySharedPreferences = SharedPreferences
-      .getInstance();
+  static SharedPreferences _prefs;
 
-  _clear() async {
-    SharedPreferences _prefs = await mySharedPreferences;
+  MySharedPreferences() {
+    _prefs = getSharePreferences();
+  }
+
+  static getSharePreferences() async {
+    return await SharedPreferences.getInstance();
+  }
+
+  static Future<SharedPreferences> getPrefs() {
+    return getSharePreferences();
+  }
+
+  static clear() {
     _prefs.clear();
   }
 
-  _putStringData(String key, String val) async {
-    SharedPreferences _prefs = await mySharedPreferences;
+  static putStringData(String key, String val) {
     _prefs.setString(key, val);
   }
 
-  _putIntegerData(String key, int val) async {
-    SharedPreferences _prefs = await mySharedPreferences;
+  static putIntegerData(String key, int val) {
     _prefs.setInt(key, val);
   }
 
-  _putBooleanData(String key, bool val) async {
-    SharedPreferences _prefs = await mySharedPreferences;
+  static putBooleanData(String key, bool val) {
     _prefs.setBool(key, val);
   }
 
-  _putDoubleData(String key, double val) async {
-    SharedPreferences _prefs = await mySharedPreferences;
+  static putDoubleData(String key, double val) async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
     _prefs.setDouble(key, val);
   }
 
-  _getStringData(String key) async {
-    SharedPreferences _prefs = await mySharedPreferences;
-    _prefs.getString(key);
+  static String getStringData(String key) {
+    return _prefs.getString(key);
   }
 
-  _getIntData(String key) async {
-    SharedPreferences _prefs = await mySharedPreferences;
-    _prefs.getInt(key);
+  static int getIntData(String key) {
+    return _prefs.getInt(key);
   }
 
-  _getBooleanData(String key) async {
-    SharedPreferences _prefs = await mySharedPreferences;
-    _prefs.getBool(key);
+  static bool getBooleanData(String key) {
+    return _prefs.getBool(key);
   }
 
-  _getDoubleData(String key) async {
-    SharedPreferences _prefs = await mySharedPreferences;
-    _prefs.getDouble(key);
+  static double getDoubleData(String key) {
+    return _prefs.getDouble(key);
   }
 
-  _getData(String key) async {
-    SharedPreferences _prefs = await mySharedPreferences;
-    _prefs.get(key);
+  static getData(String key) {
+    return _prefs.get(key);
   }
 }

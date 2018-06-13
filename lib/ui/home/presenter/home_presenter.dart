@@ -33,5 +33,25 @@ class HomePresenter {
         .catchError((_) => _view.onLoadError());
   }
 
+  void saveDoctor(String accessCode, int doctorId) {
+    _repository
+        .saveDoctor(accessCode, doctorId)
+        .then((m) {})
+        .catchError((e) => print(e.toString()));
+  }
+
+  void favDoctor(String accessCode, int doctorId) {
+    _repository
+        .setDoctorAsFavorite(accessCode, doctorId)
+        .then((m) {})
+        .catchError((e) => print(e.toString()));
+  }
+
+  void shareDoctor(String accessCode, int doctorId) {
+    _repository
+        .setShareClick(accessCode, doctorId)
+        .then((m) {})
+        .catchError((e) => print(e.to));
+  }
 
 }

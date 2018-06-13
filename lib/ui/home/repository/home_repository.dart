@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:lyc_clinic/ui/service/data/service.dart';
 import 'package:lyc_clinic/ui/doctors/data/doctor.dart';
 import 'package:lyc_clinic/ui/home/data/banner_data.dart';
+import 'package:lyc_clinic/base/data/message.dart';
 
 abstract class HomeContractRepository {
   Future<List<Service>> getServices(String accessCode);
@@ -10,11 +11,11 @@ abstract class HomeContractRepository {
 
   Future<List<BannerData>> getBanner(String accessCode);
 
-  void saveDoctor(String accessCode, int doctorId);
+  Future<Message> saveDoctor(String accessCode, int doctorId);
 
-  void setDoctorAsFavorite(String accessCode, int doctorId);
+  Future<Message> setDoctorAsFavorite(String accessCode, int doctorId);
 
   void setBannerLink(String accessCode, int bannerid);
 
-  void setShareClick(String accessCode, int doctorid);
+  Future<Message> setShareClick(String accessCode, int doctorid);
 }

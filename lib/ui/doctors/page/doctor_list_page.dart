@@ -9,6 +9,7 @@ import 'package:lyc_clinic/ui/doctors/page/doctor_filter_page.dart';
 import 'package:lyc_clinic/ui/doctors/contract/doctor_list_contract.dart';
 import 'package:lyc_clinic/ui/doctors/presenter/doctor_list_presenter.dart';
 import 'package:lyc_clinic/utils/configs.dart';
+import 'package:lyc_clinic/ui/doctors/widget/create_doctor_buttons.dart';
 
 class DoctorListPage extends StatefulWidget {
   @override
@@ -18,7 +19,7 @@ class DoctorListPage extends StatefulWidget {
 }
 
 class DoctorListPageState extends State<DoctorListPage>
-    implements DoctorListContract, FilterListener {
+    implements DoctorListContract, FilterListener, DoctorClickListener {
   DoctorListPresenter mPresenter;
   List<Doctor> doctorsList;
   Pagination pagination;
@@ -31,7 +32,7 @@ class DoctorListPageState extends State<DoctorListPage>
   void initState() {
     // TODO: implement initState
     super.initState();
-    mPresenter.getDoctorList(Configs.GUEST_CODE, null, 2, '');
+    mPresenter.getDoctorList(Configs.TEST_CODE, null, 2, '');
   }
 
   @override
@@ -66,7 +67,7 @@ class DoctorListPageState extends State<DoctorListPage>
                       shape: new RoundedRectangleBorder(
                           borderRadius: new BorderRadius.circular(30.0))),
                 ),
-                new DoctorLists(doctorsList)
+                new DoctorLists(doctorsList, this)
               ],
             ),
           )),
@@ -106,6 +107,29 @@ class DoctorListPageState extends State<DoctorListPage>
   @override
   void onChooseFilters(List<int> roleList) {
     print('List Role$roleList');
-    mPresenter.getDoctorList(Configs.TEST_CODE, roleList, null , null);
+    mPresenter.getDoctorList(Configs.TEST_CODE, roleList, null, null);
+  }
+
+  @override
+  void onDoctorShareClick(Doctor doctor) {
+    print('Doctor Share Click');
+    mPresenter.shareDoctor(Configs.TEST_CODE, doctor.id);
+  }
+
+  @override
+  void onDoctorFavClick(Doctor doctor) {
+    print('Doctor Fav Click');
+    mPresenter.favDoctor(Configs.TEST_CODE, doctor.id);
+  }
+
+  @override
+  void onDoctorSaveClick(Doctor doctor) {
+    print('Doctor Save Click');
+    mPresenter.saveDoctor(Configs.TEST_CODE, doctor.id);
+  }
+
+  @override
+  void onDoctorItemClick(Doctor doctor) {
+    print('Doctor Item Click');
   }
 }

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
 import 'package:lyc_clinic/ui/notification/data/comment.dart';
 import 'package:lyc_clinic/utils/configs.dart';
+import 'package:lyc_clinic/ui/utils/time_utils.dart';
+
 class CommentNotiWidget extends StatelessWidget {
   Comment comment;
 
@@ -37,6 +39,25 @@ class CommentNotiWidget extends StatelessWidget {
     );
   }
 
+  Widget showDateAndTime() {
+    if (comment.timeAgo > 88640) {
+      return new Text(
+        TimeUtils.getDateWithoutHours(comment.createDate),
+        style: MyStyle.dateTimeTextStyle(),
+      );
+    } else {
+      return new Row(
+        children: <Widget>[
+          new Text(
+            TimeUtils.getTime(comment.timeAgo),
+            style: MyStyle.dateTimeTextStyle(),
+          ),
+          new Text('.')
+        ],
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (comment.userId == 0 || comment.user == Configs.ADMIN_NAME) {
@@ -67,10 +88,7 @@ class CommentNotiWidget extends StatelessWidget {
                   ),
                   new Padding(
                       padding: const EdgeInsets.only(top: 10.0, left: 10.0),
-                      child: new Text(
-                        'Feb 14 2018',
-                        style: MyStyle.dateTimeTextStyle(),
-                      ))
+                      child: showDateAndTime())
                 ],
               ),
             )

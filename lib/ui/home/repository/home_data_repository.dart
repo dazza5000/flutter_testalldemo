@@ -7,6 +7,7 @@ import 'package:lyc_clinic/ui/home/repository/health_repository.dart';
 import 'package:lyc_clinic/ui/service/data/service.dart';
 import 'package:lyc_clinic/ui/home/data/banner_data.dart';
 import 'package:lyc_clinic/utils/configs.dart';
+import 'package:lyc_clinic/base/data/message.dart';
 
 class HomeDataRepository implements HomeContractRepository {
   JsonDecoder _decoder = new JsonDecoder();
@@ -63,7 +64,7 @@ class HomeDataRepository implements HomeContractRepository {
   }
 
   @override
-  void saveDoctor(String accessCode, int doctorId) async{
+  Future<Message> saveDoctor(String accessCode, int doctorId) async{
     http.Response response=await http.post(URL+accessCode+'/doctor/'+doctorId.toString()+'/save');
     final responseBody=response.body;
     final statusCode=response.statusCode;
@@ -73,11 +74,13 @@ class HomeDataRepository implements HomeContractRepository {
       print('Doctor Status code$statusCode');
     }
     print('Save Doctor Response $responseBody');
+    final jsonBody=_decoder.convert(responseBody);
+    return new Message.fromMap(jsonBody);
   }
 
 
   @override
-  void setDoctorAsFavorite(String accessCode, int doctorId) async{
+  Future<Message> setDoctorAsFavorite(String accessCode, int doctorId) async{
     http.Response response=await http.post(URL+accessCode+'/doctor/'+doctorId.toString()+'/favorite');
     final responseBody=response.body;
     final statusCode=response.statusCode;
@@ -87,6 +90,8 @@ class HomeDataRepository implements HomeContractRepository {
       print('Doctor Status code$statusCode');
     }
     print('Favourite Doctor Response $responseBody');
+    final jsonBody=_decoder.convert(responseBody);
+    return new Message.fromMap(jsonBody);
   }
 
   @override
@@ -103,7 +108,7 @@ class HomeDataRepository implements HomeContractRepository {
   }
 
   @override
-  void setShareClick(String accessCode, int doctorid) async{
+  Future<Message> setShareClick(String accessCode, int doctorid) async{
     http.Response response=await http.post(URL+accessCode+'/doctor/'+doctorid.toString()+'/share');
     final responseBody=response.body;
     final statusCode=response.statusCode;
@@ -113,6 +118,8 @@ class HomeDataRepository implements HomeContractRepository {
       print('Doctor Status code$statusCode');
     }
     print('Share Doctor Response $responseBody');
+    final jsonBody=_decoder.convert(responseBody);
+    return new Message.fromMap(jsonBody);
   }
 
 }

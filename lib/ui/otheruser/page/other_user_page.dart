@@ -30,7 +30,7 @@ class OtherUserPage extends StatefulWidget {
 class OtherUserPageState extends State<OtherUserPage>
     implements OtherUserContract, DoctorClickListener, ArticleClickListener {
   OtherUserPresenter mPresenter;
-  List<Save> saveList;
+  List<Save> saveList=new List<Save>();
 
   OtherUserPageState() {
     mPresenter = new OtherUserPresenter(this);

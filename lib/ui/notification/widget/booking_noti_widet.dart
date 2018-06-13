@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
 import 'package:lyc_clinic/ui/notification/data/booking.dart';
+import 'package:lyc_clinic/ui/utils/time_utils.dart';
 
 class BookingNotificationWidget extends StatefulWidget {
   Booking booking;
@@ -54,11 +55,13 @@ class BookingNotiWidgetState extends State<BookingNotificationWidget> {
       fontWeight: FontWeight.bold,
       decoration: TextDecoration.underline);
 
-  Widget _getCustomMessage(){
-    if(widget.booking.customMesg!=null && widget.booking.customMesg!=''){
-      return new Text(widget.booking.customMesg,style: MyStyle.listItemTextStyle(),);
-    }
-    else{
+  Widget _getCustomMessage() {
+    if (widget.booking.customMesg != null && widget.booking.customMesg != '') {
+      return new Text(
+        widget.booking.customMesg,
+        style: MyStyle.listItemTextStyle(),
+      );
+    } else {
       return _getSpannableString();
     }
   }
@@ -140,6 +143,25 @@ class BookingNotiWidgetState extends State<BookingNotificationWidget> {
     }
   }
 
+  Widget showDateAndTime() {
+    if (widget.booking.timeAgo > 88640) {
+      return new Text(
+        TimeUtils.getDateWithoutHours(widget.booking.createDate),
+        style: MyStyle.dateTimeTextStyle(),
+      );
+    } else {
+      return new Row(
+        children: <Widget>[
+          new Text(
+            TimeUtils.getTime(widget.booking.timeAgo),
+            style: MyStyle.dateTimeTextStyle(),
+          ),
+          new Text('.')
+        ],
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var networkImage = new NetworkImage(widget.booking.image);
@@ -153,7 +175,7 @@ class BookingNotiWidgetState extends State<BookingNotificationWidget> {
             new CircleAvatar(
               backgroundColor: Colors.transparent,
               backgroundImage:
-              widget.booking.image == "" ? localImage : networkImage,
+                  widget.booking.image == "" ? localImage : networkImage,
               radius: 20.0,
             ),
             new Expanded(
@@ -161,15 +183,12 @@ class BookingNotiWidgetState extends State<BookingNotificationWidget> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   new Padding(
-                      padding: const EdgeInsets.only(top: 0.0, left: 10.0),
-                      child: _getCustomMessage(),
-                      ),
+                    padding: const EdgeInsets.only(top: 0.0, left: 10.0),
+                    child: _getCustomMessage(),
+                  ),
                   new Padding(
                       padding: const EdgeInsets.only(top: 10.0, left: 10.0),
-                      child: new Text(
-                        'Feb 14 2018',
-                        style: MyStyle.dateTimeTextStyle(),
-                      ))
+                      child: showDateAndTime())
                 ],
               ),
             )

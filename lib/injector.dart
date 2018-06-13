@@ -40,6 +40,8 @@ import 'package:lyc_clinic/ui/otheruser/repository/other_user_repository.dart';
 import 'package:lyc_clinic/ui/otheruser/repository/other_user_data_repository.dart';
 import 'package:lyc_clinic/ui/comment/repository/comment_eidt_data_repository.dart';
 import 'package:lyc_clinic/ui/comment/repository/comment_eidt_repository.dart';
+import 'package:lyc_clinic/ui/home/repository/profile_info_repository.dart';
+import 'package:lyc_clinic/ui/home/repository/profile_info_data_repository.dart';
 
 class Injector {
   static final Injector _singleton = new Injector._internal();
@@ -54,85 +56,89 @@ class Injector {
     return new HomeDataRepository();
   }
 
-  DoctorProfileRepository get doctorProfileRepository{
+  DoctorProfileRepository get doctorProfileRepository {
     return new DoctorProfileDataRepository();
   }
 
-  FeatureArticlesRepository get featureArticlesRepository{
+  FeatureArticlesRepository get featureArticlesRepository {
     return new FeatureArticlesDataRepository();
   }
 
-  DoctorListRepository get doctorListRepository{
+  DoctorListRepository get doctorListRepository {
     return new DoctorListDataRepository();
   }
 
-  DoctorBookingRepository get doctorBookingRepository{
+  DoctorBookingRepository get doctorBookingRepository {
     return new DoctorBookingDataRepository();
   }
 
-  HealthEducationRepository get healthEducationRepository{
+  HealthEducationRepository get healthEducationRepository {
     return new HealthEducationDataRepository();
   }
 
-  UserBookingRepository get userBookingRepository{
+  UserBookingRepository get userBookingRepository {
     return new UserBookingDataRepository();
   }
 
-  UserSavedRepository get userSavedRepository{
+  UserSavedRepository get userSavedRepository {
     return new UserSavedDataRepository();
   }
 
-  UserActivityRepository get userActivityRepository{
+  UserActivityRepository get userActivityRepository {
     return new UserActivityDataRepository();
   }
 
-  ArticleDetailsRepository get articleDetailsRepository{
+  ArticleDetailsRepository get articleDetailsRepository {
     return new ArticleDetailsDataRepository();
   }
 
-  CommentReplyRepository get commentReplyRepository{
+  CommentReplyRepository get commentReplyRepository {
     return new CommentReplyDataRepository();
   }
 
-  CommentRepository get commentRepository{
+  CommentRepository get commentRepository {
     return new CommentDataRepository();
   }
 
-  DoctorFilterRepository get doctorFilterRepository{
+  DoctorFilterRepository get doctorFilterRepository {
     return new DoctorFilterDataRepository();
   }
 
-  HealthEducationFilterRepository get healthEducationFilterRepository{
+  HealthEducationFilterRepository get healthEducationFilterRepository {
     return new HealthEducationFilterDataRepository();
   }
 
-  ServicesRepository get servicesRepository{
+  ServicesRepository get servicesRepository {
     return new ServicesDataRepository();
   }
 
-  SubServicesDetailsRepository get subServicesDetailsRepository{
+  SubServicesDetailsRepository get subServicesDetailsRepository {
     return new SubServicesDetailsDataRepository();
-
   }
 
-  NotificationRepository get notificationRepository{
+  NotificationRepository get notificationRepository {
     return new NotificationDataRepository();
   }
 
-  AboutRepository get aboutRepository{
+  AboutRepository get aboutRepository {
     return new AboutDataRepository();
   }
 
-  ChatRepository get chatRepository{
+  ChatRepository get chatRepository {
     return new ChatDataRepository();
   }
 
-  OtherUserRepository get otherUserRepository{
+  OtherUserRepository get otherUserRepository {
     return new OtherUserDataRepository();
   }
 
-  CommentEditRepository get commentEditRepository{
+  CommentEditRepository get commentEditRepository {
     return new CommentEditDataRepository();
   }
+
+  ProfileInfoRepository get profileInfoRepository {
+    return new ProfileInfoDataRepository();
+  }
+
 }
 //DI

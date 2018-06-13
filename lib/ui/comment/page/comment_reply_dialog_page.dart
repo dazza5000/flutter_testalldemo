@@ -12,47 +12,9 @@ import 'package:lyc_clinic/utils/configs.dart';
 
 class CommentReplyDialogPage extends StatefulWidget {
   Review review;
+  String headerTime;
 
-  CommentReplyDialogPage(this.review);
-
-  /*CommentReply commentReply = new CommentReply(
-      new Pagination(1, 1, 1, 1), [
-    new Reply(
-        84,
-        "http://api.linyaungchi.com/storage/images/user/tmpphpdsuolp-20180202061947.jpg",
-        903,
-        "Hnin Nway Nway Hlaing",
-        "reply test reply test reply test ",
-        null,
-        null,
-        null,
-        null,
-        null,
-        36,
-        0,
-        "",
-        true,
-        1526891898,
-        58),
-
-    new Reply(
-        84,
-        "http://api.linyaungchi.com/storage/images/user/tmpphpdsuolp-20180202061947.jpg",
-        903,
-        "Aye Aye",
-        "reply test reply test One ",
-        null,
-        null,
-        null,
-        null,
-        null,
-        36,
-        0,
-        "",
-        true,
-        1526891898,
-        58)
-  ]);*/
+  CommentReplyDialogPage(this.review,this.headerTime);
 
   @override
   CommentReplyDialogPageState createState() {
@@ -61,28 +23,43 @@ class CommentReplyDialogPage extends StatefulWidget {
 }
 
 class CommentReplyDialogPageState extends State<CommentReplyDialogPage>
-    implements CommentReplyContract {
-  TextEditingController _textController = new TextEditingController();
+    implements CommentReplyContract, CommentReplyListener {
+  final _textEditingController = new TextEditingController();
   CommentReplyPresenter mPresenter;
   bool isWriting = false;
+  int mReplyId = 0;
+  String message;
   List<Reply> replyList = new List<Reply>();
 
   CommentReplyDialogPageState() {
     mPresenter = new CommentReplyPresenter(this);
   }
 
-  _sendClick() {}
+  _sendReplyClick() {
+    if (message != null && message.length > 0) {
+      if (widget.review.doctor != null) {
+        print('Doctor Reply Messages is $message');
+        mPresenter.submitReply(Configs.TEST_CODE, widget.review.doctor,
+            widget.review.id, message, mReplyId);
+      } else {
+        print('ArticleReply Messages is ${message} Article Id${widget.review.article}');
+        mPresenter.submitArticleReply(Configs.TEST_CODE, widget.review.article,
+            widget.review.id, message, mReplyId);
+      }
+    } else {}
+  }
 
   void _submitMessage(String text) {
-    _textController.clear();
     setState(() {
       isWriting = false;
+      message = text;
     });
+    print(message);
   }
 
   Widget _buildReplyItem(BuildContext context, int index) {
     Reply reply = replyList[index];
-    return new CommentReplyItemWidget(reply);
+    return new CommentReplyItemWidget(reply, index,widget.review, this);
   }
 
   Widget _getReplyHeader(Review review) {
@@ -122,7 +99,7 @@ class CommentReplyDialogPageState extends State<CommentReplyDialogPage>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
-                          new Text('22:00 '),
+                          new Text(widget.headerTime),
                           new Padding(
                               padding:
                                   const EdgeInsets.only(left: 5.0, right: 5.0),
@@ -138,6 +115,30 @@ class CommentReplyDialogPageState extends State<CommentReplyDialogPage>
                 )),
           ],
         ));
+  }
+
+  Widget _buildTextComposer() {
+    return new IconTheme(
+        data: new IconThemeData(color: Theme.of(context).accentColor),
+        child: new Container(
+            margin: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: new Row(children: <Widget>[
+              new Flexible(
+                  child: new TextField(
+                      style: MyStyle.captionTextStyle(),
+                      controller: _textEditingController,
+                      onChanged: _submitMessage,
+                      onSubmitted: _submitMessage,
+                      decoration: new InputDecoration.collapsed(
+                          hintText: "Comment ေပးရန္"))),
+              new Container(
+                  child: new IconButton(
+                      icon: new Icon(
+                        Icons.send,
+                        color: MyStyle.colorGreen,
+                      ),
+                      onPressed: _sendReplyClick))
+            ])));
   }
 
   _goToOtherUserActivity(BuildContext context) {
@@ -175,72 +176,49 @@ class CommentReplyDialogPageState extends State<CommentReplyDialogPage>
                 color: MyStyle.colorBlack, fontSize: MyStyle.xmedium_fontSize),
           ),
         ),
-        body: new Container(
-            color: MyStyle.colorWhite,
-            child: new Stack(children: <Widget>[
-              new Center(
-                  child: new Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                    _getReplyHeader(widget.review),
-                    new Container(
-                      margin: const EdgeInsets.only(left: 50.0),
-                      child: new ListView.builder(
-                        itemBuilder: _buildReplyItem,
-                        shrinkWrap: true,
-                        itemCount: replyList.length,
-                        scrollDirection: Axis.vertical,
-                        controller: new ScrollController(),
-                      ),
-                    )
-                  ])),
-              new Align(
-                  alignment: FractionalOffset.bottomCenter,
-                  child: new Container(
-                      child: new Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      new Divider(
-                        height: 2.0,
-                        color: Colors.black,
-                      ),
-                      new Row(
-                        children: <Widget>[
-                          new Expanded(
-                            child: new TextField(
-                              controller: _textController,
-                              onChanged: (String text) {
-                                setState(() {});
-                              },
-                              onSubmitted: _submitMessage,
-                              decoration: new InputDecoration(
-                                  border: InputBorder.none,
-                                  contentPadding:
-                                      const EdgeInsets.only(left: 10.0),
-                                  hintText: 'Comment ေပးရန္'),
-                            ),
-                          ),
-                          new IconButton(
-                            icon: new Icon(Icons.send),
-                            onPressed: _sendClick,
-                            color: Colors.green,
-                          )
-                        ],
-                      ),
-                    ],
-                  )))
-            ])));
+        body: new Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              _getReplyHeader(widget.review),
+              new Flexible(
+                child: new ListView.builder(
+                  padding: const EdgeInsets.only(left: 25.0),
+                  itemBuilder: _buildReplyItem,
+                  itemCount: replyList.length,
+                  scrollDirection: Axis.vertical,
+                  controller: new ScrollController(),
+                ),
+              ),
+              new Divider(
+                height: 2.0,
+                color: MyStyle.colorBlack,
+              ),
+              new Container(
+                  decoration:
+                      new BoxDecoration(color: MyStyle.layoutBackground),
+                  child: _buildTextComposer())
+            ]));
   }
 
   @override
   void showCommentHeader(Review r, String dateTime) {}
 
   @override
-  void updateCommentReply(int position, Reply commentReply) {}
+  void updateCommentReply(int position, Reply commentReply) {
+    print('Update Comment Reply');
+  }
 
   @override
-  void insertNewComment(Reply r) {}
+  void insertNewComment(Reply r) {
+    _textEditingController.clear();
+    message = "";
+    print('Insert New Comment${r.toString()}');
+    setState(() {
+      replyList.add(r);
+    });
+    //aniController.forward();
+  }
 
   @override
   void pagination(Pagination p) {}
@@ -253,5 +231,15 @@ class CommentReplyDialogPageState extends State<CommentReplyDialogPage>
     setState(() {
       replyList = replies;
     });
+  }
+
+  @override
+  void onCommentReplyEditClick(Reply r, int pos) {
+    print('Comment Reply Edit');
+  }
+
+  @override
+  void onCommentReplyDeleteClick(Reply r, int post) {
+    print('Comment Reply Delete');
   }
 }

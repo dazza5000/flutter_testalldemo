@@ -3,10 +3,12 @@ import 'package:lyc_clinic/ui/doctors/data/doctor.dart';
 import 'package:lyc_clinic/ui/doctors/widget/create_doctor_buttons.dart';
 import 'package:lyc_clinic/ui/doctors/widget/create_doctor_item.dart';
 
-class DoctorLists extends StatelessWidget implements DoctorClickListener{
-  DoctorLists(this.doctors);
+class DoctorLists extends StatelessWidget{
 
   final List<Doctor> doctors;
+  DoctorClickListener listener;
+
+  DoctorLists(this.doctors,[this.listener]);
 
   List<String> scheduleArr = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   List<Widget> widgets;
@@ -20,7 +22,7 @@ class DoctorLists extends StatelessWidget implements DoctorClickListener{
         new CreateDoctorItem(doctor),
         //Floating Action Button
         new Positioned(
-          child: new CreateDoctorButton(doctor,this),)
+          child: new CreateDoctorButton(doctor,listener),)
       ],
     );
   }
@@ -40,27 +42,6 @@ class DoctorLists extends StatelessWidget implements DoctorClickListener{
       ),
     );
   }
-
-  @override
-  void onDoctorShareClick(Doctor doctor) {
-
-  }
-
-  @override
-  void onDoctorFavClick(Doctor doctor) {
-
-  }
-
-  @override
-  void onDoctorSaveClick(Doctor doctor) {
-
-  }
-
-  @override
-  void onDoctorItemClick(Doctor doctor) {
-
-  }
-
 
 }
 

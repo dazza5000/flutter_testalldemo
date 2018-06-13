@@ -26,4 +26,57 @@ class CommentReplyPresenter {
       _view.pagination(cr.pagination);
     }).catchError((e) => print(e.toString()));
   }
+
+  void getMoreCommentReplies(
+      String accessCode, int doctorId, int reviewId, int page) {
+    _repository
+        .getMoreCommentReplies(accessCode, doctorId, reviewId, page)
+        .then((cr) {
+      _view.showMoreReplies(cr.data);
+    }).catchError((e) => print(e.toString()));
+  }
+
+  void getMoreArticleCommentReplies(
+      String accessCode, int articleId, int commentId, int page) {
+    _repository
+        .getMoreArticleCommmentReplies(accessCode, articleId, commentId, page)
+        .then((cr) {
+      _view.showReplies(cr.data);
+    }).catchError((e) => print(e.toString()));
+  }
+
+  void deleteReply(String accessCode, int doctorId, int reviewId, int replyId) {
+    _repository
+        .deleteReply(accessCode, doctorId, reviewId, reviewId)
+        .then((m) {})
+        .catchError((e) => print(e.toString()));
+  }
+
+  void deleteArticleReply(
+      String accessCode, int articleId, int commentId, int replyId) {
+    _repository
+        .deleteArticleReply(accessCode, articleId, commentId, replyId)
+        .then((m) {})
+        .catchError((e) => print(e.toString()));
+  }
+
+  void submitReply(String accessCode, int doctorId, int reviewId,
+      String message, int replyId) {
+    _repository
+        .submitReply(accessCode, doctorId, reviewId, message, replyId)
+        .then((r) {
+      _view.insertNewComment(r);
+    }).catchError((e) => print(e.toString()));
+  }
+
+  void submitArticleReply(String accessCode, int articleId, int commentId,
+      String message, int replyId) {
+    _repository
+        .submitArticleReply(accessCode, articleId, commentId, message, replyId)
+        .then((r) {
+      _view.insertNewComment(r);
+    }).catchError((e) => print(e.toString()));
+  }
+
+
 }

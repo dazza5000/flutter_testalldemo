@@ -4,14 +4,20 @@ import 'package:lyc_clinic/ui/otheruser/page/other_user_page.dart';
 import 'package:lyc_clinic/ui/comment/page/comment_edit_dialog_page.dart';
 import 'package:lyc_clinic/ui/comment/page/comment_reply_dialog_page.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
+import 'package:lyc_clinic/ui/utils/time_utils.dart';
 
 enum popupValue { Edit, Delete }
 
 class CommentItemWidget extends StatefulWidget {
   Review review;
   int commentCount;
+  int pos;
+  CommentListener listener;
+  AnimationController animationController;
 
-  CommentItemWidget(this.review, this.commentCount);
+  CommentItemWidget(
+      this.review, this.commentCount, this.pos, this.animationController,
+      [this.listener]);
 
   @override
   CommentItemWidgetState createState() {
@@ -19,8 +25,10 @@ class CommentItemWidget extends StatefulWidget {
   }
 }
 
-class CommentItemWidgetState extends State<CommentItemWidget> {
+class CommentItemWidgetState extends State<CommentItemWidget>
+    implements OnCommentUpdateListener {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  String timeStr;
 
   Widget _showReplyCountDesc(Review c) {
     if (c.hasReply) {
@@ -34,7 +42,8 @@ class CommentItemWidgetState extends State<CommentItemWidget> {
     Navigator.push(
         context,
         new MaterialPageRoute(
-            builder: (_) => new CommentReplyDialogPage(widget.review)));
+            builder: (_) =>
+                new CommentReplyDialogPage(widget.review, timeStr)));
   }
 
   _moreInfoClick(BuildContext context) {}
@@ -50,7 +59,8 @@ class CommentItemWidgetState extends State<CommentItemWidget> {
     Navigator.push(
         context,
         new MaterialPageRoute(
-            builder: (_) => new CommentReplyDialogPage(widget.review)));
+            builder: (_) =>
+                new CommentReplyDialogPage(widget.review, timeStr)));
   }
 
   _buildMenuItem(IconData icon, String label, popupValue val) {
@@ -83,8 +93,13 @@ class CommentItemWidgetState extends State<CommentItemWidget> {
             Navigator.push(
                 context,
                 new MaterialPageRoute(
-                    builder: (_) => new CommentEditDialogPage(widget.review)));
-          } else {}
+                    builder: (_) => new CommentEditDialogPage(
+                          this,
+                          mReview: widget.review,
+                        )));
+          } else {
+            widget.listener.onCommentDeleteClick(widget.review, widget.pos);
+          }
         },
       );
     } else {
@@ -92,6 +107,14 @@ class CommentItemWidgetState extends State<CommentItemWidget> {
         child: null,
       );
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    timeStr = (widget.review.timeAgo > 86400)
+        ? TimeUtils.getDate(widget.review.createDate)
+        : TimeUtils.getTime(widget.review.timeAgo);
   }
 
   @override
@@ -134,7 +157,7 @@ class CommentItemWidgetState extends State<CommentItemWidget> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
-                              new Text('22:00 '),
+                              new Text(timeStr),
                               new Padding(
                                   padding: const EdgeInsets.only(
                                       left: 5.0, right: 5.0),
@@ -167,4 +190,18 @@ class CommentItemWidgetState extends State<CommentItemWidget> {
               ],
             )));
   }
+
+  @override
+  void onSuccess(String comment) {
+    print('ON SUCCESS ITEM WIDGET$comment');
+    setState(() {
+      widget.review.mesg = comment;
+    });
+  }
+}
+
+abstract class CommentListener {
+  void onCommentDeleteClick(Review r, int post);
+
+  void onCommentEditClick(Review r, int pos);
 }

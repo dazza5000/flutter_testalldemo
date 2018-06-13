@@ -24,7 +24,8 @@ dependencies:
   html2md: ^0.1.5
   flutter_markdown: ^0.1.5
   flutter_facebook_login: ^1.1.1
-
+  intl: ^0.15.6
+  timezone: ^0.4.3
 
 dev_dependencies:
   build_runner: ^0.8.9

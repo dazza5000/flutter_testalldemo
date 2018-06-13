@@ -212,6 +212,7 @@ class DoctorDetailsPageState extends State<DoctorDetailsPage>
         new MaterialPageRoute(builder: (_) => new DoctorBookingPage()));
   }
 
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -247,7 +248,7 @@ class DoctorDetailsPageState extends State<DoctorDetailsPage>
                       child: new SessionItems(),
                       onTap: () => _clickAvalibleSession(context),
                     ),
-                    new ReviewListItem(comment, widget.doctorId, false),
+                  new ReviewListItem(comment, widget.doctorId, false),
                     new Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 0.0, vertical: 10.0),
@@ -274,7 +275,9 @@ class DoctorDetailsPageState extends State<DoctorDetailsPage>
   void setSaveStatus(bool isSaved) {}
 
   @override
-  void setFavoriteStatus(bool isFav, int favCount) {}
+  void setFavoriteStatus(bool isFav, int favCount) {
+
+  }
 
   @override
   void showDoctorInfo(Doctor doctor) {

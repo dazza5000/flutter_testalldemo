@@ -14,7 +14,10 @@ class CommentEditPresenter {
       String accessCode, int doctorId, int reviewId, String mesg) {
     _repository
         .updateComment(accessCode, doctorId, reviewId, mesg)
-        .then((m) => _view.showMessage(m.mesg))
+        .then((m) {
+          _view.showMessage(m.mesg);
+          _view.dismissDialog();
+    })
         .catchError((e) => print(e.toString()));
   }
 
@@ -22,7 +25,10 @@ class CommentEditPresenter {
       String accessCode, int articleId, int commentId,int replyId, String mesg) {
     _repository
         .updateArticleCommentReply(accessCode, articleId, commentId, replyId, mesg)
-        .then((m) => _view.showMessage(m.mesg))
+        .then((m) {
+          _view.showMessage(m.mesg);
+          _view.dismissDialog();
+    })
         .catchError((e) => print(e.toString()));
   }
 
@@ -30,7 +36,10 @@ class CommentEditPresenter {
       String accessCode, int articleId, int commentId, String mesg) {
     _repository
         .updateArticleComment(accessCode, articleId, commentId, mesg)
-        .then((m) => _view.showMessage(m.mesg))
+        .then((m) {
+          _view.showMessage(m.mesg);
+          _view.dismissDialog();
+    })
         .catchError((e) => print(e.toString()));
   }
 
@@ -38,7 +47,11 @@ class CommentEditPresenter {
       String accessCode, int doctorId, int reviewId, String mesg,int replyId) {
     _repository
         .updateCommentReply(accessCode, doctorId, reviewId, mesg, replyId)
-        .then((m) => _view.showMessage(m.mesg))
+        .then((m){
+           _view.showMessage(m.mesg);
+           _view.dismissDialog();
+    }
+        )
         .catchError((e) => print(e.toString()));
   }
 }

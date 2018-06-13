@@ -11,6 +11,7 @@ class ReviewListItem extends StatefulWidget {
   Comment comment;
   int doctorId;
   bool isArticle;
+  AnimationController aniController;
 
   ReviewListItem(this.comment, this.doctorId, this.isArticle);
 
@@ -20,13 +21,17 @@ class ReviewListItem extends StatefulWidget {
   }
 }
 
-class ReviewListItemState extends State<ReviewListItem> {
+class ReviewListItemState extends State<ReviewListItem>
+    with TickerProviderStateMixin {
   int reviewCount = 0;
   List<Review> reviewList = new List<Review>();
+  AnimationController aniController;
 
   @override
   void initState() {
     super.initState();
+    aniController = new AnimationController(
+        duration: new Duration(microseconds: 500), vsync: this);
     reviewCount = widget.comment.pagination.total;
     reviewList = widget.comment.data;
   }
@@ -79,7 +84,7 @@ class ReviewListItemState extends State<ReviewListItem> {
 
   Widget _buildReviewItem(BuildContext context, int index) {
     Review c = reviewList[index];
-    return new CommentItemWidget(c, reviewCount);
+    return new CommentItemWidget(c, reviewCount, index, aniController);
   }
 
   Widget _showSeeCommentWidget(int commentCount) {
@@ -101,37 +106,55 @@ class ReviewListItemState extends State<ReviewListItem> {
     }
   }
 
+  Widget _showSeeCommentItems() {
+    if (widget.comment.data.length > 0) {
+      return new Padding(
+        padding: const EdgeInsets.only(top: 30.0),
+        child: new Card(
+          child: new Column(
+            children: <Widget>[
+              new ListView.builder(
+                  padding: const EdgeInsets.only(top: 20.0),
+                  itemBuilder: _buildReviewItem,
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  itemCount: reviewCount > 3 ? 3 : reviewList.length,
+                  controller: new ScrollController()),
+              new Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
+                child: new Divider(
+                  color: MyStyle.colorBlack,
+                  height: 2.0,
+                ),
+              ),
+              _showSeeCommentWidget(reviewCount),
+            ],
+          ),
+        ),
+      );
+    } else {
+      return new Padding(
+          padding: const EdgeInsets.only(top: 30.0),
+          child: new Card(
+              child: new Column(
+            children: <Widget>[
+              new SizedBox.fromSize(
+                child: null,
+                size: new Size.fromHeight(50.0),
+              )
+            ],
+          )));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Container(
       margin: const EdgeInsets.only(top: 15.0),
       child: new Stack(
         children: <Widget>[
-          new Padding(
-            padding: const EdgeInsets.only(top: 30.0),
-            child: new Card(
-              child: new Column(
-                children: <Widget>[
-                  new ListView.builder(
-                      padding: const EdgeInsets.only(top: 20.0),
-                      itemBuilder: _buildReviewItem,
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      itemCount: reviewCount > 3 ? 3 : reviewList.length,
-                      controller: new ScrollController()),
-                  new Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 5.0, horizontal: 5.0),
-                    child: new Divider(
-                      color: MyStyle.colorBlack,
-                      height: 2.0,
-                    ),
-                  ),
-                  _showSeeCommentWidget(reviewCount),
-                ],
-              ),
-            ),
-          ),
+          _showSeeCommentItems(),
           new Align(
               alignment: FractionalOffset.topLeft,
               child: new Padding(

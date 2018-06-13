@@ -26,7 +26,7 @@ class ArticleDetailsPage extends StatefulWidget {
 }
 
 class ArticleDetailsPageState extends State<ArticleDetailsPage>
-    implements ArticleDetailsContract {
+    implements ArticleDetailsContract{
   ArticleDetailsPresenter mPresenter;
   Article article;
   Comment comment;

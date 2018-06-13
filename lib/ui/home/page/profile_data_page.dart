@@ -5,10 +5,11 @@ import 'package:lyc_clinic/ui/home/page/user_booking_list_page.dart';
 import 'package:lyc_clinic/ui/home/page/user_saved_list_page.dart';
 import 'package:lyc_clinic/ui/home/page/user_profile_info_page.dart';
 
+
 class ProfileDataPage extends StatefulWidget {
   int tabIndex;
 
-  ProfileDataPage({Key key, this.tabIndex}) :super(key: key);
+  ProfileDataPage({Key key, this.tabIndex}) : super(key: key);
 
   @override
   ProfileDataPageState createState() {
@@ -17,21 +18,23 @@ class ProfileDataPage extends StatefulWidget {
 }
 
 class ProfileDataPageState extends State<ProfileDataPage>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin
+{
   TabController controller;
+
 
   ProfileDataPage() {
     controller?.dispose();
-    controller =
-    new TabController(length: 4, vsync: this, initialIndex: widget.tabIndex);
+    controller = new TabController(
+        length: 4, vsync: this, initialIndex: widget.tabIndex);
   }
 
   @override
   void initState() {
-    controller = new TabController(length: 4, vsync: this, initialIndex: widget.tabIndex);
     super.initState();
+    controller = new TabController(
+        length: 4, vsync: this, initialIndex: widget.tabIndex);
   }
-
 
   @override
   void dispose() {
@@ -39,13 +42,11 @@ class ProfileDataPageState extends State<ProfileDataPage>
     super.dispose();
   }
 
-
   @override
   void didChangeDependencies() {
     if (controller.index != widget.tabIndex) {
       setState(() {
-        controller =
-        new TabController(
+        controller = new TabController(
             length: 4, vsync: this, initialIndex: widget.tabIndex);
       });
     }
@@ -78,14 +79,14 @@ class ProfileDataPageState extends State<ProfileDataPage>
           ),
         ),
       ),
-      body: new TabBarView(
-          children: <Widget>[
-            new UserActivityListPage(),
-            new UserSavedListPage(),
-            new UserBookingListPage(),
-            new UserProfileInfoPage()
-          ],
-          controller: controller),
+      body: new TabBarView(children: <Widget>[
+        new UserActivityListPage(),
+        new UserSavedListPage(),
+        new UserBookingListPage(),
+        new UserProfileInfoPage()
+      ], controller: controller),
     );
   }
+
+
 }

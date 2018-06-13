@@ -27,6 +27,7 @@ class ChatListPageState extends State<ChatListPage> implements ChatContract {
   int mDoctorId;
   List<Message> messageList = new List<Message>();
   String message;
+  ChatContract mView;
 
   ChatListPageState() {
     mPresenter = new ChatPresenter(this);
@@ -210,6 +211,7 @@ class ChatListPageState extends State<ChatListPage> implements ChatContract {
   @override
   void initState() {
     super.initState();
+    mView = this;
     mPresenter.getChatHistory(Configs.TEST_CODE);
   }
 
@@ -254,13 +256,11 @@ class ChatListPageState extends State<ChatListPage> implements ChatContract {
                           Icons.camera_alt,
                           color: MyStyle.defaultGrey,
                         ),
-                        onPressed: () =>
-                            _onImageButtonPressed(ImageSource.camera)),
+                        onPressed: () => mView.showCamera()),
                     new IconButton(
                         icon: new Icon(Icons.photo_library,
                             color: MyStyle.defaultGrey),
-                        onPressed: () =>
-                            _onImageButtonPressed(ImageSource.gallery)),
+                        onPressed: () => mView.showGallery()),
                     new Flexible(
                         child: new TextField(
                       onSubmitted: (val) => _submitMessage(val),
@@ -300,10 +300,14 @@ class ChatListPageState extends State<ChatListPage> implements ChatContract {
   void showSendButton() {}
 
   @override
-  void showGallery() {}
+  void showGallery() {
+    _onImageButtonPressed(ImageSource.gallery);
+  }
 
   @override
-  void showCamera() {}
+  void showCamera() {
+    _onImageButtonPressed(ImageSource.camera);
+  }
 
   @override
   void showMessage(String message) {}
@@ -312,7 +316,13 @@ class ChatListPageState extends State<ChatListPage> implements ChatContract {
   void showErrorChat(String mesg) {}
 
   @override
-  void showNewMessage(Message m) {}
+  void showNewMessage(Message m) {
+    mController.clear();
+    message = "";
+    setState(() {
+      messageList.add(m);
+    });
+  }
 
   @override
   void showMoreChatHistroy(List<Message> m) {

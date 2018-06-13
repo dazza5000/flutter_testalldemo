@@ -10,22 +10,22 @@ abstract class CommentReplyRepository {
   Future<CommentReply> getMoreCommentReplies(
       String accessCode, int doctorId, int reviewid, int page);
 
-  Future<Message> deleteReply(String accessCode, int doctorId, int reviewid, int replyid);
+  Future<Message> deleteReply(String accessCode, int doctorId, int reviewid, int replyId);
 
   Future<Reply> submitReply(
-      String accessCode, int doctorId, int reviewid, String mesg, int replyid);
+      String accessCode, int doctorId, int reviewid, String mesg, int replyId);
 
   Future<CommentReply> getArticleCommentReplies(
-      String accessCode, int artilceId, int commentId);
+      String accessCode, int articleId, int commentId);
 
   Future<CommentReply> getMoreArticleCommmentReplies(
-      String accessCode, int artilceId, int commentId, int page);
+      String accessCode, int replyId, int commentId, int page);
 
   Future<Message> deleteArticleReply(
-      String accessCode, int artilceId, int commentId, int replyid);
+      String accessCode, int articleId, int commentId, int replyId);
 
-  Future<Reply> submiteArticleReply(String accessCode, int artilceId, int commentId,
-      String mesg, int replyid);
+  Future<Reply> submitArticleReply(String accessCode, int articleId, int commentId,
+      String mesg, int replyId);
 
   void setCommentHeader(Review r);
 }

@@ -8,26 +8,7 @@ import 'package:lyc_clinic/utils/configs.dart';
 import 'package:lyc_clinic/base/data/pagination.dart';
 
 class UserBookingListPage extends StatefulWidget {
-  /*List<Booking> bookings = [new Booking(
-      55,
-      65,
-      "ေဒါက္တာယမင္းရူပါထြန္း",
-      4,
-      "",
-      "Apr 21 (Sat) 06:30 PM",
-      false
-  ),
-  new Booking(
-      55,
-      65,
-      "ေဒါက္တာယမင္းရူပါထြန္း",
-      4,
-      "",
-      "Apr 21 (Sat) 06:30 PM",
-      false
-  )
-  ];
-*/
+  
   @override
   UserBookingListPageState createState() {
     return new UserBookingListPageState();

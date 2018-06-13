@@ -19,11 +19,14 @@ class CommentItem extends StatefulWidget {
   }
 }
 
-class CommentItemState extends State<CommentItem> {
+class CommentItemState extends State<CommentItem> with TickerProviderStateMixin {
   List<Review> reviewList;
-
+  AnimationController aniController;
   @override
   void initState() {
+    super.initState();
+    aniController = new AnimationController(
+        duration: new Duration(microseconds: 500), vsync: this);
     reviewList = widget.comment.data;
   }
 
@@ -32,7 +35,7 @@ class CommentItemState extends State<CommentItem> {
   Widget _buildCommentItem(BuildContext context, int index) {
     Review c = reviewList[index];
     int commentCount = widget.comment.pagination.total;
-    return new CommentItemWidget(c, commentCount);
+    return new CommentItemWidget(c, commentCount,index,aniController);
   }
 
   _clickCommentCount(BuildContext context) {

@@ -37,4 +37,55 @@ class CommentPresenter {
       _view.pagination(c.pagination);
     }).catchError((e) => print(e.toString()));
   }
+
+  void deleteArticleComment(String accessCode, int articleId, int commentId) {
+    _repository
+        .deleteArticleComment(accessCode, articleId, commentId)
+        .then((m) {})
+        .catchError((e) => print(e.toString()));
+  }
+
+  void deleteArticleCommentReply(
+      String accessCode, int articleId, int commentId, int replyId) {
+    _repository
+        .deleteArticleCommentReply(accessCode, articleId, commentId, replyId)
+        .then((m) {})
+        .catchError((e) => print(e.toString()));
+  }
+
+  void deleteReview(String accessCode, int doctorId, int reviewId) {
+    _repository
+        .deleteReview(accessCode, doctorId, reviewId)
+        .then((m) {})
+        .catchError((e) => print(e.toString()));
+  }
+
+  void deleteReviewReply(
+      String accessCode, int doctorId, int reviewId, int replyId) {
+    _repository
+        .deleteReplyOfReview(accessCode, doctorId, reviewId, reviewId)
+        .then((m) {})
+        .catchError((e) => print(e.toString()));
+  }
+
+  void submitArticleComment(String accessCode, int articleId, String mesg) {
+    _repository.submitArticleComment(accessCode, articleId, mesg).then((r) {
+      _view.insertNewComment(r);
+    }).catchError((e) => print(e.toString()));
+  }
+
+  void submitArticleCommentReply(String accessCode, int articleId,
+      int commentId, String mesg, int replyId) {
+    _repository
+        .submitArticleCommentReply(
+            accessCode, articleId, commentId, mesg, replyId)
+        .then((r) {})
+        .catchError((e) => print(e.toString()));
+  }
+
+  void submitReview(String accessCode, int doctorId, String mesg) {
+    _repository.submitReview(accessCode, doctorId, mesg).then((r) {
+      _view.insertNewComment(r);
+    }).catchError((e) => print(e.toString()));
+  }
 }

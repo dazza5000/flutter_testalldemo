@@ -13,7 +13,9 @@ import 'package:lyc_clinic/ui/about/page/about_page.dart';
 import 'package:flutter_search_bar/flutter_search_bar.dart';
 import 'package:lyc_clinic/ui/chat/page/chat_list_page.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 //import 'package:material_search/material_search.dart';
+import 'package:lyc_clinic/ui/home/page/user_profile_info_page.dart';
 
 class HomePage extends StatefulWidget {
   final List<DrawerItem> draweritems = [
@@ -71,10 +73,12 @@ class HomePageState extends State<HomePage> {
   }
 
   _clickEditProfilel(BuildContext context) {
-    setState(() {
+    /*setState(() {
       selectedDrawerIndex = 4;
       Navigator.pop(context);
-    });
+    });*/
+    Navigator.push(context,
+        new MaterialPageRoute(builder: (_) => new UserProfileInfoPage()));
   }
 
   _clickBottomMenuItem(int index, BuildContext context) {

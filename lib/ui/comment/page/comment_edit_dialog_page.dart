@@ -12,13 +12,16 @@ class CommentEditDialogPage extends StatefulWidget {
   int mArticleId;
   int mDoctorId;
   int mReviewId;
+  OnCommentUpdateListener listener;
 
   CommentEditDialogPage(
-      [this.mReview,
-      this.mReply,
-      this.mArticleId,
-      this.mDoctorId,
-      this.mReviewId]);
+    this.listener, {
+    this.mReview,
+    this.mReply = null,
+    this.mArticleId,
+    this.mDoctorId,
+    this.mReviewId,
+  });
 
   @override
   CommentEditDialogPageState createState() {
@@ -31,9 +34,17 @@ class CommentEditDialogPageState extends State<CommentEditDialogPage>
     implements CommentEditContract {
   String updateMessage;
   CommentEditPresenter mPresenter;
+  String message;
+  OnCommentUpdateListener commentUpdateListener;
 
   CommentEditDialogPageState() {
     mPresenter = new CommentEditPresenter(this);
+  }
+
+  @override
+  void initState() {
+    commentUpdateListener = widget.listener;
+    message = widget.mReview != null ? widget.mReview.mesg : widget.mReply.mesg;
   }
 
   _cancelClick(BuildContext context) {
@@ -41,8 +52,6 @@ class CommentEditDialogPageState extends State<CommentEditDialogPage>
   }
 
   _updateClick(BuildContext context) {
-    print('Review${widget.mReview.article
-        .toString()} and Messages is $updateMessage');
     if (widget.mReview != null) {
       if (widget.mReview.doctor != null) {
         mPresenter.updateComment(Configs.TEST_CODE, widget.mReview.doctor,
@@ -53,8 +62,9 @@ class CommentEditDialogPageState extends State<CommentEditDialogPage>
       }
     }
 
-    if (widget.mReply = null) {
+    if (widget.mReply != null) {
       if (widget.mArticleId != null) {
+        print('Article Reply Edit${widget.mArticleId}');
         mPresenter.updateArticleCommentReply(
             Configs.TEST_CODE,
             widget.mArticleId,
@@ -66,7 +76,6 @@ class CommentEditDialogPageState extends State<CommentEditDialogPage>
             widget.mReviewId, updateMessage, widget.mReply.id);
       }
     }
-    Navigator.pop(context);
   }
 
   InputDecoration getDecoration(String hinttext) {
@@ -104,7 +113,8 @@ class CommentEditDialogPageState extends State<CommentEditDialogPage>
           child: new Column(
             children: <Widget>[
               new TextFormField(
-                initialValue: widget.mReview.mesg,
+                initialValue: message,
+                autovalidate: true,
                 obscureText: false,
                 decoration: getDecoration(''),
                 onFieldSubmitted: (String val) {
@@ -115,6 +125,7 @@ class CommentEditDialogPageState extends State<CommentEditDialogPage>
                 },
                 onSaved: (String val) {
                   print('on Save$val');
+                  updateMessage = val;
                 },
               ),
               new Container(
@@ -152,10 +163,18 @@ class CommentEditDialogPageState extends State<CommentEditDialogPage>
   }
 
   @override
-  void dismissDialog() {}
+  void dismissDialog() {
+    print('Dismiss Dialog');
+    Navigator.pop(context);
+    commentUpdateListener.onSuccess(updateMessage);
+  }
 
   @override
   void showMessage(String message) {
     print('Message >>$message');
   }
+}
+
+abstract class OnCommentUpdateListener {
+  void onSuccess(String comment);
 }

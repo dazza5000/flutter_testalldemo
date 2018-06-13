@@ -10,6 +10,7 @@ import 'package:lyc_clinic/ui/service/data/service.dart';
 import 'package:lyc_clinic/ui/home/presenter/home_presenter.dart';
 import 'package:lyc_clinic/ui/home/contract/home_contract.dart';
 import 'package:lyc_clinic/utils/configs.dart';
+import 'package:lyc_clinic/ui/doctors/widget/create_doctor_buttons.dart';
 
 class HomePage extends StatefulWidget {
 
@@ -19,7 +20,7 @@ class HomePage extends StatefulWidget {
   }
 }
 
-class HomePageState extends State<HomePage> implements HomeContract {
+class HomePageState extends State<HomePage> implements HomeContract ,DoctorClickListener{
 
   HomePresenter mPresenter;
   List<Service> serviceList;
@@ -34,9 +35,9 @@ class HomePageState extends State<HomePage> implements HomeContract {
   @override
   void initState() {
     super.initState();
-    mPresenter.getService(Configs.GUEST_CODE);
-    mPresenter.getDoctor(Configs.GUEST_CODE, 3);
-    mPresenter.getBanner(Configs.GUEST_CODE);
+    mPresenter.getService(Configs.TEST_CODE);
+    mPresenter.getDoctor(Configs.TEST_CODE, 3);
+    mPresenter.getBanner(Configs.TEST_CODE);
   }
 
   @override
@@ -54,7 +55,7 @@ class HomePageState extends State<HomePage> implements HomeContract {
                 children: <Widget>[
                   new ImageBanner(bannerList),
                   new ServicesScroller(serviceList),
-                  new DoctorLists(doctorList),
+                  new DoctorLists(doctorList,this),
                   /*new Expanded(
                       child: new Column(children: <Widget>[],)),*/
                   new Row(
@@ -146,6 +147,29 @@ class HomePageState extends State<HomePage> implements HomeContract {
     setState(() {
       bannerList=banner;
     });
+  }
+
+  @override
+  void onDoctorShareClick(Doctor doctor) {
+    print('Doctor Share Click');
+    mPresenter.shareDoctor(Configs.TEST_CODE, doctor.id);
+  }
+
+  @override
+  void onDoctorFavClick(Doctor doctor) {
+    print('Doctor Fav Click');
+    mPresenter.favDoctor(Configs.TEST_CODE, doctor.id);
+  }
+
+  @override
+  void onDoctorSaveClick(Doctor doctor) {
+    print('Doctor Save Click');
+    mPresenter.saveDoctor(Configs.TEST_CODE, doctor.id);
+  }
+
+  @override
+  void onDoctorItemClick(Doctor doctor) {
+
   }
 
 

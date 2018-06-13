@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:lyc_clinic/utils/configs.dart';
 import 'package:lyc_clinic/ui/doctors/data/doctors.dart';
 import 'package:lyc_clinic/ui/doctors/repository/doctor_list_repository.dart';
+import 'package:lyc_clinic/base/data/message.dart';
 
 class DoctorListDataRepository implements DoctorListRepository {
   JsonDecoder _decoder = new JsonDecoder();
@@ -44,22 +45,40 @@ class DoctorListDataRepository implements DoctorListRepository {
   }
 
   @override
-  void saveDoctor(String accessCode, int doctorId) {
-    Future<http.Response> postResponse = http
+  Future<Message> saveDoctor(String accessCode, int doctorId) async {
+    http.Response response = await http
         .post(URL + accessCode + '/doctor/' + doctorId.toString() + '/save');
-    /*final responseBody = postResponse.whenComplete(action);
-    final statusCode = postResponse.statusCode;
+
+    final responseBody = response.body;
+    final statusCode = response.statusCode;
 
     if (statusCode < 200 || statusCode >= 300 || responseBody == null) {
       //throw new FetchDataException("Error while getting contacts [StatusCode:$statusCode, Error:${response.error}]");
       print(statusCode);
-      return;
     }
-    print('Article Share Response' + responseBody);*/
+    print('Doctor Save Response' + responseBody);
+    final jsonBody = _decoder.convert(responseBody);
+
+    return new Message.fromMap(jsonBody);
   }
 
   @override
-  void setDoctorAsFavorite(String accessCode, int doctorId) {}
+  Future<Message> setDoctorAsFavorite(String accessCode, int doctorId) async {
+    http.Response response = await http.post(
+        URL + accessCode + '/doctor/' + doctorId.toString() + '/favorite');
+
+    final responseBody = response.body;
+    final statusCode = response.statusCode;
+
+    if (statusCode < 200 || statusCode >= 300 || responseBody == null) {
+      //throw new FetchDataException("Error while getting contacts [StatusCode:$statusCode, Error:${response.error}]");
+      print(statusCode);
+    }
+    print('Doctor Favorite Response' + responseBody);
+    final jsonBody = _decoder.convert(responseBody);
+
+    return new Message.fromMap(jsonBody);
+  }
 
   @override
   Future<Doctors> getMostRecentActiveDoctorList(
@@ -71,7 +90,20 @@ class DoctorListDataRepository implements DoctorListRepository {
   void searchDoctor(String accessCode, String keyword) {}
 
   @override
-  void setShareClick(String accessCode, int doctorid) {
+  Future<Message> setShareClick(String accessCode, int doctorId) async {
+    http.Response response = await http
+        .post(URL + accessCode + '/doctor/' + doctorId.toString() + '/share');
 
+    final responseBody = response.body;
+    final statusCode = response.statusCode;
+
+    if (statusCode < 200 || statusCode >= 300 || responseBody == null) {
+      //throw new FetchDataException("Error while getting contacts [StatusCode:$statusCode, Error:${response.error}]");
+      print(statusCode);
+    }
+    print('Doctor Share Response' + responseBody);
+    final jsonBody = _decoder.convert(responseBody);
+
+    return new Message.fromMap(jsonBody);
   }
 }

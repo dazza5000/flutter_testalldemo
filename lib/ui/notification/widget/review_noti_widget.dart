@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
 import 'package:lyc_clinic/ui/notification/data/review.dart';
 import 'package:lyc_clinic/utils/configs.dart';
+import 'package:lyc_clinic/ui/utils/time_utils.dart';
 
 class ReviewNotiWidget extends StatelessWidget {
   Review review;
@@ -15,6 +16,25 @@ class ReviewNotiWidget extends StatelessWidget {
       decoration: TextDecoration.underline);
 
   ReviewNotiWidget(this.review);
+
+  Widget showDateAndTime() {
+    if (review.timeAgo > 88640) {
+      return new Text(
+        TimeUtils.getDateWithoutHours(review.createDate),
+        style: MyStyle.dateTimeTextStyle(),
+      );
+    } else {
+      return new Row(
+        children: <Widget>[
+          new Text(
+            TimeUtils.getTime(review.timeAgo),
+            style: MyStyle.dateTimeTextStyle(),
+          ),
+          new Text('.')
+        ],
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,10 +88,7 @@ class ReviewNotiWidget extends StatelessWidget {
                   ),
                   new Padding(
                       padding: const EdgeInsets.only(top: 10.0, left: 10.0),
-                      child: new Text(
-                        'Feb 14 2018',
-                        style: MyStyle.dateTimeTextStyle(),
-                      ))
+                      child: showDateAndTime())
                 ],
               ),
             )
