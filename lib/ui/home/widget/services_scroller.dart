@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lyc_clinic/base/mystyle.dart';
 import 'package:lyc_clinic/ui/service/data/service.dart';
 import 'package:lyc_clinic/ui/service/page/sub_services_list_page.dart';
 
@@ -7,9 +8,11 @@ class ServicesScroller extends StatelessWidget {
 
   final List<Service> services;
 
-  _clickServiceItem(BuildContext context,int catId,String catName) {
+  _clickServiceItem(BuildContext context, int catId, String catName) {
     Navigator.push(
-        context, new MaterialPageRoute(builder: (_) => new SubServiceListPage(catId,catName)));
+        context,
+        new MaterialPageRoute(
+            builder: (_) => new SubServiceListPage(catId, catName)));
   }
 
   Widget _build_ServiceScroller(BuildContext context, int index) {
@@ -19,26 +22,25 @@ class ServicesScroller extends StatelessWidget {
         child: new ClipRRect(
             borderRadius: new BorderRadius.circular(2.0),
             child: new InkWell(
-                onTap: () => _clickServiceItem(context,service.id,service.name),
+                onTap: () =>
+                    _clickServiceItem(context, service.id, service.name),
                 child: new Column(
                   children: <Widget>[
                     new Image.network(service.image,
                         fit: BoxFit.fill,
-                        height: 80.0,
-                        width: 100.0,
+                        height: 110.0,
+                        width: 130.0,
                         scale: 6.0),
                     new Container(
-                        width: 100.0,
+                        width: 130.0,
                         child: new Text(
-                          service.name, textAlign: TextAlign.left,
+                          service.name,
+                          textAlign: TextAlign.left,
                           maxLines: 3,
-                          style: new TextStyle(letterSpacing: 0.5),)
-                    )
+                          style: new TextStyle(letterSpacing: 0.5),
+                        ))
                   ],
-                )
-            )
-        )
-    );
+                ))));
   }
 
   @override
@@ -46,17 +48,14 @@ class ServicesScroller extends StatelessWidget {
     return new Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        new Padding(
-          padding: const EdgeInsets.only(left: 10.0, top: 15.0),
-          child: new Text('Services'),),
         new SizedBox.fromSize(
-          size: const Size.fromHeight(200.0),
-          child: new ListView.builder(
-            itemBuilder: _build_ServiceScroller,
-            itemCount: services.length,
-            scrollDirection: Axis.horizontal,
-            padding: new EdgeInsets.only(top: 15.0, left: 10.0),),
-        )
+            size: const Size.fromHeight(200.0),
+            child: new ListView.builder(
+              itemBuilder: _build_ServiceScroller,
+              itemCount: services.length,
+              scrollDirection: Axis.horizontal,
+              padding: new EdgeInsets.only(top: 15.0, left: 10.0),
+            ))
       ],
     );
   }

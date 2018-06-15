@@ -1,7 +1,7 @@
-/*
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:flutter/material.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class LoginDialogPage extends StatefulWidget {
   @override
@@ -24,7 +24,6 @@ class LoginDialogPageState extends State<LoginDialogPage> {
         final FacebookAccessToken accessToken = result.accessToken;
         _showMessage('''
          Logged in!
-         
          Token: ${accessToken.token}
          User id: ${accessToken.userId}
          Expires: ${accessToken.expires}
@@ -50,32 +49,67 @@ class LoginDialogPageState extends State<LoginDialogPage> {
     });
   }
 
+  Widget _facebookButton() {
+    return new Positioned(
+        bottom: 0.0,
+        //alignment: FractionalOffset.bottomCenter,
+        child: new Container(
+          height: 40.0,
+          margin: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 0.0),
+          padding: const EdgeInsets.all(5.0),
+          child: new Row(
+            children: <Widget>[
+              new Icon(
+                FontAwesomeIcons.facebookSquare,
+                color: MyStyle.colorWhite,
+              ),
+              new Center(
+                child: new MaterialButton(
+                  child: new Text(
+                    'Continue with Facebook',
+                    style: MyStyle.buttonTextStyle(),
+                  ),
+                  onPressed: null,
+                ),
+              )
+            ],
+          ),
+          decoration: new BoxDecoration(
+              color: MyStyle.colorFB,
+              borderRadius: new BorderRadius.circular(4.0)),
+        ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Container(
-      color: Colors.black12,
       child: new Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: new Container(
-          color: MyStyle.colorWhite,
-          child: new Column(
+          padding: const EdgeInsets.all(0.0),
+          child: new Stack(
             children: <Widget>[
-              new Text('Register now to continue'),
-              new Expanded(
-                  child: new MaterialButton(
-                padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
-                child: new Text(
-                  'Continue with Facebook',
-                  style: new TextStyle(color: Colors.white, fontSize: 14.0),
+              new Align(
+                alignment: FractionalOffset.bottomCenter,
+                child: new Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 5.0, vertical: 10.0),
+                  height: 100.0,
+                  color: MyStyle.colorWhite,
+                  child: new Stack(
+                    children: <Widget>[
+                      new Container(
+                        child: new Text(
+                          'Register now to continue',
+                          style: MyStyle.headerStyle(),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      _facebookButton(),
+                    ],
+                  ),
                 ),
-                onPressed: logiWithFacebook,
-                color: Colors.blueAccent,
-              )),
+              )
             ],
-          ),
-        ),
-      ),
+          )),
     );
   }
 }
-*/

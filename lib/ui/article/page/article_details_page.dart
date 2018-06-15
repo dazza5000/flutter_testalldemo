@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:lyc_clinic/ui/article/widget/article_details_item.dart';
 import 'package:lyc_clinic/ui/comment/page/comment_page.dart';
+
 //import 'package:lyc_clinic/ui/article/widget/video_details_activity.dart';
 import 'package:lyc_clinic/ui/comment/widget/create_comment_items.dart';
 import 'package:lyc_clinic/test/custom_bottom_navigation_bar.dart';
@@ -10,8 +13,8 @@ import 'package:lyc_clinic/utils/configs.dart';
 import 'package:lyc_clinic/ui/article/data/article.dart';
 import 'package:lyc_clinic/ui/comment/data/comment.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
-import 'package:html2md/html2md.dart' as html2md;
-import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:lyc_clinic/utils/mySharedPreferences.dart';
+import 'package:lyc_clinic/ui/login/login_dialog_page.dart';
 
 class ArticleDetailsPage extends StatefulWidget {
   final int id;
@@ -26,12 +29,15 @@ class ArticleDetailsPage extends StatefulWidget {
 }
 
 class ArticleDetailsPageState extends State<ArticleDetailsPage>
-    implements ArticleDetailsContract{
+    implements ArticleDetailsContract {
   ArticleDetailsPresenter mPresenter;
-  Article article;
-  Comment comment;
-  String html =
-      '<h1>This is heading 1</h1> <h2>This is heading 2</h2><h3>This is heading 3</h3><h4>This is heading 4</h4><h5>This is heading 5</h5><h6>This is heading 6</h6>';
+  Article article = new Article();
+  Comment comment = new Comment();
+  bool isGuest = false;
+  String accessCode;
+  MySharedPreferences mySharedPreferences = new MySharedPreferences();
+  var _scaffoldKey = new GlobalKey<ScaffoldState>();
+  VoidCallback _showPersBottomSheetCallBack;
 
   ArticleDetailsPageState() {
     mPresenter = new ArticleDetailsPresenter(this);
@@ -41,7 +47,50 @@ class ArticleDetailsPageState extends State<ArticleDetailsPage>
     Navigator.of(context).pop();
   }
 
-  _clickBookmark(BuildContext context) {}
+  void _showBottomSheet() {
+    _scaffoldKey.currentState.showBottomSheet((context) {
+      return new LoginDialogPage();
+    });
+    void _showBottomSheet() {
+      setState(() {
+        _showPersBottomSheetCallBack = null;
+      });
+
+      _scaffoldKey.currentState
+          .showBottomSheet((context) {
+            return new Container(
+              height: MediaQuery.of(context).size.height - 100.0,
+              color: Colors.greenAccent,
+              child: new Center(
+                child: new Text("Hi BottomSheet"),
+              ),
+            );
+          })
+          .closed
+          .whenComplete(() {
+            if (mounted) {
+              setState(() {
+                _showPersBottomSheetCallBack = _showBottomSheet;
+              });
+            }
+          });
+    }
+  }
+
+  Future<Null> _askedToLead() async {
+    return await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return new LoginDialogPage();
+        });
+  }
+
+  _clickBookmark(BuildContext context) {
+    if (!isGuest) {
+    } else {
+      _askedToLead();
+    }
+  }
 
   _clickShare(BuildContext context) {}
 
@@ -66,8 +115,20 @@ class ArticleDetailsPageState extends State<ArticleDetailsPage>
   @override
   void initState() {
     super.initState();
-    mPresenter.getArticleDetail(Configs.TEST_CODE, widget.id);
-    mPresenter.getComment(Configs.TEST_CODE, widget.id, 3);
+    if (mySharedPreferences.isLogin()) {
+      isGuest = false;
+      mySharedPreferences
+          .getStringData(Configs.PREF_USER_ACCESSCODE)
+          .then((v) => accessCode = v);
+    } else {
+      isGuest = true;
+      accessCode = Configs.GUEST_CODE;
+    }
+
+    print('Guest is>>$isGuest');
+    mPresenter.getArticleDetail(accessCode, widget.id);
+    mPresenter.getComment(accessCode, widget.id, 3);
+    _showPersBottomSheetCallBack = _showBottomSheet;
   }
 
   Widget _buildAppBar(BuildContext context) {
@@ -77,6 +138,9 @@ class ArticleDetailsPageState extends State<ArticleDetailsPage>
           left: 0.0,
           top: 10.0,
           child: new IconButton(
+            splashColor: MyStyle.colorBlack,
+            color: MyStyle.colorBlack,
+            highlightColor: MyStyle.colorBlack,
             icon: new Icon(
               Icons.arrow_back,
               color: MyStyle.colorWhite,
@@ -89,6 +153,7 @@ class ArticleDetailsPageState extends State<ArticleDetailsPage>
           right: 60.0,
           top: 10.0,
           child: new IconButton(
+            color: MyStyle.colorGrey,
             icon: new Icon(
               Icons.bookmark_border,
               color: MyStyle.colorWhite,
@@ -118,7 +183,7 @@ class ArticleDetailsPageState extends State<ArticleDetailsPage>
       width: 40.0,
       height: 40.0,
       decoration:
-      new BoxDecoration(shape: BoxShape.circle, color: bgColor, boxShadow: [
+          new BoxDecoration(shape: BoxShape.circle, color: bgColor, boxShadow: [
         new BoxShadow(
             color: Colors.grey, blurRadius: 4.0, offset: new Offset(1.0, 4.0)),
       ]),
@@ -137,7 +202,7 @@ class ArticleDetailsPageState extends State<ArticleDetailsPage>
             new InkWell(
               child: new Padding(
                 padding:
-                const EdgeInsets.only(top: 0.0, left: 0.0, right: 10.0),
+                    const EdgeInsets.only(top: 0.0, left: 0.0, right: 10.0),
                 child: _getFloatButton(
                     Icons.chat_bubble_outline, Colors.white, Colors.grey),
               ),
@@ -152,8 +217,8 @@ class ArticleDetailsPageState extends State<ArticleDetailsPage>
                 )),
             new Expanded(
                 child: new Row(
-                  children: <Widget>[],
-                )),
+              children: <Widget>[],
+            )),
             new RaisedButton(
               onPressed: () => _clickComment(context),
               color: Colors.orange,
@@ -171,6 +236,28 @@ class ArticleDetailsPageState extends State<ArticleDetailsPage>
         ));
   }
 
+  _showHeaderImage() {
+    print('Article ${article.id}');
+    if (article.id != null) {
+      return new Container(
+        constraints: new BoxConstraints.expand(
+          height: 250.0,
+        ),
+        padding: new EdgeInsets.only(left: 16.0, bottom: 8.0, right: 16.0),
+        decoration: new BoxDecoration(
+          image: new DecorationImage(
+            image: new NetworkImage(article.image),
+            fit: BoxFit.cover,
+          ),
+        ),
+      );
+    } else {
+      return new Container(
+        child: null,
+      );
+    }
+  }
+
   Widget _buildBody(BuildContext context) {
     return new SingleChildScrollView(
         controller: new ScrollController(),
@@ -180,19 +267,7 @@ class ArticleDetailsPageState extends State<ArticleDetailsPage>
           child: new Container(
             child: new Column(
               children: <Widget>[
-                new Container(
-                  constraints: new BoxConstraints.expand(
-                    height: 250.0,
-                  ),
-                  padding:
-                      new EdgeInsets.only(left: 16.0, bottom: 8.0, right: 16.0),
-                  decoration: new BoxDecoration(
-                    image: new DecorationImage(
-                      image: new NetworkImage(article.image),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
+                _showHeaderImage(),
                 buildTitle(context),
                 new Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -203,8 +278,7 @@ class ArticleDetailsPageState extends State<ArticleDetailsPage>
                     new Container(
                       margin: const EdgeInsets.only(top: 20.0),
                       //color: MyStyle.layoutBackground,
-                      child: new CommentItem(
-                          comment, article.id, true),
+                      child: new CommentItem(comment, article.id, true),
                     ),
                     new Positioned(
                       child: _floatingBar(),
@@ -221,77 +295,83 @@ class ArticleDetailsPageState extends State<ArticleDetailsPage>
   }
 
   Widget buildTitle(BuildContext context) {
-    return new Container(
-      padding: const EdgeInsets.only(top: 15.0),
-      child: new Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          new Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: new Text(
-              article.title,
-              textAlign: TextAlign.start,
-              style: new TextStyle(
-                  fontSize: MyStyle.large_fontSize,
-                  fontWeight: FontWeight.bold),
+    if (article.id != null) {
+      return new Container(
+        padding: const EdgeInsets.only(top: 15.0),
+        child: new Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            new Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: new Text(
+                article.title,
+                textAlign: TextAlign.start,
+                style: new TextStyle(
+                    fontSize: MyStyle.large_fontSize,
+                    fontWeight: FontWeight.bold),
+              ),
             ),
-          ),
-          new Padding(
-            padding: const EdgeInsets.all(5.0),
-            child: new Row(
-              children: <Widget>[
-                new Row(
-                  children: <Widget>[
+            new Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: new Row(
+                children: <Widget>[
+                  new Row(
+                    children: <Widget>[
+                      new Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: new Icon(Icons.favorite,
+                              color: MyStyle.colorGrey, size: 18.0)),
+                      new Padding(
+                          padding: const EdgeInsets.only(right: 5.0),
+                          child: new Text(
+                            article.favCount.toString(),
+                            style: new TextStyle(
+                                color: MyStyle.colorGrey,
+                                fontSize: MyStyle.small_fontSize),
+                          )),
+                    ],
+                  ),
+                  new Row(
+                    children: <Widget>[
+                      new Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: new Icon(Icons.chat_bubble,
+                              color: MyStyle.colorGrey, size: 18.0)),
+                      new Padding(
+                          padding: const EdgeInsets.only(right: 5.0),
+                          child: new Text(
+                            article.commentCount.toString(),
+                            style: new TextStyle(
+                                color: MyStyle.colorGrey,
+                                fontSize: MyStyle.small_fontSize),
+                          )),
+                    ],
+                  ),
+                  new Row(children: <Widget>[
                     new Padding(
                         padding: const EdgeInsets.all(5.0),
-                        child: new Icon(Icons.favorite,
+                        child: new Icon(Icons.share,
                             color: MyStyle.colorGrey, size: 18.0)),
                     new Padding(
                         padding: const EdgeInsets.only(right: 5.0),
                         child: new Text(
-                          article.favCount.toString(),
+                          article.share.toString(),
                           style: new TextStyle(
                               color: MyStyle.colorGrey,
                               fontSize: MyStyle.small_fontSize),
                         )),
-                  ],
-                ),
-                new Row(
-                  children: <Widget>[
-                    new Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: new Icon(Icons.chat_bubble,
-                            color: MyStyle.colorGrey, size: 18.0)),
-                    new Padding(
-                        padding: const EdgeInsets.only(right: 5.0),
-                        child: new Text(
-                          article.commentCount.toString(),
-                          style: new TextStyle(
-                              color: MyStyle.colorGrey,
-                              fontSize: MyStyle.small_fontSize),
-                        )),
-                  ],
-                ),
-                new Row(children: <Widget>[
-                  new Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: new Icon(Icons.share,
-                          color: MyStyle.colorGrey, size: 18.0)),
-                  new Padding(
-                      padding: const EdgeInsets.only(right: 5.0),
-                      child: new Text(
-                        article.share.toString(),
-                        style: new TextStyle(
-                            color: MyStyle.colorGrey,
-                            fontSize: MyStyle.small_fontSize),
-                      )),
-                ])
-              ],
+                  ])
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    } else {
+      return new Container(
+        child: null,
+      );
+    }
   }
 
   @override

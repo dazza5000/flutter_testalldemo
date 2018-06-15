@@ -19,7 +19,7 @@ class Article extends Object with _$ArticleSerializerMixin{
   String shareUrl;
 
   Article(
-      this.id,
+      [this.id,
       this.title,
       this.type,
       this.image,
@@ -32,7 +32,7 @@ class Article extends Object with _$ArticleSerializerMixin{
       this.favCount,
       this.share,
       this.save,
-      this.shareUrl);
+      this.shareUrl]);
 
   Article.fromMap(Map<String, dynamic> map)
       : id = map['id'],

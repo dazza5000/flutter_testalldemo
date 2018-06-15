@@ -4,6 +4,7 @@ import 'package:lyc_clinic/ui/home/contract/feature_articles_contract.dart';
 import 'package:lyc_clinic/ui/home/presenter/feature_articles_presenter.dart';
 import 'package:lyc_clinic/ui/article/data/article.dart';
 import 'package:lyc_clinic/utils/configs.dart';
+import 'package:lyc_clinic/base/mystyle.dart';
 import 'package:lyc_clinic/ui/article/page/article_details_page.dart';
 
 class CreateFeatureArticles extends StatefulWidget {
@@ -16,7 +17,7 @@ class CreateFeatureArticles extends StatefulWidget {
 class CreateFeatureArticlesState extends State<CreateFeatureArticles>
     implements FeatureArticlesContract {
   FeatureArticlesPresenter _mPresenter;
-  List<Article> featureArticleList;
+  List<Article> featureArticleList = new List<Article>();
   final _controller = new PageController();
   final _kArrowColor = Colors.black.withOpacity(0.8);
   static const _kDuration = const Duration(milliseconds: 300);
@@ -43,14 +44,18 @@ class CreateFeatureArticlesState extends State<CreateFeatureArticles>
   }
 
   Widget _createFeatureArticleItem(Article article) {
-    return new ConstrainedBox(
-      constraints: const BoxConstraints.expand(),
+    return new Container(
+      decoration: new BoxDecoration(
+        shape: BoxShape.rectangle,
+        color: MyStyle.colorWhite,
+      ),
       child: new InkWell(
         onTap: () => _goToFeatureArticle(context, article),
         child: new Column(
           children: <Widget>[
-            new Card(
+            new Container(
                 child: new Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 new Stack(
                   children: <Widget>[
@@ -68,13 +73,23 @@ class CreateFeatureArticlesState extends State<CreateFeatureArticles>
                     )
                   ],
                 ),
-                new Text(
-                  article.title,
-                  style: new TextStyle(
-                      fontSize: 18.0, fontWeight: FontWeight.bold),
+                new Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: new Text(
+                    article.title,
+                    textAlign: TextAlign.left,
+                    style: new TextStyle(fontSize: MyStyle.xlarge_fontSize),
+                  ),
                 ),
-                new Text(article.content,
-                    style: new TextStyle(fontSize: 12.0), maxLines: 2),
+                new Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: new Text(article.content,
+                      textAlign: TextAlign.left,
+                      style: new TextStyle(
+                          fontSize: MyStyle.medium_fontSize,
+                          color: MyStyle.colorGrey),
+                      maxLines: 2),
+                ),
               ],
             )),
           ],
@@ -105,36 +120,54 @@ class CreateFeatureArticlesState extends State<CreateFeatureArticles>
     return _createFeatureArticleItem(featureArticle);
   }
 
+  Widget loadingIndicator = new Container(
+      child: new CircularProgressIndicator(
+    strokeWidth: 2.0,
+  ));
+
+  Widget showFeatureArticle() {
+    if (featureArticleList.length > 0) {
+      return new Stack(children: <Widget>[
+        new PageView.builder(
+            physics:new BouncingScrollPhysics(),
+            controller: _controller,
+            itemBuilder: _buildFeatureArticle),
+        new Positioned(
+          bottom: 0.0,
+          left: 0.0,
+          right: 0.0,
+          child: new Container(
+            padding: const EdgeInsets.all(20.0),
+            child: new Center(
+              child: new DotsIndicator(
+                  controller: _controller,
+                  itemCount: featureArticleList.length,
+                  onPageSelected: (int page) {
+                    _controller.animateToPage(
+                      page,
+                      duration: _kDuration,
+                      curve: _kCurve,
+                    );
+                  }),
+            ),
+          ),
+        ),
+      ]);
+    } else {
+      return new Container(
+        child: new Center(
+          child: loadingIndicator,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return new SizedBox.fromSize(
-        size: const Size.fromHeight(300.0),
-        child: new Stack(children: <Widget>[
-          new PageView.builder(
-              physics: new AlwaysScrollableScrollPhysics(),
-              controller: _controller,
-              itemBuilder: _buildFeatureArticle),
-          new Positioned(
-            bottom: 0.0,
-            left: 0.0,
-            right: 0.0,
-            child: new Container(
-              padding: const EdgeInsets.all(20.0),
-              child: new Center(
-                child: new DotsIndicator(
-                    controller: _controller,
-                    itemCount: featureArticleList.length,
-                    onPageSelected: (int page) {
-                      _controller.animateToPage(
-                        page,
-                        duration: _kDuration,
-                        curve: _kCurve,
-                      );
-                    }),
-              ),
-            ),
-          ),
-        ]));
+      size: const Size.fromHeight(350.0),
+      child: showFeatureArticle(),
+    );
   }
 
   @override

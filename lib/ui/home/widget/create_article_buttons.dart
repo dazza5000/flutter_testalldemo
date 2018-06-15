@@ -8,7 +8,7 @@ class CreateArticleButton extends StatefulWidget {
   Article article;
   ArticleClickListener articleClickListener;
 
-  CreateArticleButton(this.article,this.articleClickListener);
+  CreateArticleButton(this.article, this.articleClickListener);
 
   @override
   CreateArticleButtonState createState() {
@@ -31,7 +31,7 @@ class CreateArticleButtonState extends State<CreateArticleButton> {
     _commentCount = widget.article.commentCount;
     _isCommented = widget.article.commentCount > 0 ? true : false;
     _isBookMark = widget.article.save;
-    listener=widget.articleClickListener;
+    listener = widget.articleClickListener;
   }
 
   Widget _getFloatButton(IconData ic, Color bgColor, Color icColor) {
@@ -179,7 +179,6 @@ class CreateArticleButtonState extends State<CreateArticleButton> {
 }
 
 abstract class ArticleClickListener {
-
   void onArticleSaveClick(Article article);
 
   void onArticleFavClick(Article article);

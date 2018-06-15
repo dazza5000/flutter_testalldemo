@@ -8,7 +8,9 @@ import 'package:lyc_clinic/ui/home/presenter/health_education_presenter.dart';
 import 'package:lyc_clinic/ui/home/contract/health_education_contract.dart';
 import 'package:lyc_clinic/base/data/pagination.dart';
 import 'package:lyc_clinic/utils/configs.dart';
+import 'package:lyc_clinic/base/mystyle.dart';
 import 'package:lyc_clinic/ui/home/widget/create_article_buttons.dart';
+import 'package:lyc_clinic/utils/mySharedPreferences.dart';
 
 class HealthEducationPage extends StatefulWidget {
   @override
@@ -18,26 +20,64 @@ class HealthEducationPage extends StatefulWidget {
 }
 
 class HealthEducationPageState extends State<HealthEducationPage>
-    implements HealthEducationContract, FilterListener,ArticleClickListener{
+    implements HealthEducationContract, FilterListener, ArticleClickListener {
   HealthEducationPresenter mPresenter;
-  List<Article> articles;
+  List<Article> articles = new List<Article>();
+  String accessCode;
+  bool isGuest = false;
+  bool isLogin = false;
+  MySharedPreferences mySharedPreferences = new MySharedPreferences();
 
   HealthEducationPageState() {
     mPresenter = new HealthEducationPresenter(this);
+    mySharedPreferences
+        .getBooleanData(Configs.PREF_USER_LOGIN)
+        .then((val) => setState(() {
+              isLogin = val;
+            }));
   }
 
   @override
   void initState() {
     super.initState();
-    mPresenter.getArticles(Configs.GUEST_CODE, 1, null, 2);
+    if (isLogin) {
+      isGuest = false;
+      mySharedPreferences
+          .getStringData(Configs.PREF_USER_ACCESSCODE)
+          .then((val) => setState(() {
+                accessCode = val;
+              }));
+    } else {
+      isGuest = true;
+      accessCode = Configs.GUEST_CODE;
+    }
+    mPresenter.getArticles(accessCode, 1, null, 2);
   }
 
+  Widget loadingIndicator = new Container(
+      child: new CircularProgressIndicator(
+    strokeWidth: 2.0,
+  ));
+
   _clickFilterButton(BuildContext context) {}
+
+  Widget showArticleList() {
+    if (articles.length > 0) {
+      return new ArticleLists(articles, this);
+    } else {
+      return new Container(
+        child: Center(child: loadingIndicator),
+        height: 100.0,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
       body: new Container(
+        color: MyStyle.layoutBackground,
+        padding: const EdgeInsets.all(10.0),
         child: new SingleChildScrollView(
           controller: new ScrollController(),
           scrollDirection: Axis.vertical,
@@ -77,7 +117,7 @@ class HealthEducationPageState extends State<HealthEducationPage>
                 ),
               ),
               new CreateFeatureArticles(),
-              new ArticleLists(articles,this)
+              showArticleList()
             ],
           ),
         ),
@@ -137,9 +177,5 @@ class HealthEducationPageState extends State<HealthEducationPage>
   }
 
   @override
-  void onArticleCommentClick(Article article) {
-
-  }
-
-
+  void onArticleCommentClick(Article article) {}
 }

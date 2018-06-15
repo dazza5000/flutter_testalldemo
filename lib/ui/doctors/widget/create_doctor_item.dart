@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:lyc_clinic/ui/doctors/data/doctor.dart';
 import 'package:lyc_clinic/ui/doctors/page/doctor_details_page.dart';
+import 'package:lyc_clinic/base/mystyle.dart';
 
 class CreateDoctorItem extends StatelessWidget {
-
   CreateDoctorItem(this.doctor);
 
   final Doctor doctor;
@@ -11,8 +11,8 @@ class CreateDoctorItem extends StatelessWidget {
   List<Widget> widgets;
 
   _navigatorToDoctorDetails(BuildContext context) {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (_) => new DoctorDetailsPage(doctor.id)));
+    Navigator.push(context,
+        MaterialPageRoute(builder: (_) => new DoctorDetailsPage(doctor.id)));
   }
 
   @override
@@ -25,31 +25,34 @@ class CreateDoctorItem extends StatelessWidget {
               child: new Column(
                 children: <Widget>[
                   new Container(
-                    color: Colors.grey,
+                    color: MyStyle.colorLightGrey,
                     child: new Center(
-                      child: new Text(doctor.role, style: new TextStyle(
-                          fontSize: 16.0)),
+                      child: new Text(
+                        doctor.role,
+                        style: new TextStyle(
+                          fontSize: 16.0,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
                     ),
-                    height: 30.0,
+                    height: 40.0,
                   ),
-                  new Text(doctor.name,
+                  new Text(doctor.name, style: new TextStyle(fontSize: 16.0)),
+                  new Text(doctor.degree,
                       style: new TextStyle(
-                          fontSize: 16.0)
-                  ),
-                  new Text(doctor.degree, style: new TextStyle(
-                      fontSize: 14.0, fontWeight: FontWeight.bold)),
+                          fontSize: 14.0, fontWeight: FontWeight.bold)),
                   new Divider(
-                    height: 2.0, color: Colors.grey, indent: 3.0,),
+                    height: 2.0,
+                    color: Colors.grey,
+                    indent: 3.0,
+                  ),
                   _scheduleWidget(),
                   new Container(
                       child: new Padding(
-                          padding: const EdgeInsets.only(top: 20.0))
-                  ),
+                          padding: const EdgeInsets.only(top: 20.0))),
                 ],
               ),
-            )
-        )
-    );
+            )));
   }
 
   _scheduleWidget() {
@@ -65,18 +68,16 @@ class CreateDoctorItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 //crossAxisAlignment: CrossAxisAlignment.center,
                 children: _getScheduleWidgets(scheduleArr, 0, 4),
-              )
-          ),
+              )),
           //Column2
           new Padding(
               padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
               child: new Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 //crossAxisAlignment: CrossAxisAlignment.start,
-                children: _getScheduleWidgets(
-                    scheduleArr, 4, scheduleArr.length),
-              )
-          )
+                children:
+                    _getScheduleWidgets(scheduleArr, 4, scheduleArr.length),
+              ))
         ],
       ),
     );
@@ -93,18 +94,21 @@ class CreateDoctorItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             new Icon(Icons.date_range, color: mColor, size: 20.0),
-            new Icon(Icons.access_time, color: mColor, size: 20.0,),
-
+            new Icon(
+              Icons.access_time,
+              color: mColor,
+              size: 20.0,
+            ),
           ],
         ),
         new Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            new Text(title, style: new TextStyle(
-                fontSize: 12.0, color: mColor)),
-            new Text('05:00 PM', style: new TextStyle(
-                fontSize: 12.0, color: mColor))
+            new Text(title,
+                style: new TextStyle(fontSize: 12.0, color: mColor)),
+            new Text('05:00 PM',
+                style: new TextStyle(fontSize: 12.0, color: mColor))
           ],
         )
       ],
@@ -118,7 +122,4 @@ class CreateDoctorItem extends StatelessWidget {
     }
     return widgets;
   }
-
 }
-
-

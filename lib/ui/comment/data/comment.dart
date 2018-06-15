@@ -8,7 +8,7 @@ class Comment extends Object with _$CommentSerializerMixin{
   Pagination pagination;
   List<Review> data;
 
-  Comment(this.pagination, this.data);
+  Comment([this.pagination, this.data]);
 
   factory Comment.fromJson(Map<String, dynamic> json) => _$CommentFromJson(json);
 

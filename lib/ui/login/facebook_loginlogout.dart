@@ -5,7 +5,7 @@ class FacebookLoginLogot {
   static final FacebookLogin facebookSignIn = new FacebookLogin();
   String _message = 'Log in/out by pressing the buttons below.';
 
-  static Future<Null> _login() async {
+   static Future<Null> _login() async {
     final FacebookLoginResult result =
         await facebookSignIn.logInWithReadPermissions(['email']);
 
@@ -22,8 +22,9 @@ class FacebookLoginLogot {
     }
   }
 
-  static Future<Null> _logOut() async {
+   static  Future<Null> _logOut() async {
     await facebookSignIn.logOut();
-
   }
+
+
 }

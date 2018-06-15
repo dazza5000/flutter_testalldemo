@@ -3,10 +3,13 @@ import 'package:lyc_clinic/ui/chat/page/chat_list_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:map_view/map_view.dart';
 import 'dart:async';
+import 'package:lyc_clinic/utils/mySharedPreferences.dart';
+import 'package:lyc_clinic/utils/configs.dart';
+import 'package:lyc_clinic/ui/login/login_dialog_page.dart';
 
 var API_KEY = "AIzaSyC5b4ygf2aPikhkstqxTgme891YjorFKg4";
-class CustomBottomNavigationBar extends StatefulWidget {
 
+class CustomBottomNavigationBar extends StatefulWidget {
   @override
   CustomBottomNavigationBarState createState() {
     return new CustomBottomNavigationBarState();
@@ -14,12 +17,21 @@ class CustomBottomNavigationBar extends StatefulWidget {
 }
 
 class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
-
   MapView mapView = new MapView();
   CameraPosition cameraPosition;
-  var compositeSubscription = new CompositeSubscription() ;
+  var compositeSubscription = new CompositeSubscription();
   var staticMapProvider = new StaticMapProvider(API_KEY);
+  MySharedPreferences mySharedPreferences = new MySharedPreferences();
   Uri staticMapUri;
+  bool isLogin = false;
+
+  CustomBottomNavigationBarState() {
+    mySharedPreferences
+        .getBooleanData(Configs.PREF_USER_LOGIN)
+        .then((val) => setState(() {
+              isLogin = val != null ? val : false;
+            }));
+  }
 
   _addressClick(BuildContext context) {
     showMap();
@@ -30,8 +42,16 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   }
 
   _chatClick(BuildContext context) {
-    Navigator.push(
-        context, new MaterialPageRoute(builder: (_) => new ChatListPage()));
+    if (isLogin)
+      Navigator.push(
+          context, new MaterialPageRoute(builder: (_) => new ChatListPage()));
+    else
+      Navigator.of(context).push(new MaterialPageRoute<Null>(
+          builder: (BuildContext context) {
+            return new LoginDialogPage();
+          },
+          maintainState: false,
+          fullscreenDialog: true));
   }
 
   _callPhone() async {
@@ -39,8 +59,7 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
     const phoneNo = 'tel:09421234567';
     if (await canLaunch(phoneNo)) {
       await launch(phoneNo);
-    }
-    else {
+    } else {
       throw 'Colud not call $phoneNo';
     }
   }
@@ -59,7 +78,8 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
     }
   }
 
-  Widget buildButtonColumn(BuildContext context, IconData icon, String label, Color color, int id) {
+  Widget buildButtonColumn(
+      BuildContext context, IconData icon, String label, Color color, int id) {
     return new InkWell(
       highlightColor: Colors.red,
       child: new Row(
@@ -78,10 +98,8 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         ],
       ),
       onTap: () => _clickButton(id, context),
-
     );
   }
-
 
   @override
   void initState() {
@@ -91,6 +109,7 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
     staticMapUri = staticMapProvider.getStaticUri(Locations.portland, 12,
         width: 900, height: 400);
   }
+
   @override
   Widget build(BuildContext context) {
     return new Container(
@@ -98,11 +117,11 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
       decoration: new BoxDecoration(
           color: Colors.white,
           shape: BoxShape.rectangle,
-          boxShadow: [new BoxShadow(
-              color: Colors.black,
-              blurRadius: 15.0,
-              offset: new Offset(1.0, 4.0)
-          ),
+          boxShadow: [
+            new BoxShadow(
+                color: Colors.black,
+                blurRadius: 15.0,
+                offset: new Offset(1.0, 4.0)),
           ]),
       child: new Row(
         crossAxisAlignment: CrossAxisAlignment.center,

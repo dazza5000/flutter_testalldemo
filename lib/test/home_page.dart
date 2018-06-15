@@ -16,9 +16,12 @@ import 'package:url_launcher/url_launcher.dart';
 
 //import 'package:material_search/material_search.dart';
 import 'package:lyc_clinic/ui/home/page/user_profile_info_page.dart';
+import 'package:lyc_clinic/utils/mySharedPreferences.dart';
+import 'package:lyc_clinic/utils/configs.dart';
+import 'package:lyc_clinic/ui/login/login_dialog_page.dart';
 
 class HomePage extends StatefulWidget {
-  final List<DrawerItem> draweritems = [
+  List<DrawerItem> afterLoginDraweritems = [
     new DrawerItem("HOME", Icons.home),
     new DrawerItem("က်န္းမာေရးပညာေပး", Icons.library_books),
     new DrawerItem(
@@ -26,6 +29,14 @@ class HomePage extends StatefulWidget {
     new DrawerItem("BOOKINGS", Icons.event_available),
     new DrawerItem("MY PROFILE", Icons.account_box),
     //new DrawerItem("Login", Icons.account_box),
+  ];
+
+  List<DrawerItem> beforeLoginDraweritems = [
+    new DrawerItem("HOME", Icons.home),
+    new DrawerItem("က်န္းမာေရးပညာေပး", Icons.library_books),
+    new DrawerItem(
+        "ျပသေဆြးေႏြးႏိုင္ေသာဆရာဝန္မ်ား", FontAwesomeIcons.stethoscope),
+    new DrawerItem("LOGIN/ REGISTER", Icons.account_box),
   ];
 
   @override
@@ -40,6 +51,9 @@ class HomePageState extends State<HomePage> {
       "https://avatars3.githubusercontent.com/u/16825392?s=460&v=4";
   SearchBar searchBar;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  List<DrawerItem> draweritems = new List<DrawerItem>();
+  bool isLogin = false;
+  MySharedPreferences mySharedPreferences = new MySharedPreferences();
 
   _getDrawerItemWidgets(int position) {
     print('Drawer Item $position');
@@ -51,7 +65,16 @@ class HomePageState extends State<HomePage> {
       case 2:
         return new DoctorListPage();
       case 3:
-        return new ProfileDataPage(tabIndex: 2);
+        if (isLogin) {
+          return new ProfileDataPage(tabIndex: 2);
+        } else {
+          Navigator.of(context).push(new MaterialPageRoute<Null>(
+              builder: (BuildContext context) {
+                return new LoginDialogPage();
+              },
+              fullscreenDialog: true));
+        }
+        break;
       case 4:
         return new ProfileDataPage(tabIndex: 3);
       default:
@@ -89,8 +112,16 @@ class HomePageState extends State<HomePage> {
         _callPhone();
         break;
       case 2:
-        Navigator.push(
-            context, new MaterialPageRoute(builder: (_) => new ChatListPage()));
+        if (isLogin) {
+          Navigator.push(context,
+              new MaterialPageRoute(builder: (_) => new ChatListPage()));
+        } else {
+          Navigator.of(context).push(new MaterialPageRoute<Null>(
+              builder: (BuildContext context) {
+                return new LoginDialogPage();
+              },
+              fullscreenDialog: true));
+        }
         break;
     }
   }
@@ -101,6 +132,16 @@ class HomePageState extends State<HomePage> {
       await launch(phoneNo);
     } else {
       throw 'Colud not call $phoneNo';
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (isLogin) {
+      draweritems = widget.afterLoginDraweritems;
+    } else {
+      draweritems = widget.beforeLoginDraweritems;
     }
   }
 
@@ -142,7 +183,7 @@ class HomePageState extends State<HomePage> {
     if (selectedDrawerIndex == 2) {
       return new AppBar(
         title: new Text(
-          widget.draweritems[selectedDrawerIndex].title,
+          draweritems[selectedDrawerIndex].title,
           style: MyStyle.appbarTitleStyle(),
         ),
         backgroundColor: MyStyle.colorWhite,
@@ -184,6 +225,13 @@ class HomePageState extends State<HomePage> {
   }
 
   HomePageState() {
+
+    mySharedPreferences
+        .getBooleanData(Configs.PREF_USER_LOGIN)
+        .then((val) => setState(() {
+      isLogin = val != null ? val : false;
+    }));
+
     searchBar = new SearchBar(
         inBar: false,
         buildDefaultAppBar: _buildAppBar,
@@ -234,8 +282,8 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     List<Widget> drawerOptions = new List<Widget>();
-    for (var i = 0; i < widget.draweritems.length; i++) {
-      var d = widget.draweritems[i];
+    for (var i = 0; i < draweritems.length; i++) {
+      var d = draweritems[i];
       drawerOptions.add(new ListTile(
           leading: new Icon(d.icon),
           title: new Text(d.title),

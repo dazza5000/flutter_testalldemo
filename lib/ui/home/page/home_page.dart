@@ -11,72 +11,157 @@ import 'package:lyc_clinic/ui/home/presenter/home_presenter.dart';
 import 'package:lyc_clinic/ui/home/contract/home_contract.dart';
 import 'package:lyc_clinic/utils/configs.dart';
 import 'package:lyc_clinic/ui/doctors/widget/create_doctor_buttons.dart';
+import 'package:lyc_clinic/utils/mySharedPreferences.dart';
 
 class HomePage extends StatefulWidget {
-
   @override
   HomePageState createState() {
     return new HomePageState();
   }
 }
 
-class HomePageState extends State<HomePage> implements HomeContract ,DoctorClickListener{
-
+class HomePageState extends State<HomePage>
+    implements HomeContract, DoctorClickListener {
   HomePresenter mPresenter;
-  List<Service> serviceList;
-  List<Doctor> doctorList;
-  List<BannerData> bannerList;
-
+  List<Service> serviceList = new List<Service>();
+  List<Doctor> doctorList = new List<Doctor>();
+  List<BannerData> bannerList = new List<BannerData>();
+  String accessCode;
+  bool isGuest = false;
+  bool isLogin = false;
+  MySharedPreferences mySharedPreferences = new MySharedPreferences();
 
   HomePageState() {
     mPresenter = new HomePresenter(this);
+    mySharedPreferences
+        .getBooleanData(Configs.PREF_USER_LOGIN)
+        .then((val) => setState(() {
+              isLogin = val;
+            }));
   }
 
   @override
   void initState() {
     super.initState();
-    mPresenter.getService(Configs.TEST_CODE);
-    mPresenter.getDoctor(Configs.TEST_CODE, 3);
-    mPresenter.getBanner(Configs.TEST_CODE);
+    if (isLogin) {
+      isGuest = false;
+      mySharedPreferences
+          .getStringData(Configs.PREF_USER_ACCESSCODE)
+          .then((val) => setState(() {
+                accessCode = val;
+              }));
+    } else {
+      isGuest = true;
+      accessCode = Configs.GUEST_CODE;
+    }
+    print('AccessCode$accessCode And IsGuest $isGuest');
+    mPresenter.getService(accessCode);
+    mPresenter.getDoctor(accessCode, 3);
+    mPresenter.getBanner(accessCode);
+  }
+
+  _clickSeeMore(BuildContext context) {
+    Navigator.push(
+        context, new MaterialPageRoute(builder: (_) => new DoctorListPage()));
+  }
+
+  _showImageBanner() {
+    if (bannerList.length > 0) {
+      return new ImageBanner(bannerList);
+    } else {
+      return new Container(
+        child: null,
+        height: 200.0,
+      );
+    }
+  }
+
+  Widget loadingIndicator = new Container(
+      child: new CircularProgressIndicator(
+    strokeWidth: 2.0,
+  ));
+
+  _showServices() {
+    if (serviceList.length > 0) {
+      return new ServicesScroller(serviceList);
+    } else {
+      return new Container(
+        child: new Center(
+          child: loadingIndicator,
+        ),
+        height: 80.0,
+      );
+    }
+  }
+
+  _showDoctorLists() {
+    if (doctorList.length > 0) {
+      return new DoctorLists(doctorList);
+    } else {
+      return new Container(
+        child: new Center(
+          child: loadingIndicator,
+        ),
+        height: 80.0,
+      );
+    }
+  }
+
+  _showLoadMoreButton() {
+    if (doctorList.length > 0) {
+      return new Padding(
+          padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
+          child: new Row(
+            children: <Widget>[
+              new Expanded(
+                  child: new MaterialButton(
+                padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
+                child: new Text(
+                  'SEE MORE',
+                  style: MyStyle.buttonTextStyle(),
+                ),
+                onPressed: () => _clickSeeMore(context),
+                color: MyStyle.colorAccent,
+              )),
+            ],
+            crossAxisAlignment: CrossAxisAlignment.center,
+          ));
+    } else {
+      return new Container(
+        child: null,
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    _clickSeeMore(BuildContext context) {
-      Navigator.push(
-          context, new MaterialPageRoute(builder: (_) => new DoctorListPage()));
-    }
     return new Scaffold(
         body: new SingleChildScrollView(
-          controller: new ScrollController(),
-          scrollDirection: Axis.vertical,
-          child: new Center(
-              child: new Column(
-                children: <Widget>[
-                  new ImageBanner(bannerList),
-                  new ServicesScroller(serviceList),
-                  new DoctorLists(doctorList,this),
-                  /*new Expanded(
-                      child: new Column(children: <Widget>[],)),*/
-                  new Row(
-                      children: <Widget>[
-                        new Expanded(
-                            child: new MaterialButton(
-                              padding: const EdgeInsets.only(
-                                  top: 15.0, bottom: 15.0),
-                              child: new Text('See More',
-                                style: new TextStyle(
-                                    color: MyStyle.colorWhite,
-                                    fontSize: MyStyle.medium_fontSize),),
-                              onPressed: () => _clickSeeMore(context),
-                              color: MyStyle.colorAccent,)),
-                      ]
-                  )
-                ],
-              )
-          ),
-        )
-    );
+      controller: new ScrollController(),
+      scrollDirection: Axis.vertical,
+      child: new Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: new Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              _showImageBanner(),
+              new Padding(
+                padding: const EdgeInsets.only(left: 10.0, top: 15.0),
+                child: new Text('ဝန္ေဆာင္မွုမ်ား', textAlign: TextAlign.left),
+              ),
+              _showServices(),
+              new Padding(
+                padding: const EdgeInsets.only(left: 10.0, top: 15.0),
+                child: new Text(
+                  'ျပသေဆြးေႏြးႏိုင္ေသာဆရာဝန္မ်ား',
+                  textAlign: TextAlign.left,
+                ),
+              ),
+              _showDoctorLists(),
+              _showLoadMoreButton()
+            ],
+          )),
+    ));
   }
 
   @override
@@ -94,7 +179,6 @@ class HomePageState extends State<HomePage> implements HomeContract ,DoctorClick
     // TODO: implement onLoadError
   }
 
-
   @override
   void showDoctorDialog() {
     // TODO: implement showDoctorDialog
@@ -102,8 +186,8 @@ class HomePageState extends State<HomePage> implements HomeContract ,DoctorClick
 
   @override
   void showDoctors(List<Doctor> d) {
-    // TODO: implement showDoctors
     setState(() {
+      doctorList.clear();
       doctorList = d;
       print('Doctor Respone Page $doctorList');
     });
@@ -145,7 +229,7 @@ class HomePageState extends State<HomePage> implements HomeContract ,DoctorClick
   @override
   void showBanner(List<BannerData> banner) {
     setState(() {
-      bannerList=banner;
+      bannerList = banner;
     });
   }
 
@@ -168,9 +252,5 @@ class HomePageState extends State<HomePage> implements HomeContract ,DoctorClick
   }
 
   @override
-  void onDoctorItemClick(Doctor doctor) {
-
-  }
-
-
+  void onDoctorItemClick(Doctor doctor) {}
 }

@@ -129,6 +129,7 @@
       <excludeFolder url="file://$MODULE_DIR$/ios/Pods/.symlinks/plugins/video_player-0.5.4/example/.pub" />
       <excludeFolder url="file://$MODULE_DIR$/ios/Pods/.symlinks/plugins/video_player-0.5.4/example/build" />
     </content>
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Dart SDK" level="project" />
     <orderEntry type="library" name="Dart Packages" level="project" />

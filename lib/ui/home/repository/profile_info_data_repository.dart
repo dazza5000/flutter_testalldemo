@@ -29,6 +29,7 @@ class ProfileInfoDataRepository implements ProfileInfoRepository {
     }
 
     final responseBody = _decoder.convert(jsonBody);
+    print('Get Profile Info >>$responseBody');
     return new ProfileInfo.fromMap(responseBody);
   }
 
@@ -78,6 +79,6 @@ class ProfileInfoDataRepository implements ProfileInfoRepository {
 
   @override
   void removeAllData() {
-    MySharedPreferences.clear();
+    //MySharedPreferences.clear();
   }
 }

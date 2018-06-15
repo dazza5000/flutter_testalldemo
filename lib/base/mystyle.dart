@@ -13,14 +13,15 @@ class MyStyle {
   static final Color colorWhite = Colors.white;
   static final Color colorBlack = Colors.black;
   static final Color colorGrey = Colors.grey[600];
-  static final Color colorGreen = Colors.green[600];
+  static final Color colorLightGrey = Colors.grey[350];
+  static final Color colorGreen = Colors.green[700];
   static final Color layoutBackground = Colors.grey[100];
   static final Color doctorCategoryHeaderBackground = Colors.grey[300];
   static final Color colorDarkGrey = Colors.grey[850];
   static final Color defaultGrey = Colors.grey;
   static final Color colorRed = Colors.red[700];
+  static final Color colorFB = Colors.indigo;
   static final Color chatRespondBackground = Colors.orange[100];
-
 
   static headerStyle() {
     return new TextStyle(
@@ -35,7 +36,10 @@ class MyStyle {
   }
 
   static TextStyle buttonTextStyle() {
-    return new TextStyle(color: colorWhite, fontSize: medium_fontSize);
+    return new TextStyle(
+        color: colorWhite,
+        fontSize: medium_fontSize,
+        fontWeight: FontWeight.bold);
   }
 
   static TextStyle listItemTextStyle() {
@@ -51,12 +55,11 @@ class MyStyle {
         fontSize: medium_fontSize, color: MyStyle.colorDarkGrey);
   }
 
-  static TextStyle customTextStyle(Color txtcolor){
-    return new TextStyle(fontSize: medium_fontSize,color: txtcolor);
+  static TextStyle customTextStyle(Color txtcolor) {
+    return new TextStyle(fontSize: medium_fontSize, color: txtcolor);
   }
 
-  static TextStyle pastRepliesDescStyle(){
-    return new TextStyle(fontSize: medium_fontSize,color: colorAccent);
+  static TextStyle pastRepliesDescStyle() {
+    return new TextStyle(fontSize: medium_fontSize, color: colorAccent);
   }
-
 }

@@ -9,6 +9,7 @@ final ThemeData themeData = new ThemeData(
     textSelectionColor: MyStyle.colorAccent,
     textSelectionHandleColor:Colors.blue,
     cardColor: Colors.white,
+    canvasColor: Colors.transparent,
     dividerColor: Colors.grey[300],
     backgroundColor: Colors.grey[100],
     primaryColor: MyStyle.colorPrimary,

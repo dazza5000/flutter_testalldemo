@@ -6,6 +6,8 @@ import 'package:lyc_clinic/ui/home/contract/profile_info_contract.dart';
 import 'package:lyc_clinic/utils/mySharedPreferences.dart';
 import 'package:lyc_clinic/utils/configs.dart';
 import 'package:lyc_clinic/ui/home/data/profile_info.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:lyc_clinic/ui/login/facebook_loginlogout.dart';
 
 class UserProfileInfoPage extends StatefulWidget {
   @override
@@ -14,15 +16,20 @@ class UserProfileInfoPage extends StatefulWidget {
   }
 }
 
-class UserProfileInfoPageState extends State<UserProfileInfoPage> {
+class UserProfileInfoPageState extends State<UserProfileInfoPage>
+    implements ProfileInfoContract {
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   List<String> data = ['Mandalay', 'Yangon', 'Monywa'];
   ProfileInfoPresenter mPresenter;
-  String accessCode =
-      MySharedPreferences.getStringData(Configs.PREF_USER_ACCESSCODE) != null
-          ? MySharedPreferences.getStringData(Configs.PREF_USER_ACCESSCODE)
-          : Configs.TEST_CODE;
+  MySharedPreferences mySharedPrefs = new MySharedPreferences();
+  SharedPreferences prefs;
+  String accessCode = Configs.TEST_CODE;
   ProfileInfo profileInfo;
+  TextEditingController _nameController = new TextEditingController();
+  TextEditingController _phoneController = new TextEditingController();
+  TextEditingController _ageController = new TextEditingController();
+
+  FacebookLoginLogot facebookLogin = new FacebookLoginLogot();
 
   UserProfileInfoPageState() {
     mPresenter = new ProfileInfoPresenter(this);
@@ -31,6 +38,7 @@ class UserProfileInfoPageState extends State<UserProfileInfoPage> {
   InputDecoration getDecoration(String hinttext) {
     return new InputDecoration(
         hintText: hinttext,
+        helperText: hinttext,
         filled: true,
         fillColor: MyStyle.layoutBackground,
         contentPadding: const EdgeInsets.all(10.0),
@@ -40,6 +48,10 @@ class UserProfileInfoPageState extends State<UserProfileInfoPage> {
             gapPadding: 0.5));
   }
 
+  void _facebookLogout() async{
+    await FacebookLoginLogot.facebookSignIn.logOut();
+  }
+
   onChangedData() {
     setState(() {});
   }
@@ -47,7 +59,14 @@ class UserProfileInfoPageState extends State<UserProfileInfoPage> {
   @override
   void initState() {
     super.initState();
+    //mySharedPrefs.getStringData(Configs.PREF_USER_ACCESSCODE).then(updatAccessCode);
     mPresenter.getProfileInfo(accessCode);
+  }
+
+  void updatAccessCode(String val) {
+    setState(() {
+      this.accessCode = val;
+    });
   }
 
   @override
@@ -66,9 +85,8 @@ class UserProfileInfoPageState extends State<UserProfileInfoPage> {
                   child:
                       new Text('User Name', style: MyStyle.captionTextStyle()),
                 ),
-                new TextFormField(
-                    initialValue: 'Nway Nway',
-                    controller: new TextEditingController(),
+                new TextField(
+                    controller: _nameController,
                     decoration: getDecoration('Name')),
                 new Padding(
                   padding: const EdgeInsets.symmetric(vertical: 5.0),
@@ -76,7 +94,7 @@ class UserProfileInfoPageState extends State<UserProfileInfoPage> {
                       style: MyStyle.captionTextStyle()),
                 ),
                 new TextField(
-                  controller: new TextEditingController(),
+                  controller: _phoneController,
                   decoration: getDecoration('Phone'),
                 ),
                 new Padding(
@@ -85,80 +103,80 @@ class UserProfileInfoPageState extends State<UserProfileInfoPage> {
                 ),
                 new InkWell(
                   child: new TextField(
-                    controller: new TextEditingController(),
+                    controller: _ageController,
                     decoration: getDecoration('Age'),
                   ),
                   onTap: null,
                 ),
-                new DropdownButton(
-                    value: data.length,
-                    items: data.map((String value) {
-                      return new DropdownMenuItem(
-                          value: value,
-                          child: new Row(
-                            children: <Widget>[new Text('Size: ${value}')],
-                          ));
-                    }).toList(),
-                    onChanged: onChangedData()),
+                new Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                  child: new Text('Gender', style: MyStyle.captionTextStyle()),
+                ),
+                new Container(
+                  decoration: new BoxDecoration(
+                      color: MyStyle.layoutBackground,
+                      shape: BoxShape.rectangle,
+                      boxShadow: [
+                        new BoxShadow(color: Colors.grey, spreadRadius: 2.0),
+                      ]),
+                  child: new DropdownButton(
+                      isDense: false,
+                      hint: new Text('Gender'),
+                      items: data.map((String value) {
+                        return new DropdownMenuItem<String>(
+                            value: value,
+                            child: new Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 5.0),
+                              child: new Text(value,
+                                  style: MyStyle.captionTextStyle()),
+                            ));
+                      }).toList(),
+                      onChanged: onChangedData()),
+                ),
+                new Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                  child:
+                      new Text('Location', style: MyStyle.captionTextStyle()),
+                ),
+                new Container(
+                  decoration: new BoxDecoration(
+                      color: MyStyle.layoutBackground,
+                      shape: BoxShape.rectangle,
+                      boxShadow: [
+                        new BoxShadow(color: Colors.grey, spreadRadius: 2.0),
+                      ]),
+                  child: new DropdownButton(
+                      isDense: false,
+                      hint: new Text('Location'),
+                      items: data.map((String value) {
+                        return new DropdownMenuItem<String>(
+                            value: value,
+                            child: new Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 5.0),
+                              child: new Text(value,
+                                  style: MyStyle.captionTextStyle()),
+                            ));
+                      }).toList(),
+                      onChanged: onChangedData()),
+                ),
+                new FlatButton.icon(
+                    onPressed: _facebookLogout,
+                    icon: new Icon(
+                      Icons.exit_to_app,
+                      color: MyStyle.colorLightGrey,
+                    ),
+                    label: new Text(
+                      'LOG OUT',
+                      style: new TextStyle(
+                          fontSize: MyStyle.medium_fontSize,
+                          color: MyStyle.colorLightGrey),
+                    ))
               ]),
         ),
       ),
     );
-
-    /*return new Scaffold(
-        backgroundColor: MyStyle.layoutBackground,
-        body: new Stack(
-          overflow: Overflow.clip,
-          fit: StackFit.expand,
-          children: <Widget>[
-            new Container(
-                margin: const EdgeInsets.symmetric(
-                    horizontal: 10.0, vertical: 15.0),
-                color: MyStyle.colorWhite,
-                child: new ListView(
-                  shrinkWrap: true,
-                  children: <Widget>[
-                    new Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 5.0),
-                      child: new Text('User Name',
-                          style: MyStyle.captionTextStyle()),
-                    ),
-                    new TextField(
-                        enabled: true,
-                        obscureText: true,
-                        controller: new TextEditingController(),
-                        //initialValue: 'Hnin Nway Nway Hlaing',
-                        decoration: getDecoration('Name')),
-                    new Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 5.0),
-                      child: new Text('Mobile Phone',
-                          style: MyStyle.captionTextStyle()),
-                    ),
-                    new TextField(
-                      enabled: true,
-                      obscureText: true,
-                      controller: new TextEditingController(),
-                      //initialValue: '09400404010',
-                      decoration: getDecoration('Phone'),
-                    ),
-                    new Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 5.0),
-                      child: new Text('Age', style: MyStyle.captionTextStyle()),
-                    ),
-                    new TextField(
-                        enabled: true,
-                        obscureText: true,
-                        controller: new TextEditingController(),
-                        //initialValue: '24',
-                        decoration: getDecoration('Age')),
-                    new Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 5.0),
-                      child: new Text('Age', style: MyStyle.captionTextStyle()),
-                    ),
-                  ],
-                ))
-          ],
-        ));*/
   }
 
   @override
@@ -186,6 +204,10 @@ class UserProfileInfoPageState extends State<UserProfileInfoPage> {
   void displayProfileLayout(ProfileInfo profileInfo) {
     setState(() {
       this.profileInfo = profileInfo;
+      _phoneController.text = profileInfo.phone;
+      _nameController.text = profileInfo.name;
+      _ageController.text = profileInfo.dob;
     });
+    print("Profile Info Data$profileInfo");
   }
 }

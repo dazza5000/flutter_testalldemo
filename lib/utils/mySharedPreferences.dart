@@ -1,59 +1,75 @@
 import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:lyc_clinic/utils/configs.dart';
 
 class MySharedPreferences {
-  static SharedPreferences _prefs;
-
   MySharedPreferences() {
-    _prefs = getSharePreferences();
+    //_prefs = getSharePreferences();
   }
 
-  static getSharePreferences() async {
-    return await SharedPreferences.getInstance();
+  getSharePreferences() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences;
   }
 
-  static Future<SharedPreferences> getPrefs() {
-    return getSharePreferences();
-  }
-
-  static clear() {
+  Future<bool> clear() async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
     _prefs.clear();
+    return _prefs.commit();
   }
 
-  static putStringData(String key, String val) {
+  Future<bool> putStringData(String key, String val) async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
     _prefs.setString(key, val);
+    return _prefs.commit();
   }
 
-  static putIntegerData(String key, int val) {
+  Future<bool> putIntegerData(String key, int val) async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
     _prefs.setInt(key, val);
+    return _prefs.commit();
   }
 
-  static putBooleanData(String key, bool val) {
+  Future<bool> putBooleanData(String key, bool val) async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
     _prefs.setBool(key, val);
+    return _prefs.commit();
   }
 
-  static putDoubleData(String key, double val) async {
+  Future<bool> putDoubleData(String key, double val) async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     _prefs.setDouble(key, val);
+    return _prefs.commit();
   }
 
-  static String getStringData(String key) {
+  Future<String> getStringData(String key) async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
     return _prefs.getString(key);
   }
 
-  static int getIntData(String key) {
+  Future<int> getIntData(String key) async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
     return _prefs.getInt(key);
   }
 
-  static bool getBooleanData(String key) {
+  Future<bool> getBooleanData(String key) async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
     return _prefs.getBool(key);
   }
 
-  static double getDoubleData(String key) {
+  Future<double> getDoubleData(String key) async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
     return _prefs.getDouble(key);
   }
 
-  static getData(String key) {
-    return _prefs.get(key);
+  bool isLogin() {
+    bool isLogin = false;
+    getBooleanData(Configs.PREF_USER_LOGIN).then((val) {
+      isLogin = val;
+    });
+    return isLogin;
   }
+/* getData(String key) {
+    return _prefs.get(key);
+  }*/
 }
