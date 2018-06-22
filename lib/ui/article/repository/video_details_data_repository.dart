@@ -2,12 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:lyc_clinic/utils/configs.dart';
-import 'package:lyc_clinic/ui/article/repository/article_details_repository.dart';
+import 'package:lyc_clinic/ui/article/repository/video_details_repository.dart';
 import 'package:lyc_clinic/ui/article/data/article_details.dart';
 import 'package:lyc_clinic/ui/comment/data/comment.dart';
 import 'package:lyc_clinic/base/data/message.dart';
 
-class ArticleDetailsDataRepository implements ArticleDetailsRepository{
+class VideoDetailsDataRepository implements VideoDetailsRepository{
   String URL = Configs.LYC_URL + Configs.VERSION_NO + "/";
   JsonDecoder _decoder = new JsonDecoder();
   @override
@@ -48,7 +48,6 @@ class ArticleDetailsDataRepository implements ArticleDetailsRepository{
     if (statusCode < 200 || statusCode >= 300 || response == null) {
       //throw new FetchDataException("Error while getting contacts [StatusCode:$statusCode, Error:${response.error}]");
       print(statusCode);
-
     }
     final jsonBody=_decoder.convert(responseBody);
     print('Response Favourite$jsonBody');
@@ -69,7 +68,6 @@ class ArticleDetailsDataRepository implements ArticleDetailsRepository{
     if (statusCode < 200 || statusCode >= 300 || response == null) {
       //throw new FetchDataException("Error while getting contacts [StatusCode:$statusCode, Error:${response.error}]");
       print(statusCode);
-
     }
     final jsonBody=_decoder.convert(responseBody);
     print('Response Favourite$jsonBody');
@@ -85,6 +83,7 @@ class ArticleDetailsDataRepository implements ArticleDetailsRepository{
     if (statusCode < 200 || statusCode >= 300 || response == null) {
       //throw new FetchDataException("Error while getting contacts [StatusCode:$statusCode, Error:${response.error}]");
       print(statusCode);
+
     }
     final jsonBody=_decoder.convert(responseBody);
     print('Response Favourite$jsonBody');

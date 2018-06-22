@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
-
 import 'package:lyc_clinic/ui/article/data/article.dart';
 import 'package:lyc_clinic/ui/comment/data/comment.dart';
 import 'package:html2md/html2md.dart' as html2md;
@@ -21,35 +20,13 @@ class ArticleDetailsItem extends StatefulWidget {
 }
 
 class ArticleDetailsItemState extends State<ArticleDetailsItem> {
-
-
-  /*Widget _createArticleDetailsWidgets() {
-    return new Container(
-      child: new Column(children: <Widget>[
-        new Expanded(
-          child: new Markdown(
-            data: html2md.convert(widget.html),
-          ),
-        ),
-        new Container(
-          color: MyStyle.layoutBackground,
-          child: new CommentItem(widget.comment, widget.article.id, true),
-        )
-        *//*new Container(
-           color: MyStyle.colorWhite,
-           child:  new Markdown(
-             data: html2md.convert(widget.html),
-           ),
-         )*//*
-      ]),
-      *//*new Positioned(
-          child: _floatingBar(),
-          bottom: 20.0,
-          left: 5.0,
-          right: 5.0,
-        )*//*
-    );
-  }*/
+  showContent(){
+    if(widget.article.id!=null){
+      return new MarkdownBody(
+        data: html2md.convert(widget.article.content),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,9 +34,7 @@ class ArticleDetailsItemState extends State<ArticleDetailsItem> {
       child: new Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          new MarkdownBody(
-            data: html2md.convert(widget.article.content),
-          ),
+          showContent(),
           new Container(
               color: MyStyle.colorWhite,
               child: new SizedBox.fromSize(

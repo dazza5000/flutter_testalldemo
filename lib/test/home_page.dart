@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:lyc_clinic/ui/home/data/drawer_item.dart';
-import 'package:lyc_clinic/base/base_menu.dart';
-import 'package:lyc_clinic/ui/home/page/home_container_fragment.dart';
-import 'package:lyc_clinic/ui/doctors/page/doctor_list_page.dart';
-import 'package:lyc_clinic/ui/home/page/health_education_page.dart';
-import 'home_fragment.dart';
-import 'package:lyc_clinic/ui/notification/page/notification_list_page.dart';
-import 'package:lyc_clinic/ui/home/page/profile_data_page.dart';
-import 'package:lyc_clinic/base/mystyle.dart';
-import 'package:lyc_clinic/ui/about/page/about_page.dart';
-import 'package:flutter_search_bar/flutter_search_bar.dart';
-import 'package:lyc_clinic/ui/chat/page/chat_list_page.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-//import 'package:material_search/material_search.dart';
-import 'package:lyc_clinic/ui/home/page/user_profile_info_page.dart';
-import 'package:lyc_clinic/utils/mySharedPreferences.dart';
+import 'package:flutter_search_bar/flutter_search_bar.dart';
+import 'package:lyc_clinic/base/base_menu.dart';
+import 'package:lyc_clinic/base/mystyle.dart';
+import 'package:lyc_clinic/base/widget.dart';
 import 'package:lyc_clinic/utils/configs.dart';
+import 'package:lyc_clinic/utils/mySharedPreferences.dart';
+import 'package:lyc_clinic/ui/home/data/drawer_item.dart';
+import 'package:lyc_clinic/ui/home/page/home_container_fragment.dart';
+import 'package:lyc_clinic/ui/home/page/user_profile_info_page.dart';
+import 'package:lyc_clinic/ui/home/page/health_education_page.dart';
+import 'package:lyc_clinic/ui/home/page/profile_data_page.dart';
+import 'package:lyc_clinic/ui/notification/page/notification_list_page.dart';
+import 'package:lyc_clinic/ui/doctors/page/doctor_list_page.dart';
+import 'package:lyc_clinic/ui/about/page/about_page.dart';
+import 'package:lyc_clinic/ui/chat/page/chat_list_page.dart';
 import 'package:lyc_clinic/ui/login/login_dialog_page.dart';
 
-class HomePage extends StatefulWidget {
+
+class MainPage extends StatefulWidget {
   List<DrawerItem> afterLoginDraweritems = [
     new DrawerItem("HOME", Icons.home),
     new DrawerItem("က်န္းမာေရးပညာေပး", Icons.library_books),
@@ -40,12 +40,12 @@ class HomePage extends StatefulWidget {
   ];
 
   @override
-  HomePageState createState() {
-    return new HomePageState();
+  MainPageState createState() {
+    return new MainPageState();
   }
 }
 
-class HomePageState extends State<HomePage> {
+class MainPageState extends State<MainPage> {
   int selectedDrawerIndex = 0;
   String imageUrl =
       "https://avatars3.githubusercontent.com/u/16825392?s=460&v=4";
@@ -54,6 +54,25 @@ class HomePageState extends State<HomePage> {
   List<DrawerItem> draweritems = new List<DrawerItem>();
   bool isLogin = false;
   MySharedPreferences mySharedPreferences = new MySharedPreferences();
+
+  MainPageState() {
+    mySharedPreferences
+        .getBooleanData(Configs.PREF_USER_LOGIN)
+        .then((val) => setState(() {
+      isLogin = val!=null?val:false;
+    }));
+
+    searchBar = new SearchBar(
+        inBar: false,
+        buildDefaultAppBar: _buildAppBar,
+        setState: setState,
+        onSubmitted: onSubmitted);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   _getDrawerItemWidgets(int position) {
     print('Drawer Item $position');
@@ -68,11 +87,7 @@ class HomePageState extends State<HomePage> {
         if (isLogin) {
           return new ProfileDataPage(tabIndex: 2);
         } else {
-          Navigator.of(context).push(new MaterialPageRoute<Null>(
-              builder: (BuildContext context) {
-                return new LoginDialogPage();
-              },
-              fullscreenDialog: true));
+          _showLoginDialog();
         }
         break;
       case 4:
@@ -82,6 +97,17 @@ class HomePageState extends State<HomePage> {
     }
   }
 
+  Future<Null> _showLoginDialog() async {
+    return await showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return new Container(
+              color: MyStyle.colorWhite,
+              height: 150.0,
+              child: new LoginDialogPage());
+        });
+  }
+
   _onSelectedItem(int index) {
     setState(() {
       selectedDrawerIndex = index;
@@ -89,6 +115,7 @@ class HomePageState extends State<HomePage> {
     });
     _getDrawerItemWidgets(selectedDrawerIndex);
   }
+
 
   _clickNoti(BuildContext context) {
     Navigator.push(context,
@@ -116,11 +143,8 @@ class HomePageState extends State<HomePage> {
           Navigator.push(context,
               new MaterialPageRoute(builder: (_) => new ChatListPage()));
         } else {
-          Navigator.of(context).push(new MaterialPageRoute<Null>(
-              builder: (BuildContext context) {
-                return new LoginDialogPage();
-              },
-              fullscreenDialog: true));
+          Navigator.of(context).pop();
+          BaseWidgets.showLoginDialog(context);
         }
         break;
     }
@@ -135,15 +159,6 @@ class HomePageState extends State<HomePage> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    if (isLogin) {
-      draweritems = widget.afterLoginDraweritems;
-    } else {
-      draweritems = widget.beforeLoginDraweritems;
-    }
-  }
 
   /* _buildMaterialSearchPage(BuildContext context) {
     return new MaterialPageRoute<String>(
@@ -204,10 +219,12 @@ class HomePageState extends State<HomePage> {
         backgroundColor: Colors.transparent,
         iconTheme: new IconThemeData(color: MyStyle.colorGrey),
         actions: <Widget>[
-          new IconButton(
-            icon: new Icon(Icons.notifications),
-            onPressed: () => _clickNoti(context),
-          )
+          new Opacity(
+              opacity: isLogin ? 1.0 : 0.0,
+              child: new IconButton(
+                icon: new Icon(Icons.notifications),
+                onPressed: () => _clickNoti(context),
+              ))
         ],
         elevation: 0.0,
       );
@@ -224,63 +241,63 @@ class HomePageState extends State<HomePage> {
             new SnackBar(content: new Text('You wrote $value!'))));*/
   }
 
-  HomePageState() {
-
-    mySharedPreferences
-        .getBooleanData(Configs.PREF_USER_LOGIN)
-        .then((val) => setState(() {
-      isLogin = val != null ? val : false;
-    }));
-
-    searchBar = new SearchBar(
-        inBar: false,
-        buildDefaultAppBar: _buildAppBar,
-        setState: setState,
-        onSubmitted: onSubmitted);
-  }
 
   Widget _getNavHeader() {
-    return new Padding(
-      padding: new EdgeInsets.fromLTRB(5.0, 30.0, 5.0, 30.0),
-      child: new Row(
-        children: <Widget>[
-          new GestureDetector(
-            child: new CircleAvatar(
-              backgroundImage: new NetworkImage(imageUrl),
-              radius: 40.0,
+    if (isLogin) {
+      return new Padding(
+        padding: new EdgeInsets.fromLTRB(5.0, 30.0, 5.0, 30.0),
+        child: new Row(
+          children: <Widget>[
+            new GestureDetector(
+              child: new CircleAvatar(
+                backgroundImage: new NetworkImage(imageUrl),
+                radius: 40.0,
+              ),
             ),
-          ),
-          new Column(
-            children: <Widget>[
-              new Padding(
-                padding: const EdgeInsets.fromLTRB(15.0, 3.0, 0.0, 3.0),
-                child: new Text('Hnin Nway Nway Hlaing',
-                    textAlign: TextAlign.left),
-              ),
-              new Padding(
-                padding: const EdgeInsets.all(3.0),
-                child: new RaisedButton.icon(
-                    onPressed: () => _clickEditProfilel(context),
-                    color: MyStyle.colorWhite,
-                    textColor: MyStyle.colorGrey,
-                    icon: new Icon(
-                      Icons.edit,
-                      color: MyStyle.colorGrey,
-                    ),
-                    label: new Text(
-                      "Edit Profile",
-                      style: new TextStyle(fontWeight: FontWeight.bold),
-                    )),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
+            new Column(
+              children: <Widget>[
+                new Padding(
+                  padding: const EdgeInsets.fromLTRB(15.0, 3.0, 0.0, 3.0),
+                  child: new Text('Hnin Nway Nway Hlaing',
+                      textAlign: TextAlign.left),
+                ),
+                new Padding(
+                  padding: const EdgeInsets.all(3.0),
+                  child: new RaisedButton.icon(
+                      onPressed: () => _clickEditProfilel(context),
+                      color: MyStyle.colorWhite,
+                      textColor: MyStyle.colorGrey,
+                      icon: new Icon(
+                        Icons.edit,
+                        color: MyStyle.colorGrey,
+                      ),
+                      label: new Text(
+                        "Edit Profile",
+                        style: new TextStyle(fontWeight: FontWeight.bold),
+                      )),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    } else {
+      return new Container(
+        child: new Padding(
+          padding: const EdgeInsets.only(top: 5.0),
+          child: null,
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (isLogin) {
+      draweritems = widget.afterLoginDraweritems;
+    } else {
+      draweritems = widget.beforeLoginDraweritems;
+    }
     List<Widget> drawerOptions = new List<Widget>();
     for (var i = 0; i < draweritems.length; i++) {
       var d = draweritems[i];

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:lyc_clinic/ui/doctors/data/active_booking.dart';
 import 'package:lyc_clinic/ui/doctors/data/booking_request.dart';
 import 'package:lyc_clinic/ui/doctors/data/schedule.dart';
+import 'package:lyc_clinic/base/data/message.dart';
 
 abstract class DoctorBookingRepository {
   Future<ActiveBooking> getBookingDetail(String accessCode, int doctorId);
@@ -12,7 +13,7 @@ abstract class DoctorBookingRepository {
   Future<BookingRequest> requestBooking(String accessCode, int doctorId, int schedule,
       String date);
 
-  void cancelBooking(String accessCode, int doctorId, int bookingId);
+  Future<Message> cancelBooking(String accessCode, int doctorId, int bookingId);
 
   void setActiveBooking(ActiveBooking activeBooking);
 

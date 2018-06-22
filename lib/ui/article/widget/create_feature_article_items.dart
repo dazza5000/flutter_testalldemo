@@ -6,6 +6,7 @@ import 'package:lyc_clinic/ui/article/data/article.dart';
 import 'package:lyc_clinic/utils/configs.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
 import 'package:lyc_clinic/ui/article/page/article_details_page.dart';
+import 'package:lyc_clinic/ui/article/page/video_details_page.dart';
 
 class CreateFeatureArticles extends StatefulWidget {
   @override
@@ -34,13 +35,23 @@ class CreateFeatureArticlesState extends State<CreateFeatureArticles>
   }
 
   _goToFeatureArticle(BuildContext context, Article article) {
-    Navigator.push(
-        context,
-        new MaterialPageRoute(
-            builder: (_) => new ArticleDetailsPage(
-                  article.id,
-                  isFeature: true,
-                )));
+    if (article.type == 1) {
+      Navigator.push(
+          context,
+          new MaterialPageRoute(
+              builder: (_) => new ArticleDetailsPage(
+                    article.id,
+                    isFeature: true,
+                  )));
+    } else {
+      Navigator.push(
+          context,
+          new MaterialPageRoute(
+              builder: (_) => new VideoDetailsPage(
+                    article.id,
+                    isFeature: true,
+                  )));
+    }
   }
 
   Widget _createFeatureArticleItem(Article article) {
@@ -129,7 +140,7 @@ class CreateFeatureArticlesState extends State<CreateFeatureArticles>
     if (featureArticleList.length > 0) {
       return new Stack(children: <Widget>[
         new PageView.builder(
-            physics:new BouncingScrollPhysics(),
+            physics: new BouncingScrollPhysics(),
             controller: _controller,
             itemBuilder: _buildFeatureArticle),
         new Positioned(

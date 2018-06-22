@@ -13,7 +13,7 @@ class MyStyle {
   static final Color colorWhite = Colors.white;
   static final Color colorBlack = Colors.black;
   static final Color colorGrey = Colors.grey[600];
-  static final Color colorLightGrey = Colors.grey[350];
+  static final Color colorLightGrey = Colors.grey[300];
   static final Color colorGreen = Colors.green[700];
   static final Color layoutBackground = Colors.grey[100];
   static final Color doctorCategoryHeaderBackground = Colors.grey[300];
@@ -23,12 +23,20 @@ class MyStyle {
   static final Color colorFB = Colors.indigo;
   static final Color chatRespondBackground = Colors.orange[100];
 
-  static headerStyle() {
+  static TextStyle headerStyle() {
     return new TextStyle(
       color: Colors.black,
       fontWeight: FontWeight.normal,
       fontSize: large_fontSize,
     );
+  }
+
+  static TextStyle captionTextStyle(){
+    return new TextStyle(color: colorBlack,fontSize: xmedium_fontSize);
+  }
+
+  static TextStyle titleTextStyle() {
+    return new TextStyle(fontSize: medium_fontSize, color: MyStyle.colorDarkGrey);
   }
 
   static TextStyle appbarTitleStyle() {
@@ -50,16 +58,12 @@ class MyStyle {
     return new TextStyle(color: MyStyle.defaultGrey, fontSize: small_fontSize);
   }
 
-  static TextStyle captionTextStyle() {
-    return new TextStyle(
-        fontSize: medium_fontSize, color: MyStyle.colorDarkGrey);
-  }
-
   static TextStyle customTextStyle(Color txtcolor) {
     return new TextStyle(fontSize: medium_fontSize, color: txtcolor);
   }
 
-  static TextStyle pastRepliesDescStyle() {
-    return new TextStyle(fontSize: medium_fontSize, color: colorAccent);
+  static TextStyle itemTextStyle() {
+    return new TextStyle(
+        fontSize: small_fontSize, color: MyStyle.colorDarkGrey);
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:share/share.dart';
 import 'package:lyc_clinic/ui/doctors/widget/create_session_items.dart';
 import 'package:lyc_clinic/ui/doctors/widget/create_review_list_item.dart';
 import 'package:lyc_clinic/ui/doctors/data/doctor_profile.dart';
@@ -17,13 +18,16 @@ import 'package:lyc_clinic/ui/home/data/booking.dart';
 import 'package:lyc_clinic/ui/comment/data/review.dart';
 import 'package:lyc_clinic/utils/configs.dart';
 import 'package:lyc_clinic/ui/home/page/profile_data_page.dart';
+import 'package:lyc_clinic/utils/mySharedPreferences.dart';
+import 'package:lyc_clinic/base/widget.dart';
+
 
 class DoctorDetailsPage extends StatefulWidget {
   int doctorId;
 
   DoctorDetailsPage(this.doctorId);
 
-  ActiveBooking activeBooking;
+
 
   @override
   DoctorDetailsPageState createState() {
@@ -37,11 +41,18 @@ class DoctorDetailsPageState extends State<DoctorDetailsPage>
   DoctorProfile doctorProfile;
   Doctor doctor;
   Comment comment;
+  ActiveBooking activeBooking;
   List<Booking> bookingList = new List<Booking>();
+  List<Schedule> scheduleList = new List<Schedule>();
 
   bool _isFavourite = false;
+  bool isLoading = true;
   bool _isBookMark = false;
   int _favCount = 0;
+  String accessCode;
+  bool isGuest = false;
+  bool isLogin = false;
+  MySharedPreferences mySharedPreferences = new MySharedPreferences();
 
   DoctorDetailsPageState() {
     mPresenter = new DoctorProfilePresetner(this);
@@ -50,7 +61,28 @@ class DoctorDetailsPageState extends State<DoctorDetailsPage>
   @override
   void initState() {
     super.initState();
-    mPresenter.getDoctorProfile(Configs.TEST_CODE, widget.doctorId);
+    mySharedPreferences
+        .getBooleanData(Configs.PREF_USER_LOGIN)
+        .then((val) => setState(() {
+              isLogin = val != null ? val : false;
+              getAccessCode(isLogin);
+            }));
+  }
+
+  void getAccessCode(bool login) {
+    if (login) {
+      isGuest = false;
+      mySharedPreferences
+          .getStringData(Configs.PREF_USER_ACCESSCODE)
+          .then((val) => setState(() {
+                accessCode = val;
+                mPresenter.getDoctorProfile(accessCode, widget.doctorId);
+              }));
+    } else {
+      isGuest = true;
+      accessCode = Configs.GUEST_CODE;
+      mPresenter.getDoctorProfile(accessCode, widget.doctorId);
+    }
   }
 
   _clickSeelAllBooking(BuildContext context) {
@@ -60,6 +92,48 @@ class DoctorDetailsPageState extends State<DoctorDetailsPage>
         context,
         new MaterialPageRoute(
             builder: (_) => new ProfileDataPage(tabIndex: 2)));
+  }
+
+  _clickShare(){
+    Share.share(doctor.shareUrl);
+  }
+
+  _clickBookMark(){
+    if(isLogin){
+      setState(() {
+       _isBookMark=!_isBookMark;
+      });
+      mPresenter.saveDoctor(accessCode, doctor.id);
+    }
+    else{
+      BaseWidgets.showLoginDialog(context);
+    }
+  }
+
+  void _clickLikeButton() {
+    if (isLogin) {
+      setState(() {
+        if (_isFavourite) {
+          _isFavourite = false;
+          _favCount -= 1;
+        } else {
+          _isFavourite = true;
+          _favCount += 1;
+        }
+      });
+      mPresenter.favDoctor(accessCode, doctor.id);
+    } else {
+      BaseWidgets.showLoginDialog(context);
+    }
+  }
+
+  _clickAvalibleSession(BuildContext context) {
+    if(doctor.schedule.length>0)
+    Navigator.push(context,
+        new MaterialPageRoute(builder: (_) => new DoctorBookingPage(activeBooking,doctor,isLogin,accessCode)));
+    else
+      Scaffold.of(context).showSnackBar(new SnackBar(content: new Text('Hello')));
+
   }
 
   Widget _doctorInfo() {
@@ -157,37 +231,44 @@ class DoctorDetailsPageState extends State<DoctorDetailsPage>
   }
 
   Widget _showBookingItems() {
-    return new Card(
-        child: new Column(children: <Widget>[
-      new Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
-          child: new Row(children: <Widget>[
-            new Image.asset('assets/images/lyc_icon.png', scale: 2.0),
-            new Expanded(
-                child: new Row(
-              children: <Widget>[],
-            )),
-            new InkWell(
-                onTap: () => _clickSeelAllBooking(context),
-                child: new Text(
-                  'See all your booking',
-                  style: new TextStyle(
-                    fontSize: MyStyle.small_fontSize,
-                    color: MyStyle.colorBlack,
-                    decoration: TextDecoration.underline,
-                    decorationColor: MyStyle.colorBlack,
-                    decorationStyle: TextDecorationStyle.solid,
-                  ),
-                )),
-          ])),
-      new ListView.builder(
-          controller: new ScrollController(),
-          padding: const EdgeInsets.all(0.0),
-          itemBuilder: _buildBookingList,
-          itemCount: bookingList.length,
-          shrinkWrap: true,
-          scrollDirection: Axis.vertical)
-    ]));
+    if (isLogin) {
+      return new Card(
+          child: new Column(children: <Widget>[
+        new Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
+            child: new Row(children: <Widget>[
+              new Image.asset('assets/images/lyc_icon.png', scale: 2.0),
+              new Expanded(
+                  child: new Row(
+                children: <Widget>[],
+              )),
+              new InkWell(
+                  onTap: () => _clickSeelAllBooking(context),
+                  child: new Text(
+                    'See all your booking',
+                    style: new TextStyle(
+                      fontSize: MyStyle.small_fontSize,
+                      color: MyStyle.colorBlack,
+                      decoration: TextDecoration.underline,
+                      decorationColor: MyStyle.colorBlack,
+                      decorationStyle: TextDecorationStyle.solid,
+                    ),
+                  )),
+            ])),
+        new ListView.builder(
+            controller: new ScrollController(),
+            padding: const EdgeInsets.all(0.0),
+            itemBuilder: _buildBookingList,
+            itemCount: bookingList.length,
+            shrinkWrap: true,
+            scrollDirection: Axis.vertical)
+      ]));
+    } else {
+      return new Container(
+        child: null,
+      );
+    }
   }
 
   Widget _buildBookingList(BuildContext context, int index) {
@@ -195,23 +276,46 @@ class DoctorDetailsPageState extends State<DoctorDetailsPage>
     return new BookingItems(booking, booking.status);
   }
 
-  void _clickLikeButton() {
-    setState(() {
-      if (_isFavourite) {
-        _isFavourite = false;
-        _favCount -= 1;
-      } else {
-        _isFavourite = true;
-        _favCount += 1;
-      }
-    });
-  }
 
-  _clickAvalibleSession(BuildContext context) {
-    Navigator.push(context,
-        new MaterialPageRoute(builder: (_) => new DoctorBookingPage()));
-  }
+  /*Widget loadingIndicator = new Container(
+      child: new CircularProgressIndicator(
+    strokeWidth: 2.0,
+  ));*/
 
+  Widget _showLoadingAndData() {
+    if (isLoading) {
+      return new Center(child: BaseWidgets.loadingIndicator);
+    } else {
+      return new SingleChildScrollView(
+          controller: new ScrollController(),
+          scrollDirection: Axis.vertical,
+          child: new Container(
+              color: MyStyle.layoutBackground,
+              child: new Padding(
+                padding:
+                    const EdgeInsets.only(top: 20.0, left: 10.0, right: 10.0),
+                child: new Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    _doctorInfo(),
+                    _availableSessionRow(),
+                    new InkWell(
+                      child: new Card(
+                        child: new SessionItems(),
+                      ),
+                      onTap: () => _clickAvalibleSession(context),
+                    ),
+                    new ReviewListItem(
+                        comment, widget.doctorId, false, isLogin),
+                    new Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 0.0, vertical: 10.0),
+                        child: _showBookingItems())
+                  ],
+                ),
+              )));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -227,35 +331,17 @@ class DoctorDetailsPageState extends State<DoctorDetailsPage>
         ),
         actions: <Widget>[
           new IconButton(
-              icon: new Icon(Icons.bookmark_border, color: MyStyle.colorBlack),
-              onPressed: null),
+              icon: new Icon(_isBookMark?Icons.bookmark:Icons.bookmark_border, color: MyStyle.colorBlack),
+              onPressed: _clickBookMark),
           new IconButton(
               icon: new Icon(Icons.share, color: MyStyle.colorBlack),
-              onPressed: null)
+              onPressed: _clickShare)
         ],
       ),
-      body: new SingleChildScrollView(
-          child: new Container(
-              color: MyStyle.layoutBackground,
-              child: new Padding(
-                padding:
-                    const EdgeInsets.only(top: 20.0, left: 10.0, right: 10.0),
-                child: new Column(
-                  children: <Widget>[
-                    _doctorInfo(),
-                    _availableSessionRow(),
-                    new InkWell(
-                      child: new SessionItems(),
-                      onTap: () => _clickAvalibleSession(context),
-                    ),
-                  new ReviewListItem(comment, widget.doctorId, false),
-                    new Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 0.0, vertical: 10.0),
-                        child: _showBookingItems())
-                  ],
-                ),
-              ))),
+      body: new Container(
+        color: MyStyle.layoutBackground,
+        child: _showLoadingAndData(),
+      ),
       bottomNavigationBar: new Material(
         child: new CustomBottomNavigationBar(),
       ),
@@ -266,8 +352,10 @@ class DoctorDetailsPageState extends State<DoctorDetailsPage>
   void hideRequestedBooking() {}
 
   @override
-  void showRequestedBooking(ActiveBooking activeBooking) {
-    setState(() {});
+  void showRequestedBooking(ActiveBooking ab) {
+    setState(() {
+      activeBooking=ab;
+    });
     print('Active booking$activeBooking');
   }
 
@@ -275,14 +363,13 @@ class DoctorDetailsPageState extends State<DoctorDetailsPage>
   void setSaveStatus(bool isSaved) {}
 
   @override
-  void setFavoriteStatus(bool isFav, int favCount) {
-
-  }
+  void setFavoriteStatus(bool isFav, int favCount) {}
 
   @override
   void showDoctorInfo(Doctor doctor) {
     setState(() {
       this.doctor = doctor;
+      isLoading = false;
     });
     print('Doctor  Data${doctor.toString()}');
   }
@@ -291,6 +378,7 @@ class DoctorDetailsPageState extends State<DoctorDetailsPage>
   void showReviews(Comment c) {
     setState(() {
       comment = c;
+      isLoading = false;
     });
     print('Review Data $comment');
   }
@@ -299,13 +387,16 @@ class DoctorDetailsPageState extends State<DoctorDetailsPage>
   void showBookings(List<Booking> b) {
     setState(() {
       bookingList = b;
+      isLoading = false;
     });
     print('Booking Data$b');
   }
 
   @override
   void showDoctorSchedules(List<Schedule> schedules) {
-    setState(() {});
+    setState(() {
+      scheduleList = schedules;
+    });
     print('Schedule List $schedules');
   }
 

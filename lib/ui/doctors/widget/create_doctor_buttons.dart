@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import  'package:share/share.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
+import 'package:lyc_clinic/base/widget.dart';
+import 'package:lyc_clinic/utils/configs.dart';
 import 'package:lyc_clinic/ui/doctors/data/doctor.dart';
-//import  'package:share/share.dart';
+import 'package:lyc_clinic/utils/mySharedPreferences.dart';
 
 class CreateDoctorButton extends StatefulWidget {
   Doctor doctor;
@@ -20,6 +23,8 @@ class _CreateButtonState extends State<CreateDoctorButton> {
   bool _isBookMark = false;
   int _favCount = 0;
   DoctorClickListener doctorClickListener;
+  bool isLogin=false;
+  MySharedPreferences mySharedPreferences=new MySharedPreferences();
 
   @override
   void initState() {
@@ -27,9 +32,15 @@ class _CreateButtonState extends State<CreateDoctorButton> {
     _isFavourite = widget.doctor.fav;
     _isBookMark = widget.doctor.save;
     doctorClickListener=widget.listener;
+
+    mySharedPreferences
+        .getBooleanData(Configs.PREF_USER_LOGIN)
+        .then((val) => setState(() {
+      isLogin = val!=null?val:false;
+    }));
   }
 
-  Widget _getFloatButton(IconData ic, Color bgColor, Color icColor) {
+  /*Widget _getFloatButton(IconData ic, Color bgColor, Color icColor) {
     return new Container(
       width: 40.0,
       height: 40.0,
@@ -43,37 +54,46 @@ class _CreateButtonState extends State<CreateDoctorButton> {
         color: icColor,
       ),
     );
-  }
+  }*/
 
   void _clickLikeButton() {
-    setState(() {
-      if (_isFavourite) {
-        _isFavourite = false;
-        _favCount -= 1;
-      } else {
-        _isFavourite = true;
-        _favCount += 1;
-      }
-    });
-    doctorClickListener.onDoctorFavClick(widget.doctor);
+    if(isLogin) {
+      setState(() {
+        if (_isFavourite) {
+          _isFavourite = false;
+          _favCount -= 1;
+        } else {
+          _isFavourite = true;
+          _favCount += 1;
+        }
+      });
+      doctorClickListener.onDoctorFavClick(widget.doctor);
+    }else{
+      BaseWidgets.showLoginDialog(context);
+    }
   }
 
   _clickShareButton() {
     setState(() {
-      //share(widget.doctor.shareUrl);
+      Share.share(widget.doctor.shareUrl);
     });
     doctorClickListener.onDoctorShareClick(widget.doctor);
   }
 
   _clickBookMarkButton() {
-    setState(() {
-      if (_isBookMark) {
-        _isBookMark = false;
-      } else {
-        _isBookMark = true;
-      }
-    });
-    doctorClickListener.onDoctorSaveClick(widget.doctor);
+    if(isLogin) {
+      setState(() {
+        if (_isBookMark) {
+          _isBookMark = false;
+        } else {
+          _isBookMark = true;
+        }
+      });
+      doctorClickListener.onDoctorSaveClick(widget.doctor);
+    }
+    else{
+      BaseWidgets.showLoginDialog(context);
+    }
   }
 
   Widget _showActivityCount(String activityCount) {
@@ -96,25 +116,25 @@ class _CreateButtonState extends State<CreateDoctorButton> {
     var favCount = _favCount > 0 ? "$_favCount" : " ";
 
     return new Container(
-        margin: new EdgeInsets.fromLTRB(20.0, 180.0, 10.0, 10.0),
-        alignment: FractionalOffset.center,
+        //margin: new EdgeInsets.fromLTRB(20.0, 180.0, 10.0, 10.0),
+        alignment: FractionalOffset.bottomCenter,
         child: new Row(
           children: <Widget>[
             new InkWell(
               child: new Padding(
-                padding: const EdgeInsets.only(top: 0.0, left: 0.0, right: 5.0),
-                child: _getFloatButton(_favIcon, _favbgColor, _favicColor),
+                padding: const EdgeInsets.only(top: 10.0, left: 0.0, right: 5.0),
+                child: BaseWidgets.getFloatButton(_favIcon, _favbgColor, _favicColor),
               ),
               onTap: _clickLikeButton,
             ),
             new Padding(
                 padding:
-                    const EdgeInsets.only(top: 0.0, bottom: 10.0, right: 15.0),
+                    const EdgeInsets.only(top: 10.0, bottom: 10.0, right: 15.0),
                 child: _showActivityCount(favCount)),
             new InkWell(
               child: new Padding(
-                padding: const EdgeInsets.only(top: 0.0, left: 0.0, right: 0.0),
-                child: _getFloatButton(Icons.share, Colors.white, Colors.grey),
+                padding: const EdgeInsets.only(top: 10.0, left: 0.0, right: 0.0),
+                child: BaseWidgets.getFloatButton(Icons.share, Colors.white, Colors.grey),
               ),
               onTap: _clickShareButton,
             ),
@@ -124,9 +144,9 @@ class _CreateButtonState extends State<CreateDoctorButton> {
             )),
             new InkWell(
               child: new Padding(
-                padding: const EdgeInsets.only(top: 0.0, left: 0.0, right: 0.0),
+                padding: const EdgeInsets.only(top: 10.0, left: 0.0, right: 0.0),
                 child:
-                    _getFloatButton(_bookMarkIcon, _bookbgColor, _bookicColor),
+                    BaseWidgets.getFloatButton(_bookMarkIcon, _bookbgColor, _bookicColor),
               ),
               onTap: _clickBookMarkButton,
             ),

@@ -1,5 +1,4 @@
 import 'package:intl/intl.dart';
-import 'package:timezone/timezone.dart';
 
 class TimeUtils {
   static String getTime(int seconds) {
@@ -34,6 +33,16 @@ class TimeUtils {
     print('Date Time $d');
     var dateFormat = new DateFormat("MMM dd yyyy' 'hh:mm:ss a");
     return dateFormat.format(d);
+  }
+
+  static String getMonthNameYear(DateTime d){
+    String dateFormat=new DateFormat.yMMMM().format(d);
+    return dateFormat;
+  }
+
+  static String getMonthDayYear(DateTime d){
+    String dateFormat=new DateFormat.yMMMd().format(d);
+    return dateFormat;
   }
 
   static String getTimeZone() {

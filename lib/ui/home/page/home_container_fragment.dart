@@ -7,26 +7,27 @@ import 'package:lyc_clinic/ui/home/page/health_education_page.dart';
 import 'package:lyc_clinic/test/custom_bottom_navigation_bar.dart';
 
 class HomeContainerFragment extends StatefulWidget {
-
+  const HomeContainerFragment({Key key}) : super(key: key);
 
   @override
-  _HomeContainerFragmentState createState() =>
-      new _HomeContainerFragmentState();
+  HomeContainerFragmentState createState() => new HomeContainerFragmentState();
 }
 
-class _HomeContainerFragmentState extends State<HomeContainerFragment> with SingleTickerProviderStateMixin {
+class HomeContainerFragmentState extends State<HomeContainerFragment>
+    with SingleTickerProviderStateMixin {
   static const String PREF_KEY_TAB_INDEX = "pref_key_tab_index";
   TabController controller;
 
   HomeContainerFragment() {
-    controller?.dispose();
-    controller = new TabController(length: 2, vsync: this, initialIndex: 0);
+    //controller?.dispose();
+    //controller = new TabController(length: 2, initialIndex: 0);
   }
+
 
   @override
   void initState() {
     super.initState();
-    controller = new TabController(length: 2, vsync: this, initialIndex: 0);
+    controller = new TabController(length: 2, initialIndex: 0, vsync: this);
   }
 
   @override
@@ -47,45 +48,40 @@ class _HomeContainerFragmentState extends State<HomeContainerFragment> with Sing
     return tabIndex != null ? tabIndex : controller?.index;
   }
 
-
   @override
   Widget build(BuildContext context) {
-    if (controller == null) {
-      controller = new TabController(length: 2, vsync: this);
-    }
+    /* if (controller == null) {
+      controller = new TabController(length: 2,vsync: this);
+    }*/
+    print('Index Change Status>>${controller
+        .indexIsChanging} and previous index>>${controller.previousIndex}');
 
     return new Scaffold(
-        appBar: new PreferredSize(
-
-          preferredSize: new Size.fromHeight(kTextTabBarHeight),
-          child: new Material(
-            color: Colors.white,
-            elevation: 4.0,
-            child: new TabBar(
-              controller: controller,
-              isScrollable: true,
-              labelStyle: new TextStyle(
-                  fontWeight: FontWeight.bold, fontSize: 16.0),
-              tabs: <Tab>[
-                new Tab(text: 'Home'),
-                new Tab(text: 'Health & Education')
-              ],
-              labelColor: Colors.orange,
-              unselectedLabelColor: Colors.grey,
-              indicatorColor: Colors.orange,
-
-            ),
+      appBar: new PreferredSize(
+        preferredSize: new Size.fromHeight(kTextTabBarHeight),
+        child: new Material(
+          color: Colors.white,
+          elevation: 4.0,
+          child: new TabBar(
+            controller: controller,
+            isScrollable: true,
+            labelStyle:
+            new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+            tabs: <Tab>[
+              new Tab(text: 'Home'),
+              new Tab(text: 'Health & Education')
+            ],
+            labelColor: Colors.orange,
+            unselectedLabelColor: Colors.grey,
+            indicatorColor: Colors.orange,
           ),
         ),
-        body: new TabBarView(
-          children: <Widget>[
-            new HomePage(),
-            new HealthEducationPage()
-          ],
-          controller: controller,
-
-        ),
-      bottomNavigationBar:new CustomBottomNavigationBar() ,
+      ),
+      body: new TabBarView(
+        children: <Widget>[new HomePage(), new HealthEducationPage()],
+        controller: controller,
+      ),
+      bottomNavigationBar: new CustomBottomNavigationBar(),
     );
 
     /*return new DefaultTabController(
@@ -137,4 +133,3 @@ class _HomeContainerFragmentState extends State<HomeContainerFragment> with Sing
     );*/
   }
 }
-

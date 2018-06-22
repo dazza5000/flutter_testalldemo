@@ -12,6 +12,7 @@ import 'package:lyc_clinic/ui/home/contract/home_contract.dart';
 import 'package:lyc_clinic/utils/configs.dart';
 import 'package:lyc_clinic/ui/doctors/widget/create_doctor_buttons.dart';
 import 'package:lyc_clinic/utils/mySharedPreferences.dart';
+import 'package:lyc_clinic/test/home_page.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -27,41 +28,54 @@ class HomePageState extends State<HomePage>
   List<Doctor> doctorList = new List<Doctor>();
   List<BannerData> bannerList = new List<BannerData>();
   String accessCode;
-  bool isGuest = false;
-  bool isLogin = false;
+  bool isGuest = true;
+  bool isLogin ;
   MySharedPreferences mySharedPreferences = new MySharedPreferences();
 
   HomePageState() {
     mPresenter = new HomePresenter(this);
-    mySharedPreferences
-        .getBooleanData(Configs.PREF_USER_LOGIN)
-        .then((val) => setState(() {
-              isLogin = val;
-            }));
   }
+
 
   @override
   void initState() {
     super.initState();
-    if (isLogin) {
-      isGuest = false;
+    print('initial state');
+    mySharedPreferences
+        .getBooleanData(Configs.PREF_USER_LOGIN)
+        .then((val) => setState(() {
+      isLogin = val!=null?val:false;
+      _getAccessCode(isLogin);
+    }));
+  }
+
+  _getAccessCode(bool login){
+    if (login) {
       mySharedPreferences
           .getStringData(Configs.PREF_USER_ACCESSCODE)
           .then((val) => setState(() {
-                accessCode = val;
-              }));
+        accessCode = val;
+        isGuest = false;
+        getHomeData();
+      }));
     } else {
-      isGuest = true;
-      accessCode = Configs.GUEST_CODE;
+      setState(() {
+        isGuest = true;
+        accessCode = Configs.GUEST_CODE;
+        getHomeData();
+      });
     }
     print('AccessCode$accessCode And IsGuest $isGuest');
+  }
+
+  void getHomeData() {
     mPresenter.getService(accessCode);
     mPresenter.getDoctor(accessCode, 3);
     mPresenter.getBanner(accessCode);
   }
 
   _clickSeeMore(BuildContext context) {
-    Navigator.push(
+    Navigator.pop(
         context, new MaterialPageRoute(builder: (_) => new DoctorListPage()));
   }
 
@@ -96,7 +110,7 @@ class HomePageState extends State<HomePage>
 
   _showDoctorLists() {
     if (doctorList.length > 0) {
-      return new DoctorLists(doctorList);
+      return new DoctorLists(doctorList,this);
     } else {
       return new Container(
         child: new Center(
@@ -114,11 +128,14 @@ class HomePageState extends State<HomePage>
           child: new Row(
             children: <Widget>[
               new Expanded(
-                  child: new MaterialButton(
+                  child: new RaisedButton(
                 padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
                 child: new Text(
                   'SEE MORE',
                   style: MyStyle.buttonTextStyle(),
+                ),
+                shape: new RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(7.0)
                 ),
                 onPressed: () => _clickSeeMore(context),
                 color: MyStyle.colorAccent,
@@ -136,32 +153,34 @@ class HomePageState extends State<HomePage>
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
+        backgroundColor: MyStyle.layoutBackground,
         body: new SingleChildScrollView(
-      controller: new ScrollController(),
-      scrollDirection: Axis.vertical,
-      child: new Padding(
-          padding: const EdgeInsets.all(5.0),
-          child: new Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              _showImageBanner(),
-              new Padding(
-                padding: const EdgeInsets.only(left: 10.0, top: 15.0),
-                child: new Text('ဝန္ေဆာင္မွုမ်ား', textAlign: TextAlign.left),
-              ),
-              _showServices(),
-              new Padding(
-                padding: const EdgeInsets.only(left: 10.0, top: 15.0),
-                child: new Text(
-                  'ျပသေဆြးေႏြးႏိုင္ေသာဆရာဝန္မ်ား',
-                  textAlign: TextAlign.left,
-                ),
-              ),
-              _showDoctorLists(),
-              _showLoadMoreButton()
-            ],
-          )),
-    ));
+          controller: new ScrollController(),
+          scrollDirection: Axis.vertical,
+          child: new Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: new Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  _showImageBanner(),
+                  new Padding(
+                    padding: const EdgeInsets.only(left: 10.0, top: 15.0),
+                    child:
+                        new Text('ဝန္ေဆာင္မွုမ်ား', textAlign: TextAlign.left),
+                  ),
+                  _showServices(),
+                  new Padding(
+                    padding: const EdgeInsets.only(left: 10.0, top: 15.0),
+                    child: new Text(
+                      'ျပသေဆြးေႏြးႏိုင္ေသာဆရာဝန္မ်ား',
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
+                  _showDoctorLists(),
+                  _showLoadMoreButton()
+                ],
+              )),
+        ));
   }
 
   @override
@@ -236,19 +255,19 @@ class HomePageState extends State<HomePage>
   @override
   void onDoctorShareClick(Doctor doctor) {
     print('Doctor Share Click');
-    mPresenter.shareDoctor(Configs.TEST_CODE, doctor.id);
+    mPresenter.shareDoctor(accessCode, doctor.id);
   }
 
   @override
   void onDoctorFavClick(Doctor doctor) {
     print('Doctor Fav Click');
-    mPresenter.favDoctor(Configs.TEST_CODE, doctor.id);
+    mPresenter.favDoctor(accessCode, doctor.id);
   }
 
   @override
   void onDoctorSaveClick(Doctor doctor) {
     print('Doctor Save Click');
-    mPresenter.saveDoctor(Configs.TEST_CODE, doctor.id);
+    mPresenter.saveDoctor(accessCode, doctor.id);
   }
 
   @override

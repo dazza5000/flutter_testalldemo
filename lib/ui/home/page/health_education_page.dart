@@ -3,7 +3,7 @@ import 'package:lyc_clinic/ui/home/page/health_education_page.dart';
 import 'package:lyc_clinic/ui/article/widget/create_feature_article_items.dart';
 import 'package:lyc_clinic/ui/home/widget/article_lists.dart';
 import 'package:lyc_clinic/ui/article/data/article.dart';
-import 'package:lyc_clinic/ui/home/page/filter_health_education_dialog_fragment.dart';
+import 'package:lyc_clinic/ui/home/page/article_filter_dialog_page.dart';
 import 'package:lyc_clinic/ui/home/presenter/health_education_presenter.dart';
 import 'package:lyc_clinic/ui/home/contract/health_education_contract.dart';
 import 'package:lyc_clinic/base/data/pagination.dart';
@@ -30,28 +30,35 @@ class HealthEducationPageState extends State<HealthEducationPage>
 
   HealthEducationPageState() {
     mPresenter = new HealthEducationPresenter(this);
-    mySharedPreferences
-        .getBooleanData(Configs.PREF_USER_LOGIN)
-        .then((val) => setState(() {
-              isLogin = val;
-            }));
   }
 
   @override
   void initState() {
     super.initState();
-    if (isLogin) {
+    mySharedPreferences
+        .getBooleanData(Configs.PREF_USER_LOGIN)
+        .then((val) => setState(() {
+              isLogin = val;
+              _getAccessCode(isLogin);
+            }));
+  }
+
+  _getAccessCode(bool login) {
+    if (login) {
       isGuest = false;
       mySharedPreferences
           .getStringData(Configs.PREF_USER_ACCESSCODE)
           .then((val) => setState(() {
+                isGuest = false;
                 accessCode = val;
+                mPresenter.getArticles(accessCode, 1, null, 2);
               }));
     } else {
       isGuest = true;
       accessCode = Configs.GUEST_CODE;
+      mPresenter.getArticles(accessCode, 1, null, 2);
     }
-    mPresenter.getArticles(accessCode, 1, null, 2);
+    print('islogin>>$isLogin And isGuest>>$isGuest');
   }
 
   Widget loadingIndicator = new Container(
@@ -78,12 +85,24 @@ class HealthEducationPageState extends State<HealthEducationPage>
       body: new Container(
         color: MyStyle.layoutBackground,
         padding: const EdgeInsets.all(10.0),
-        child: new SingleChildScrollView(
-          controller: new ScrollController(),
-          scrollDirection: Axis.vertical,
-          child: new Column(
-            children: <Widget>[
-              new Padding(
+        child: new Stack(
+          children: <Widget>[
+            new SingleChildScrollView(
+              controller: new ScrollController(),
+              scrollDirection: Axis.vertical,
+              child: new Container(
+                margin: const EdgeInsets.only(top: 30.0),
+                child: new Column(
+                  children: <Widget>[
+                    new CreateFeatureArticles(),
+                    showArticleList()
+                  ],
+                ),
+              ),
+            ),
+            new Align(
+              alignment: FractionalOffset.topRight,
+              child: new Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: new Row(
                   children: <Widget>[
@@ -116,10 +135,8 @@ class HealthEducationPageState extends State<HealthEducationPage>
                   ],
                 ),
               ),
-              new CreateFeatureArticles(),
-              showArticleList()
-            ],
-          ),
+            )
+          ],
         ),
       ),
     );
@@ -161,19 +178,19 @@ class HealthEducationPageState extends State<HealthEducationPage>
   @override
   void onArticleShareClick(Article article) {
     print('Article Share Click');
-    mPresenter.setShare(Configs.TEST_CODE, article.id);
+    mPresenter.setShare(accessCode, article.id);
   }
 
   @override
   void onArticleFavClick(Article article) {
     print('Article Fav Click');
-    mPresenter.setFavourite(Configs.TEST_CODE, article.id);
+    mPresenter.setFavourite(accessCode, article.id);
   }
 
   @override
   void onArticleSaveClick(Article article) {
     print('Article Save Click');
-    mPresenter.saveArticle(Configs.TEST_CODE, article.id);
+    mPresenter.saveArticle(accessCode, article.id);
   }
 
   @override

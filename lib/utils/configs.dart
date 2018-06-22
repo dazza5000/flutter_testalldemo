@@ -1,6 +1,7 @@
 class Configs {
   static final String VERSION_NO = "v1.0";
-  static final String YOUTUBE_API_KEY = "AIzaSyDrpWU3oCQvrDwI-69uyGFJKi2sW9wsewY";
+  static final String YOUTUBE_API_KEY = "AIzaSyBGUKmOdeko8CL1pEblqW-aFFVHP0k7ddQ";
+  //static final String YOUTUBE_API_KEY = "AIzaSyDrpWU3oCQvrDwI-69uyGFJKi2sW9wsewY";
   static final String LYC_URL = "https://api.linyaungchi.com/";
   static final String GUEST_CODE = "a6beec63beb22f1ac2e6ebf78e45a66f";
   static final String TEST_CODE="0c51e0e4f89c7bf304b9f5161d2d0d5caa169b49b583a2b5af89203c2b78c67c85db0963df4e9046f9e9974deafde5bf903";

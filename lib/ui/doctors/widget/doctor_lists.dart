@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lyc_clinic/ui/doctors/data/doctor.dart';
 import 'package:lyc_clinic/ui/doctors/widget/create_doctor_buttons.dart';
 import 'package:lyc_clinic/ui/doctors/widget/create_doctor_item.dart';
+import 'package:lyc_clinic/base/mystyle.dart';
 
 class DoctorLists extends StatelessWidget{
 
@@ -10,8 +11,6 @@ class DoctorLists extends StatelessWidget{
 
   DoctorLists(this.doctors,[this.listener]);
 
-  List<String> scheduleArr = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  List<Widget> widgets;
 
 
   Widget _buildDoctorLists(BuildContext context, int index) {
@@ -22,6 +21,10 @@ class DoctorLists extends StatelessWidget{
         new CreateDoctorItem(doctor),
         //Floating Action Button
         new Positioned(
+          top: 0.0,
+          bottom: 5.0,
+          left: 10.0,
+          right: 10.0,
           child: new CreateDoctorButton(doctor,listener),)
       ],
     );

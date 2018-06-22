@@ -9,12 +9,13 @@ import 'package:lyc_clinic/ui/otheruser/page/other_user_page.dart';
 import 'package:lyc_clinic/ui/comment/contract/comment_reply_contract.dart';
 import 'package:lyc_clinic/ui/comment/presenter/comment_reply_presenter.dart';
 import 'package:lyc_clinic/utils/configs.dart';
+import 'package:lyc_clinic/utils/mySharedPreferences.dart';
 
 class CommentReplyDialogPage extends StatefulWidget {
   Review review;
   String headerTime;
 
-  CommentReplyDialogPage(this.review,this.headerTime);
+  CommentReplyDialogPage(this.review, this.headerTime);
 
   @override
   CommentReplyDialogPageState createState() {
@@ -29,21 +30,57 @@ class CommentReplyDialogPageState extends State<CommentReplyDialogPage>
   bool isWriting = false;
   int mReplyId = 0;
   String message;
+  String accessCode;
+  bool isGuest = false;
+  bool isLogin = false;
+  bool isLoading = true;
+  MySharedPreferences mySharedPreferences = new MySharedPreferences();
   List<Reply> replyList = new List<Reply>();
 
   CommentReplyDialogPageState() {
     mPresenter = new CommentReplyPresenter(this);
+    mySharedPreferences
+        .getBooleanData(Configs.PREF_USER_LOGIN)
+        .then((val) => setState(() {
+              isLogin = val != null ? val : false;
+            }));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (isLogin) {
+      isGuest = false;
+      mySharedPreferences
+          .getStringData(Configs.PREF_USER_ACCESSCODE)
+          .then((val) => setState(() {
+                accessCode = val;
+              }));
+    } else {
+      isGuest = true;
+      accessCode = Configs.GUEST_CODE;
+    }
+
+    if (widget.review.article != null) {
+      print('Article');
+      mPresenter.getArticleCommentReply(
+          accessCode, widget.review.article, widget.review.id);
+    } else {
+      mPresenter.getCommentReply(
+          accessCode, widget.review.doctor, widget.review.id);
+    }
   }
 
   _sendReplyClick() {
     if (message != null && message.length > 0) {
       if (widget.review.doctor != null) {
         print('Doctor Reply Messages is $message');
-        mPresenter.submitReply(Configs.TEST_CODE, widget.review.doctor,
+        mPresenter.submitReply(accessCode, widget.review.doctor,
             widget.review.id, message, mReplyId);
       } else {
-        print('ArticleReply Messages is ${message} Article Id${widget.review.article}');
-        mPresenter.submitArticleReply(Configs.TEST_CODE, widget.review.article,
+        print('ArticleReply Messages is ${message} Article Id${widget.review
+            .article}');
+        mPresenter.submitArticleReply(accessCode, widget.review.article,
             widget.review.id, message, mReplyId);
       }
     } else {}
@@ -59,7 +96,7 @@ class CommentReplyDialogPageState extends State<CommentReplyDialogPage>
 
   Widget _buildReplyItem(BuildContext context, int index) {
     Reply reply = replyList[index];
-    return new CommentReplyItemWidget(reply, index,widget.review, this);
+    return new CommentReplyItemWidget(reply, index, widget.review, this);
   }
 
   Widget _getReplyHeader(Review review) {
@@ -125,7 +162,7 @@ class CommentReplyDialogPageState extends State<CommentReplyDialogPage>
             child: new Row(children: <Widget>[
               new Flexible(
                   child: new TextField(
-                      style: MyStyle.captionTextStyle(),
+                      style: MyStyle.titleTextStyle(),
                       controller: _textEditingController,
                       onChanged: _submitMessage,
                       onSubmitted: _submitMessage,
@@ -146,19 +183,6 @@ class CommentReplyDialogPageState extends State<CommentReplyDialogPage>
         context,
         new MaterialPageRoute(
             builder: (_) => new OtherUserPage(widget.review.user)));
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    if (widget.review.article != null) {
-      print('Article');
-      mPresenter.getArticleCommentReply(
-          Configs.TEST_CODE, widget.review.article, widget.review.id);
-    } else {
-      mPresenter.getCommentReply(
-          Configs.TEST_CODE, widget.review.doctor, widget.review.id);
-    }
   }
 
   @override
@@ -190,14 +214,19 @@ class CommentReplyDialogPageState extends State<CommentReplyDialogPage>
                   controller: new ScrollController(),
                 ),
               ),
-              new Divider(
-                height: 2.0,
-                color: MyStyle.colorBlack,
+              new Opacity(
+                opacity: isLogin ? 1.0 : 0.0,
+                child: new Divider(
+                  height: 2.0,
+                  color: MyStyle.colorBlack,
+                ),
               ),
-              new Container(
-                  decoration:
-                      new BoxDecoration(color: MyStyle.layoutBackground),
-                  child: _buildTextComposer())
+              new Opacity(
+                  opacity: isLogin ? 1.0 : 0.0,
+                  child: new Container(
+                      decoration:
+                          new BoxDecoration(color: MyStyle.layoutBackground),
+                      child: _buildTextComposer()))
             ]));
   }
 

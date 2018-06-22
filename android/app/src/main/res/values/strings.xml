@@ -3,8 +3,8 @@
     <string name="app_name">LYC</string>
 
     <!-- Replace "000000000000" with your Facebook App ID here. -->
-    <string name="facebook_app_id">243032576469614</string>
+    <string name="facebook_app_id">1740075076002992</string>
 
     <!-- Replace "000000000000" with your Facebook App ID here. -->
-    <string name="fb_login_protocol_scheme">fb243032576469614</string>
+    <string name="fb_login_protocol_scheme">fb1740075076002992</string>
 </resources>

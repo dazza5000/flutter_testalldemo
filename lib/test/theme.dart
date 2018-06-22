@@ -5,12 +5,12 @@ import 'package:lyc_clinic/base/mystyle.dart';
 
 final ThemeData themeData = new ThemeData(
     brightness: Brightness.light,
+    disabledColor: Colors.green,
     primaryColorDark: MyStyle.colorPrimaryDark,
     textSelectionColor: MyStyle.colorAccent,
     textSelectionHandleColor:Colors.blue,
     cardColor: Colors.white,
-    canvasColor: Colors.transparent,
-    dividerColor: Colors.grey[300],
+    dividerColor: MyStyle.colorDarkGrey,
     backgroundColor: Colors.grey[100],
     primaryColor: MyStyle.colorPrimary,
     primaryColorBrightness: Brightness.light,
@@ -20,7 +20,7 @@ final ThemeData themeData = new ThemeData(
     primaryIconTheme: const IconThemeData(color: Colors.white),
     highlightColor: MyStyle.layoutBackground,
     fontFamily: 'Zawgyi-One',
-    accentIconTheme: const IconThemeData(color: Colors.white));
+    accentIconTheme: const IconThemeData(color: Colors.green));
 
 class _MyColors {
   _MyColors._(); // this basically makes it so you can instantiate this class

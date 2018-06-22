@@ -4,7 +4,6 @@ import 'package:lyc_clinic/utils/configs.dart';
 
 class MySharedPreferences {
   MySharedPreferences() {
-    //_prefs = getSharePreferences();
   }
 
   getSharePreferences() async {
@@ -52,9 +51,9 @@ class MySharedPreferences {
     return _prefs.getInt(key);
   }
 
-  Future<bool> getBooleanData(String key) async {
+  Future<bool> getBooleanData(String key) async{
     SharedPreferences _prefs = await SharedPreferences.getInstance();
-    return _prefs.getBool(key);
+    return _prefs.getBool(key)??false;
   }
 
   Future<double> getDoubleData(String key) async {
@@ -62,14 +61,36 @@ class MySharedPreferences {
     return _prefs.getDouble(key);
   }
 
-  bool isLogin() {
-    bool isLogin = false;
-    getBooleanData(Configs.PREF_USER_LOGIN).then((val) {
-      isLogin = val;
+
+  bool getDataBoolean(String key){
+    bool result;
+    getBooleanData(key).then((val){
+      result=val??false;
     });
-    return isLogin;
+    return result;
   }
-/* getData(String key) {
-    return _prefs.get(key);
-  }*/
+
+  String getDataString(String key){
+    String result;
+    getStringData(key).then((val){
+      result=val??"";
+    });
+    return result;
+  }
+
+  int getDataInteger(String key){
+    int result;
+    getIntData(key).then((val){
+      result=val??0;
+    });
+    return result;
+  }
+
+  double getDataDouble(String key){
+    double result;
+    getDoubleData(key).then((val){
+      result=val??0.0;
+    });
+    return result;
+  }
 }

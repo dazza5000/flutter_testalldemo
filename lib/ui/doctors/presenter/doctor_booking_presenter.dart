@@ -17,9 +17,27 @@ class DoctorBookingPresenter {
     }).catchError(() => _view.onLoadError());
   }
 
-  void checkBooking(String accessCode,int doctorId,DateTime date,List<Schedule> scheduleList){
-    _repository.checkBooking(accessCode, doctorId, date, scheduleList).then((ab){
+  void checkBooking(String accessCode, int doctorId, DateTime date,
+      List<Schedule> scheduleList) {
+    _repository
+        .checkBooking(accessCode, doctorId, date, scheduleList)
+        .then((ab) {
+      _view.showBookingDetail(ab);
       _view.showMessage('Hello Message');
     }).catchError(() => _view.onLoadError());
+  }
+
+  void requestBooking(
+      String accessCode, int doctorId, int schedule, String date) {
+    _repository.requestBooking(accessCode, doctorId, schedule, date).then((br) {
+      getBookingDetail(accessCode, doctorId);
+    }).catchError((e) => print(e.toString()));
+  }
+
+  void cancelBooking(String accessCode, int doctorId, int bookingId) {
+    _repository.cancelBooking(accessCode, doctorId, bookingId).then((m) {
+      _view.showMessage(m.mesg);
+      _view.removeBooking();
+    }).catchError((e) => print(e.toString()));
   }
 }

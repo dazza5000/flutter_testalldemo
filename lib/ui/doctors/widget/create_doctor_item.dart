@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:lyc_clinic/ui/doctors/data/doctor.dart';
 import 'package:lyc_clinic/ui/doctors/page/doctor_details_page.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
+import 'package:lyc_clinic/ui/doctors/widget/create_session_items.dart';
+import 'package:lyc_clinic/ui/doctors/data/schedule.dart';
 
 class CreateDoctorItem extends StatelessWidget {
   CreateDoctorItem(this.doctor);
@@ -18,41 +20,72 @@ class CreateDoctorItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new Container(
-        child: new InkWell(
-            onTap: () => _navigatorToDoctorDetails(context),
-            child: new Card(
-              color: Colors.white,
+        child: new Column(
+      children: <Widget>[
+        new InkWell(
+          onTap: () => _navigatorToDoctorDetails(context),
+          child: new Card(
+            color: Colors.white,
+            child: new Container(
               child: new Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   new Container(
+                    padding: const EdgeInsets.only(
+                        left: 5.0, right: 5.0),
                     color: MyStyle.colorLightGrey,
-                    child: new Center(
-                      child: new Text(
-                        doctor.role,
-                        style: new TextStyle(
-                          fontSize: 16.0,
-                        ),
-                        textAlign: TextAlign.left,
+                    child: new Text(
+                      doctor.role,
+                      style: new TextStyle(
+                        fontSize: MyStyle.xmedium_fontSize,
                       ),
+                      textAlign: TextAlign.left,
                     ),
                     height: 40.0,
                   ),
-                  new Text(doctor.name, style: new TextStyle(fontSize: 16.0)),
-                  new Text(doctor.degree,
+                  new Padding(
+                    padding: const EdgeInsets.only(left: 5.0),
+                    child: new Text(
+                      doctor.name,
                       style: new TextStyle(
-                          fontSize: 14.0, fontWeight: FontWeight.bold)),
-                  new Divider(
-                    height: 2.0,
-                    color: Colors.grey,
-                    indent: 3.0,
+                        fontSize: MyStyle.xmedium_fontSize,
+                      ),
+                      textAlign: TextAlign.left,
+                    ),
                   ),
-                  _scheduleWidget(),
+                  new Padding(
+                    padding: const EdgeInsets.only(left: 5.0),
+                    child: new Text(
+                      doctor.degree,
+                      style: new TextStyle(
+                          fontSize: MyStyle.small_fontSize,
+                          fontWeight: FontWeight.normal),
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
+                  new Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: new Divider(
+                      height: 2.0,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  new SessionItems(),
                   new Container(
-                      child: new Padding(
-                          padding: const EdgeInsets.only(top: 20.0))),
+                    height: 15.0,
+                    color: MyStyle.colorWhite,
+                  ),
                 ],
               ),
-            )));
+            ),
+          ),
+        ),
+        new Container(
+          height: 20.0,
+          color: MyStyle.layoutBackground,
+        ),
+      ],
+    ));
   }
 
   _scheduleWidget() {

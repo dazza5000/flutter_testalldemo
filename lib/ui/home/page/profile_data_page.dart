@@ -5,11 +5,11 @@ import 'package:lyc_clinic/ui/home/page/user_booking_list_page.dart';
 import 'package:lyc_clinic/ui/home/page/user_saved_list_page.dart';
 import 'package:lyc_clinic/ui/home/page/user_profile_info_page.dart';
 
-
 class ProfileDataPage extends StatefulWidget {
-  int tabIndex;
+  final int tabIndex;
 
-  ProfileDataPage({Key key, this.tabIndex}) : super(key: key);
+  const ProfileDataPage({Key key, this.tabIndex}) : super(key: key);
+
 
   @override
   ProfileDataPageState createState() {
@@ -18,22 +18,56 @@ class ProfileDataPage extends StatefulWidget {
 }
 
 class ProfileDataPageState extends State<ProfileDataPage>
-    with TickerProviderStateMixin
-{
+    with SingleTickerProviderStateMixin {
   TabController controller;
 
-
   ProfileDataPage() {
-    controller?.dispose();
-    controller = new TabController(
-        length: 4, vsync: this, initialIndex: widget.tabIndex);
+    //controller?.dispose();
+    //controller = new TabController(
+    //  length: 4, initialIndex: widget.tabIndex);
+    //new TabController(
+    //  length: 4, vsync: this, initialIndex: widget.tabIndex);
+  }
+
+
+  @override
+  void reassemble() {
+
+  }
+
+
+  @override
+  void setState(VoidCallback fn) {
+
+  }
+
+
+  @override
+  void didUpdateWidget(ProfileDataPage oldWidget) {
+
+  }
+
+  @override
+  void deactivate() {
+
   }
 
   @override
   void initState() {
     super.initState();
     controller = new TabController(
-        length: 4, vsync: this, initialIndex: widget.tabIndex);
+        vsync: this, length: 4, initialIndex: widget.tabIndex);
+    controller.addListener(_handleTabSelection);
+  }
+
+  void _handleTabSelection() {
+    setState(() {
+      //_selectedTab = MyWidgetTabs.values[_tabController.index];
+      print("Changed tab to: ${widget.tabIndex
+              .toString()
+              .split('.')
+              .last} , index: ${controller.index}");
+    });
   }
 
   @override
@@ -46,8 +80,8 @@ class ProfileDataPageState extends State<ProfileDataPage>
   void didChangeDependencies() {
     if (controller.index != widget.tabIndex) {
       setState(() {
-        controller = new TabController(
-            length: 4, vsync: this, initialIndex: widget.tabIndex);
+        controller =
+            new TabController(length: 4, initialIndex: widget.tabIndex,vsync: this);
       });
     }
   }
@@ -87,6 +121,4 @@ class ProfileDataPageState extends State<ProfileDataPage>
       ], controller: controller),
     );
   }
-
-
 }

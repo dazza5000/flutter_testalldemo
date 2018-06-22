@@ -18,7 +18,16 @@ class DoctorProfilePresetner {
       _view.setFavoriteStatus(dp.doctor.fav, dp.doctor.favCount);
       _view.setSaveStatus(dp.doctor.save);
       _view.showReviews(dp.reviews);
-      }).catchError((e) => print('Go To Error ${e.toString()}'));
+    }).catchError((e) => print('Go To Error ${e.toString()}'));
+  }
 
+  void saveDoctor(String accessCode, int doctorId) {
+    _repository.save(accessCode, doctorId).then((m) {_view.setSaveStatus(m.status);
+    }).catchError((e) => print(e.toString()));
+  }
+
+  void favDoctor(String accessCode,int doctorId){
+    _repository.setFavorite(accessCode, doctorId).then((m){
+    });
   }
 }

@@ -18,6 +18,8 @@ import 'package:lyc_clinic/ui/home/repository/user_activity_repository.dart';
 import 'package:lyc_clinic/ui/home/repository/user_activity_data_repository.dart';
 import 'package:lyc_clinic/ui/article/repository/article_details_repository.dart';
 import 'package:lyc_clinic/ui/article/repository/article_details_data_repository.dart';
+import 'package:lyc_clinic/ui/article/repository/video_details_repository.dart';
+import 'package:lyc_clinic/ui/article/repository/video_details_data_repository.dart';
 import 'package:lyc_clinic/ui/comment/repository/comment_reply_repository.dart';
 import 'package:lyc_clinic/ui/comment/repository/comment_reply_data_repository.dart';
 import 'package:lyc_clinic/ui/comment/repository/comment_repository.dart';
@@ -42,6 +44,8 @@ import 'package:lyc_clinic/ui/comment/repository/comment_eidt_data_repository.da
 import 'package:lyc_clinic/ui/comment/repository/comment_eidt_repository.dart';
 import 'package:lyc_clinic/ui/home/repository/profile_info_repository.dart';
 import 'package:lyc_clinic/ui/home/repository/profile_info_data_repository.dart';
+import 'package:lyc_clinic/ui/login/repository/login_repository.dart';
+import 'package:lyc_clinic/ui/login/repository/login_data_repository.dart';
 
 class Injector {
   static final Injector _singleton = new Injector._internal();
@@ -92,6 +96,10 @@ class Injector {
     return new ArticleDetailsDataRepository();
   }
 
+  VideoDetailsRepository get videoDetailsRepository {
+    return new VideoDetailsDataRepository();
+  }
+
   CommentReplyRepository get commentReplyRepository {
     return new CommentReplyDataRepository();
   }
@@ -138,6 +146,10 @@ class Injector {
 
   ProfileInfoRepository get profileInfoRepository {
     return new ProfileInfoDataRepository();
+  }
+
+  LoginRepository get loginRepository{
+    return new LoginDataRepository();
   }
 
 }

@@ -1,5 +1,18 @@
 PODS:
+  - Bolts (1.9.0):
+    - Bolts/AppLinks (= 1.9.0)
+    - Bolts/Tasks (= 1.9.0)
+  - Bolts/AppLinks (1.9.0):
+    - Bolts/Tasks
+  - Bolts/Tasks (1.9.0)
+  - FBSDKCoreKit (4.33.0):
+    - Bolts (~> 1.7)
+  - FBSDKLoginKit (4.33.0):
+    - FBSDKCoreKit
   - Flutter (1.0.0)
+  - flutter_facebook_login (0.0.1):
+    - FBSDKLoginKit (~> 4.29)
+    - Flutter
   - GoogleMaps (2.7.0):
     - GoogleMaps/Maps (= 2.7.0)
   - GoogleMaps/Base (2.7.0)
@@ -10,6 +23,8 @@ PODS:
   - map_view (0.0.1):
     - Flutter
     - GoogleMaps
+  - share (0.5.2):
+    - Flutter
   - shared_preferences (0.0.1):
     - Flutter
   - url_launcher (0.0.1):
@@ -19,19 +34,32 @@ PODS:
 
 DEPENDENCIES:
   - Flutter (from `Pods/.symlinks/flutter/ios`)
-  - image_picker (from `Pods/.symlinks/plugins/image_picker-0.4.4/ios`)
+  - flutter_facebook_login (from `Pods/.symlinks/plugins/flutter_facebook_login-1.1.1/ios`)
+  - image_picker (from `Pods/.symlinks/plugins/image_picker-0.4.5/ios`)
   - map_view (from `Pods/.symlinks/plugins/map_view-0.0.12/ios`)
+  - share (from `Pods/.symlinks/plugins/share-0.5.2/ios`)
   - shared_preferences (from `Pods/.symlinks/plugins/shared_preferences-0.4.2/ios`)
   - url_launcher (from `Pods/.symlinks/plugins/url_launcher-3.0.2/ios`)
   - video_player (from `Pods/.symlinks/plugins/video_player-0.5.4/ios`)
 
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - Bolts
+    - FBSDKCoreKit
+    - FBSDKLoginKit
+    - GoogleMaps
+
 EXTERNAL SOURCES:
   Flutter:
     :path: Pods/.symlinks/flutter/ios
+  flutter_facebook_login:
+    :path: Pods/.symlinks/plugins/flutter_facebook_login-1.1.1/ios
   image_picker:
-    :path: Pods/.symlinks/plugins/image_picker-0.4.4/ios
+    :path: Pods/.symlinks/plugins/image_picker-0.4.5/ios
   map_view:
     :path: Pods/.symlinks/plugins/map_view-0.0.12/ios
+  share:
+    :path: Pods/.symlinks/plugins/share-0.5.2/ios
   shared_preferences:
     :path: Pods/.symlinks/plugins/shared_preferences-0.4.2/ios
   url_launcher:
@@ -40,14 +68,19 @@ EXTERNAL SOURCES:
     :path: Pods/.symlinks/plugins/video_player-0.5.4/ios
 
 SPEC CHECKSUMS:
+  Bolts: ac6567323eac61e203f6a9763667d0f711be34c8
+  FBSDKCoreKit: 572b047a7e029bc44542bcf8a59414e7ff2b543e
+  FBSDKLoginKit: 88cb456349cfb3b554427ce4f8b43729d85dfb40
   Flutter: 9d0fac939486c9aba2809b7982dfdbb47a7b0296
+  flutter_facebook_login: e3d2f0a348889fe0f49c302bc044b8cc66c691be
   GoogleMaps: f79af95cb24d869457b1f961c93d3ce8b2f3b848
   image_picker: ee00aab0487cedc80a304085219503cc6d0f2e22
   map_view: da5875d2bc7b2871e4b7ed3e9e8e4509fc62d7bd
+  share: 222b5dcc8031238af9d7de91149df65bad1aef75
   shared_preferences: 5a1d487c427ee18fcd3ea1f2a131569481834b53
   url_launcher: 92b89c1029a0373879933c21642958c874539095
   video_player: 906796a841943c8d370ac7c13b18039aa9b56498
 
 PODFILE CHECKSUM: 70e69985f01fdaffe3180d3ae5e73472304a9371
 
-COCOAPODS: 1.4.0
+COCOAPODS: 1.5.3

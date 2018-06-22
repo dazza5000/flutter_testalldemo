@@ -10,6 +10,7 @@ import 'package:lyc_clinic/ui/comment/data/review.dart';
 import 'package:lyc_clinic/ui/comment/data/reply.dart';
 import 'package:lyc_clinic/ui/comment/page/comment_edit_dialog_page.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
+import 'package:lyc_clinic/utils/mySharedPreferences.dart';
 
 class CommentPage extends StatefulWidget {
   int articleId;
@@ -24,29 +25,37 @@ class CommentPage extends StatefulWidget {
   }
 }
 
-class CommentPageState extends State<CommentPage>
-    with TickerProviderStateMixin
-    implements CommentContract, CommentListener {
+class CommentPageState extends State<CommentPage> with SingleTickerProviderStateMixin
+    implements CommentContract, CommentListener{
   CommentPresenter mPresenter;
   bool isWriting = false;
   List<Review> reviewList = new List<Review>();
   Pagination _pagination;
   String message;
+  String accessCode;
+  bool isGuest = false;
+  bool isLogin = false;
+  bool isLoading = true;
   final _textEditingController = new TextEditingController();
+  MySharedPreferences mySharedPreferences = new MySharedPreferences();
   AnimationController aniController;
 
   CommentPageState() {
     mPresenter = new CommentPresenter(this);
+    mySharedPreferences
+        .getBooleanData(Configs.PREF_USER_LOGIN)
+        .then((val) => setState(() {
+              isLogin = val != null ? val : false;
+            }));
   }
 
   void _sendClick() {
     print('Messages is $message');
-    if (message != null && message.length >0) {
+    if (message != null && message.length > 0) {
       if (widget.isArticle) {
-        mPresenter.submitArticleComment(
-            Configs.TEST_CODE, widget.articleId, message);
+        mPresenter.submitArticleComment(accessCode, widget.articleId, message);
       } else {
-        mPresenter.submitReview(Configs.TEST_CODE, widget.doctorId, message);
+        mPresenter.submitReview(accessCode, widget.doctorId, message);
       }
     } else {}
   }
@@ -65,114 +74,49 @@ class CommentPageState extends State<CommentPage>
     return new CommentItemWidget(c, commentCount, index, aniController, this);
   }
 
-  Widget _buildTextComposer() {
-    return new IconTheme(
-        data: new IconThemeData(color: Theme.of(context).accentColor),
-        child: new Container(
-            margin: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: new Row(children: <Widget>[
-              new Flexible(
-                  child: new TextField(
-                      style: MyStyle.captionTextStyle(),
-                      controller: _textEditingController,
-                      onSubmitted: _submitMessage,
-                      decoration: new InputDecoration.collapsed(
-                          hintText: "Comment ေပးရန္"))),
-              new Container(
-                  child: new IconButton(
-                      icon: new Icon(
-                        Icons.send,
-                        color: MyStyle.colorGreen,
-                      ),
-                      onPressed: _sendClick))
-            ])));
-  }
-
   @override
   void initState() {
     super.initState();
-    aniController = new AnimationController(
-        duration: new Duration(microseconds: 500), vsync: this);
-    if (widget.isArticle) {
-      print('Article');
-      mPresenter.getArticleComments(Configs.TEST_CODE, widget.articleId);
+    aniController = new AnimationController(vsync: this,
+        duration:new Duration(microseconds: 500));
+        //new Duration(microseconds: 500), vsync: this);
+
+    if (isLogin) {
+      isGuest = false;
+      mySharedPreferences
+          .getStringData(Configs.PREF_USER_ACCESSCODE)
+          .then((val) => setState(() {
+                accessCode = val;
+              }));
     } else {
-      mPresenter.getComments(Configs.TEST_CODE, widget.doctorId);
+      isGuest = true;
+      accessCode = Configs.GUEST_CODE;
+    }
+    if (widget.isArticle) {
+      mPresenter.getArticleComments(accessCode, widget.articleId);
+    } else {
+      mPresenter.getComments(accessCode, widget.doctorId);
     }
   }
 
-  /*@override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: new AppBar(
-          backgroundColor: Colors.white,
-          title: new Text(
-            'Comments',
-            style: new TextStyle(color: Colors.black, fontSize: 16.0),
-          ),
-          leading: new IconButton(
-            icon: new Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pop(context, true);
-            },
-            color: Colors.black,
-          ),
+  showLoadingOrData() {
+    if (isLoading) {
+      new Center(
+        child: new CircularProgressIndicator(
+          strokeWidth: 2.0,
         ),
-        body: new Column(
-            children: <Widget>[
-          new Flexible(
-            child: new ListView.builder(
-              itemBuilder: _buildCommentItem,
-              shrinkWrap: true,
-              itemCount: reviewList.length,
-              scrollDirection: Axis.vertical,
-              controller: new ScrollController(),
-            ),
-          ),
-          new Divider(
-            height: 2.0,
-            color: MyStyle.colorBlack,
-          ),
-          new Container(
-              decoration: new BoxDecoration(color: MyStyle.layoutBackground),
-              child: _buildTextComposer())
-        ]));
-
-    */ /*new Align(
-              alignment: FractionalOffset.bottomCenter,
-              child: new Container(
-                  child: new Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  new Divider(
-                    height: 2.0,
-                    color: Colors.black,
-                  ),
-                  new Row(
-                    children: <Widget>[
-                      new Expanded(
-                        child: new TextField(
-                          controller: _textController,
-                          onChanged: (String text) {
-                            setState(() {});
-                          },
-                          onSubmitted: _submitMessage,
-                          decoration: new InputDecoration(
-                              border: InputBorder.none,
-                              contentPadding: const EdgeInsets.only(left: 10.0),
-                              hintText: 'Please enter a search term'),
-                        ),
-                      ),
-                      new IconButton(
-                        icon: new Icon(Icons.send),
-                        onPressed: _sendClick,
-                        color: Colors.green,
-                      )
-                    ],
-                  ),
-                ],
-              )))*/ /*
-  }*/
+      );
+    } else {
+      return new Flexible(
+        child: new ListView.builder(
+          itemBuilder: _buildCommentItem,
+          itemCount: reviewList.length,
+          scrollDirection: Axis.vertical,
+          controller: new ScrollController(),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -191,23 +135,48 @@ class CommentPageState extends State<CommentPage>
             color: Colors.black,
           ),
         ),
-        body: new Column(children: <Widget>[
-          new Flexible(
-            child: new ListView.builder(
-              itemBuilder: _buildCommentItem,
-              itemCount: reviewList.length,
-              scrollDirection: Axis.vertical,
-              controller: new ScrollController(),
-            ),
-          ),
-          new Divider(
-            height: 2.0,
-            color: MyStyle.colorBlack,
-          ),
-          new Container(
-              decoration: new BoxDecoration(color: MyStyle.layoutBackground),
-              child: _buildTextComposer())
-        ]));
+        body: new Container(
+            color: MyStyle.colorWhite,
+            child: new Column(children: <Widget>[
+              new Container(
+                child: showLoadingOrData(),
+              ),
+              new Opacity(
+                opacity: isLogin ? 1.0 : 0.0,
+                child: new Divider(
+                  height: 2.0,
+                  color: MyStyle.colorBlack,
+                ),
+              ),
+              new Opacity(
+                  opacity: isLogin ? 1.0 : 0.0,
+                  child: new Container(
+                      decoration:
+                          new BoxDecoration(color: MyStyle.layoutBackground),
+                      child: new IconTheme(
+                          data: new IconThemeData(
+                              color: Theme.of(context).accentColor),
+                          child: new Container(
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: new Row(children: <Widget>[
+                                new Flexible(
+                                    child: new TextField(
+                                        style: MyStyle.titleTextStyle(),
+                                        controller: _textEditingController,
+                                        onSubmitted: _submitMessage,
+                                        decoration:
+                                            new InputDecoration.collapsed(
+                                                hintText: "Comment ေပးရန္"))),
+                                new Container(
+                                    child: new IconButton(
+                                        icon: new Icon(
+                                          Icons.send,
+                                          color: MyStyle.colorGreen,
+                                        ),
+                                        onPressed: _sendClick))
+                              ])))))
+            ])));
   }
 
   @override
@@ -243,6 +212,7 @@ class CommentPageState extends State<CommentPage>
     print('Show More Comment${r.toString()}');
     setState(() {
       reviewList.addAll(r);
+      isLoading = false;
     });
   }
 
@@ -251,6 +221,7 @@ class CommentPageState extends State<CommentPage>
     setState(() {
       reviewList.clear();
       reviewList = r;
+      isLoading = false;
     });
   }
 
@@ -260,7 +231,7 @@ class CommentPageState extends State<CommentPage>
   @override
   void onCommentDeleteClick(Review r, int post) {
     print("Comment Delete");
-    mPresenter.deleteArticleComment(Configs.TEST_CODE, r.article, r.id);
+    mPresenter.deleteArticleComment(accessCode, r.article, r.id);
     setState(() {
       reviewList.removeAt(post);
     });

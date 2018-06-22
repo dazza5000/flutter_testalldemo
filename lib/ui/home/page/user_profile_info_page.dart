@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:lyc_clinic/ui/home/presenter/profile_info_presenter.dart';
 import 'package:lyc_clinic/ui/home/contract/profile_info_contract.dart';
 import 'package:lyc_clinic/utils/mySharedPreferences.dart';
@@ -25,11 +26,10 @@ class UserProfileInfoPageState extends State<UserProfileInfoPage>
   SharedPreferences prefs;
   String accessCode = Configs.TEST_CODE;
   ProfileInfo profileInfo;
+  var facebookLogin = new FacebookLogin();
   TextEditingController _nameController = new TextEditingController();
   TextEditingController _phoneController = new TextEditingController();
   TextEditingController _ageController = new TextEditingController();
-
-  FacebookLoginLogot facebookLogin = new FacebookLoginLogot();
 
   UserProfileInfoPageState() {
     mPresenter = new ProfileInfoPresenter(this);
@@ -48,8 +48,8 @@ class UserProfileInfoPageState extends State<UserProfileInfoPage>
             gapPadding: 0.5));
   }
 
-  void _facebookLogout() async{
-    await FacebookLoginLogot.facebookSignIn.logOut();
+  void _facebookLogout() {
+    facebookLogin.logOut().then((_) => mySharedPrefs.clear());
   }
 
   onChangedData() {
@@ -82,16 +82,15 @@ class UserProfileInfoPageState extends State<UserProfileInfoPage>
               children: <Widget>[
                 new Padding(
                   padding: const EdgeInsets.symmetric(vertical: 5.0),
-                  child:
-                      new Text('User Name', style: MyStyle.captionTextStyle()),
+                  child: new Text('User Name', style: MyStyle.titleTextStyle()),
                 ),
                 new TextField(
                     controller: _nameController,
                     decoration: getDecoration('Name')),
                 new Padding(
                   padding: const EdgeInsets.symmetric(vertical: 5.0),
-                  child: new Text('Mobile Phone',
-                      style: MyStyle.captionTextStyle()),
+                  child:
+                      new Text('Mobile Phone', style: MyStyle.titleTextStyle()),
                 ),
                 new TextField(
                   controller: _phoneController,
@@ -99,7 +98,7 @@ class UserProfileInfoPageState extends State<UserProfileInfoPage>
                 ),
                 new Padding(
                   padding: const EdgeInsets.symmetric(vertical: 5.0),
-                  child: new Text('Age', style: MyStyle.captionTextStyle()),
+                  child: new Text('Age', style: MyStyle.titleTextStyle()),
                 ),
                 new InkWell(
                   child: new TextField(
@@ -110,7 +109,7 @@ class UserProfileInfoPageState extends State<UserProfileInfoPage>
                 ),
                 new Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                  child: new Text('Gender', style: MyStyle.captionTextStyle()),
+                  child: new Text('Gender', style: MyStyle.titleTextStyle()),
                 ),
                 new Container(
                   decoration: new BoxDecoration(
@@ -129,15 +128,14 @@ class UserProfileInfoPageState extends State<UserProfileInfoPage>
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 5.0),
                               child: new Text(value,
-                                  style: MyStyle.captionTextStyle()),
+                                  style: MyStyle.titleTextStyle()),
                             ));
                       }).toList(),
                       onChanged: onChangedData()),
                 ),
                 new Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                  child:
-                      new Text('Location', style: MyStyle.captionTextStyle()),
+                  child: new Text('Location', style: MyStyle.titleTextStyle()),
                 ),
                 new Container(
                   decoration: new BoxDecoration(
@@ -156,7 +154,7 @@ class UserProfileInfoPageState extends State<UserProfileInfoPage>
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 5.0),
                               child: new Text(value,
-                                  style: MyStyle.captionTextStyle()),
+                                  style: MyStyle.titleTextStyle()),
                             ));
                       }).toList(),
                       onChanged: onChangedData()),
@@ -165,13 +163,13 @@ class UserProfileInfoPageState extends State<UserProfileInfoPage>
                     onPressed: _facebookLogout,
                     icon: new Icon(
                       Icons.exit_to_app,
-                      color: MyStyle.colorLightGrey,
+                      color: MyStyle.colorDarkGrey,
                     ),
                     label: new Text(
                       'LOG OUT',
                       style: new TextStyle(
                           fontSize: MyStyle.medium_fontSize,
-                          color: MyStyle.colorLightGrey),
+                          color: MyStyle.colorDarkGrey),
                     ))
               ]),
         ),

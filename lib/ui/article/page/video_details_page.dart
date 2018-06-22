@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:lyc_clinic/ui/article/widget/article_details_item.dart';
+import 'package:share/share.dart';
+import 'dart:async';
 import 'package:lyc_clinic/ui/comment/page/comment_page.dart';
-//import 'package:lyc_clinic/ui/article/widget/video_details_activity.dart';
+import 'package:lyc_clinic/ui/article/widget/video_details_item.dart';
 import 'package:lyc_clinic/ui/comment/widget/create_comment_items.dart';
 import 'package:lyc_clinic/test/custom_bottom_navigation_bar.dart';
-import 'package:lyc_clinic/ui/article/contract/article_details_contract.dart';
-import 'package:lyc_clinic/ui/article/presenter/article_details_presenter.dart';
+import 'package:lyc_clinic/ui/article/contract/video_details_contract.dart';
+import 'package:lyc_clinic/ui/article/presenter/video_details_presenter.dart';
 import 'package:lyc_clinic/utils/configs.dart';
 import 'package:lyc_clinic/ui/article/data/article.dart';
 import 'package:lyc_clinic/ui/comment/data/comment.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
-import 'package:html2md/html2md.dart' as html2md;
-import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:lyc_clinic/utils/mySharedPreferences.dart';
+import 'package:lyc_clinic/ui/login/login_dialog_page.dart';
+import 'package:lyc_clinic/base/widget.dart';
 
 class VideoDetailsPage extends StatefulWidget {
   final int id;
@@ -26,26 +28,63 @@ class VideoDetailsPage extends StatefulWidget {
 }
 
 class VideoDetailsPageState extends State<VideoDetailsPage>
-    implements ArticleDetailsContract {
-  ArticleDetailsPresenter mPresenter;
+    implements VideoDetailsContract {
+  VideoDetailsPresenter mPresenter;
   Article article;
   Comment comment;
-  String html =
-      '<h1>This is heading 1</h1> <h2>This is heading 2</h2><h3>This is heading 3</h3><h4>This is heading 4</h4><h5>This is heading 5</h5><h6>This is heading 6</h6>';
+  bool isBookmark = false;
+  bool isFav = false;
+  bool isGuest = true;
+  bool isLoading = true;
+  bool isLogin = false;
+  String accessCode;
+  MySharedPreferences mySharedPreferences = new MySharedPreferences();
 
-  ArticleDetailsPageState() {
-    mPresenter = new ArticleDetailsPresenter(this);
+  VideoDetailsPageState() {
+    mPresenter = new VideoDetailsPresenter(this);
   }
+
+  /*Future<Null> _showLoginDialog() async {
+    return await showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return new Container(
+              color: MyStyle.colorWhite,
+              height: 150.0,
+              child: new LoginDialogPage());
+          //return null;
+        });
+  }*/
 
   _clickBack(BuildContext context) {
     Navigator.of(context).pop();
   }
 
-  _clickBookmark(BuildContext context) {}
+  _clickBookmark(BuildContext context) {
+    if (!isGuest) {
+      setState(() {
+        isBookmark = !isBookmark;
+      });
+      mPresenter.saveArticle(accessCode, article.id);
+    } else {
+      BaseWidgets.showLoginDialog(context);
+    }
+  }
 
-  _clickShare(BuildContext context) {}
+  _clickShare(BuildContext context) {
+    Share.share(article.shareUrl);
+  }
 
-  _clickFloatingButton(BuildContext context) {}
+  _clickFloatingButton(BuildContext context) {
+    if (!isGuest) {
+      setState(() {
+        isFav = !isFav;
+      });
+      mPresenter.setFavorite(accessCode, article.id);
+    } else {
+      BaseWidgets.showLoginDialog(context);
+    }
+  }
 
   _clickComment(BuildContext context) {
     Navigator.push(
@@ -54,20 +93,34 @@ class VideoDetailsPageState extends State<VideoDetailsPage>
             builder: (_) => new CommentPage(article.id, true, null)));
   }
 
-  Widget showArticleAndVideo(int type) {
-    if (type == 2) {
-      // return new VideoDetailsActivity();
-      return null;
-    } else {
-      return new ArticleDetailsItem(article, comment);
-    }
-  }
-
   @override
   void initState() {
     super.initState();
-    mPresenter.getArticleDetail(Configs.TEST_CODE, widget.id);
-    mPresenter.getComment(Configs.TEST_CODE, widget.id, 3);
+    mySharedPreferences
+        .getBooleanData(Configs.PREF_USER_LOGIN)
+        .then((val) => setState(() {
+              isLogin = val != null ? val : false;
+              getAccessCode(isLogin);
+            }));
+  }
+
+  void getAccessCode(bool login) {
+    if (login) {
+      isGuest = false;
+      mySharedPreferences.getStringData(Configs.PREF_USER_ACCESSCODE).then((v) {
+        accessCode = v;
+        getData();
+      });
+    } else {
+      isGuest = true;
+      accessCode = Configs.GUEST_CODE;
+      getData();
+    }
+  }
+
+  void getData() {
+    mPresenter.getArticleDetail(accessCode, widget.id);
+    mPresenter.getComment(accessCode, widget.id, 3);
   }
 
   Widget _buildAppBar(BuildContext context) {
@@ -79,7 +132,7 @@ class VideoDetailsPageState extends State<VideoDetailsPage>
           child: new IconButton(
             icon: new Icon(
               Icons.arrow_back,
-              color: MyStyle.colorWhite,
+              color: MyStyle.colorBlack,
             ),
             iconSize: 30.0,
             onPressed: () => _clickBack(context),
@@ -90,8 +143,8 @@ class VideoDetailsPageState extends State<VideoDetailsPage>
           top: 10.0,
           child: new IconButton(
             icon: new Icon(
-              Icons.bookmark_border,
-              color: MyStyle.colorWhite,
+              isBookmark ? Icons.bookmark : Icons.bookmark_border,
+              color: MyStyle.colorBlack,
             ),
             iconSize: 30.0,
             onPressed: () => _clickBookmark(context),
@@ -103,7 +156,7 @@ class VideoDetailsPageState extends State<VideoDetailsPage>
           child: new IconButton(
             icon: new Icon(
               Icons.share,
-              color: MyStyle.colorWhite,
+              color: MyStyle.colorBlack,
             ),
             iconSize: 30.0,
             onPressed: () => _clickShare(context),
@@ -118,7 +171,7 @@ class VideoDetailsPageState extends State<VideoDetailsPage>
       width: 40.0,
       height: 40.0,
       decoration:
-      new BoxDecoration(shape: BoxShape.circle, color: bgColor, boxShadow: [
+          new BoxDecoration(shape: BoxShape.circle, color: bgColor, boxShadow: [
         new BoxShadow(
             color: Colors.grey, blurRadius: 4.0, offset: new Offset(1.0, 4.0)),
       ]),
@@ -137,7 +190,7 @@ class VideoDetailsPageState extends State<VideoDetailsPage>
             new InkWell(
               child: new Padding(
                 padding:
-                const EdgeInsets.only(top: 0.0, left: 0.0, right: 10.0),
+                    const EdgeInsets.only(top: 0.0, left: 0.0, right: 10.0),
                 child: _getFloatButton(
                     Icons.chat_bubble_outline, Colors.white, Colors.grey),
               ),
@@ -152,8 +205,8 @@ class VideoDetailsPageState extends State<VideoDetailsPage>
                 )),
             new Expanded(
                 child: new Row(
-                  children: <Widget>[],
-                )),
+              children: <Widget>[],
+            )),
             new RaisedButton(
               onPressed: () => _clickComment(context),
               color: Colors.orange,
@@ -171,53 +224,64 @@ class VideoDetailsPageState extends State<VideoDetailsPage>
         ));
   }
 
+  /*Widget loadingIndicator = new Container(
+      child: new CircularProgressIndicator(
+    strokeWidth: 2.0,
+  ));*/
+
   Widget _buildBody(BuildContext context) {
-    return new SingleChildScrollView(
-        controller: new ScrollController(),
-        scrollDirection: Axis.vertical,
-        child: new Padding(
-          padding: const EdgeInsets.only(top: 0.0, bottom: 5.0),
-          child: new Container(
-            child: new Column(
-              children: <Widget>[
-                new Container(
-                  constraints: new BoxConstraints.expand(
-                    height: 250.0,
-                  ),
-                  padding:
-                  new EdgeInsets.only(left: 16.0, bottom: 8.0, right: 16.0),
-                  decoration: new BoxDecoration(
-                    image: new DecorationImage(
-                      image: new NetworkImage(article.image),
-                      fit: BoxFit.cover,
+    if (!isLoading) {
+      return new SingleChildScrollView(
+          controller: new ScrollController(),
+          scrollDirection: Axis.vertical,
+          child: new Padding(
+            padding: const EdgeInsets.only(top: 0.0, bottom: 5.0),
+            child: new Container(
+              child: new Column(
+                children: <Widget>[
+                  new Container(
+                    constraints: new BoxConstraints.expand(
+                      height: 250.0,
                     ),
+                    padding:
+                        new EdgeInsets.only(left: 0.0, bottom: 8.0, right: 0.0),
+                    /*decoration: new BoxDecoration(
+                      image: new DecorationImage(
+                        image: new NetworkImage(article.video),
+                        fit: BoxFit.cover,
+                      ),
+                    ),*/
+                    child: new VideoDetailsItem(article),
                   ),
-                ),
-                buildTitle(context),
-                new Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: showArticleAndVideo(article.type),
-                ),
-                new Stack(
-                  children: <Widget>[
-                    new Container(
-                      margin: const EdgeInsets.only(top: 20.0),
-                      //color: MyStyle.layoutBackground,
-                      child: new CommentItem(
-                          comment, article.id, true),
-                    ),
-                    new Positioned(
-                      child: _floatingBar(),
-                      top: 0.0,
-                      left: 5.0,
-                      right: 5.0,
-                    )
-                  ],
-                )
-              ],
+                  buildTitle(context),
+                  new Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: null,
+                  ),
+                  new Stack(
+                    children: <Widget>[
+                      new Container(
+                        margin: const EdgeInsets.only(top: 20.0),
+                        //color: MyStyle.layoutBackground,
+                        child: new CommentItem(comment, article.id, true),
+                      ),
+                      new Positioned(
+                        child: _floatingBar(),
+                        top: 0.0,
+                        left: 5.0,
+                        right: 5.0,
+                      )
+                    ],
+                  )
+                ],
+              ),
             ),
-          ),
-        ));
+          ));
+    } else {
+      return new Container(
+        child: Center(child: BaseWidgets.loadingIndicator),
+      );
+    }
   }
 
   Widget buildTitle(BuildContext context) {
@@ -308,8 +372,9 @@ class VideoDetailsPageState extends State<VideoDetailsPage>
       floatingActionButton: new FloatingActionButton(
           onPressed: () => _clickFloatingButton(context),
           elevation: 10.0,
-          child: new Icon(Icons.favorite_border, color: MyStyle.colorGrey),
-          backgroundColor: MyStyle.colorWhite),
+          child: new Icon(isFav ? Icons.favorite : Icons.favorite_border,
+              color: isFav ? MyStyle.colorWhite : MyStyle.colorGrey),
+          backgroundColor: isFav ? MyStyle.colorAccent : MyStyle.colorWhite),
       backgroundColor: MyStyle.colorWhite,
       bottomNavigationBar: new Material(child: new CustomBottomNavigationBar()),
     );
@@ -327,6 +392,9 @@ class VideoDetailsPageState extends State<VideoDetailsPage>
   void showArticle(Article a, int commentCount) {
     setState(() {
       article = a;
+      isBookmark = a.save;
+      isFav = a.fav;
+      isLoading = false;
     });
   }
 }

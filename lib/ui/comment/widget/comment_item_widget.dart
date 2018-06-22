@@ -33,7 +33,7 @@ class CommentItemWidgetState extends State<CommentItemWidget>
   Widget _showReplyCountDesc(Review c) {
     if (c.hasReply) {
       return new Text('ပီးခဲ့ေသာ Replies ${c.replyCount}ခုကို ၾကည့္ရန္',
-          style: MyStyle.pastRepliesDescStyle());
+          style: MyStyle.customTextStyle(MyStyle.colorAccent));
     }
     return null;
   }

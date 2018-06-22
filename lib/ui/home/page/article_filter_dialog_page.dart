@@ -33,28 +33,30 @@ class FilterHealthEducationDialogFragmentState
   int _selectedIndex = 0;
 
   _buildClearButton() {
-    return new Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        new Container(
-          width: 50.0,
-          height: 30.0,
-          decoration: new BoxDecoration(
-              shape: BoxShape.rectangle,
-              color: Colors.black,
-              borderRadius: new BorderRadius.circular(15.0)),
-          child: new GestureDetector(
-            onTap: _clearEvent,
-            child: new Text(
-              'Clear',
-              style: new TextStyle(color: Colors.white),
-            ),
-          ),
-          alignment: Alignment.center,
-        )
-      ],
-    );
+    return new Container(
+        margin: const EdgeInsets.only(right: 5.0),
+        child: new Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            new Container(
+              width: 50.0,
+              height: 30.0,
+              decoration: new BoxDecoration(
+                  shape: BoxShape.rectangle,
+                  color: Colors.black,
+                  borderRadius: new BorderRadius.circular(15.0)),
+              child: new GestureDetector(
+                onTap: _clearEvent,
+                child: new Text(
+                  'Clear',
+                  style: new TextStyle(color: Colors.white),
+                ),
+              ),
+              alignment: Alignment.center,
+            )
+          ],
+        ));
   }
 
   void _clearEvent() {

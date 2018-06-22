@@ -15,6 +15,7 @@ import 'package:lyc_clinic/ui/home/widget/create_article_buttons.dart';
 import 'package:lyc_clinic/ui/otheruser/presenter/other_user_presenter.dart';
 import 'package:lyc_clinic/ui/otheruser/contract/other_user_contract.dart';
 import 'package:lyc_clinic/utils/configs.dart';
+import 'package:lyc_clinic/utils/mySharedPreferences.dart';
 
 class OtherUserPage extends StatefulWidget {
   int userId;
@@ -30,16 +31,37 @@ class OtherUserPage extends StatefulWidget {
 class OtherUserPageState extends State<OtherUserPage>
     implements OtherUserContract, DoctorClickListener, ArticleClickListener {
   OtherUserPresenter mPresenter;
-  List<Save> saveList=new List<Save>();
+  List<Save> saveList = new List<Save>();
+  String accessCode;
+  bool isGuest = false;
+  bool isLogin = false;
+  bool isLoading = true;
+  MySharedPreferences mySharedPreferences = new MySharedPreferences();
 
   OtherUserPageState() {
     mPresenter = new OtherUserPresenter(this);
+    mySharedPreferences
+        .getBooleanData(Configs.PREF_USER_LOGIN)
+        .then((val) => setState(() {
+              isLogin = val != null ? val : false;
+            }));
   }
 
   @override
   void initState() {
     super.initState();
-    mPresenter.getUserActivities(Configs.TEST_CODE, widget.userId);
+    if (isLogin) {
+      isGuest = false;
+      mySharedPreferences
+          .getStringData(Configs.PREF_USER_ACCESSCODE)
+          .then((val) => setState(() {
+                accessCode = val;
+              }));
+    } else {
+      isGuest = true;
+      accessCode = Configs.GUEST_CODE;
+    }
+    mPresenter.getUserActivities(accessCode, widget.userId);
   }
 
   Widget _buildOtherUserActivityItem(BuildContext context, int index) {
@@ -51,6 +73,10 @@ class OtherUserPageState extends State<OtherUserPage>
           new CreateDoctorItem(saveList[index].doctor.data),
           //Floating Action Button
           new Positioned(
+            top: 0.0,
+            bottom: 5.0,
+            left: 10.0,
+            right: 10.0,
             child: new CreateDoctorButton(saveList[index].doctor.data, this),
           )
         ],
@@ -59,13 +85,23 @@ class OtherUserPageState extends State<OtherUserPage>
       return Container(
         child: new Stack(
           children: <Widget>[
-            new CreateArticleItems(saveList[index].article.data),
+            new Container(
+              color: MyStyle.layoutBackground,
+              margin: const EdgeInsets.only(top: 15.0, bottom: 15.0),
+              child: new Container(
+                height: 330.0,
+                child: new CreateArticleItems(saveList[index].article.data),
+                decoration: new BoxDecoration(
+                    shape: BoxShape.rectangle,
+                    color: MyStyle.colorWhite,
+                    borderRadius: new BorderRadius.circular(5.0)),
+              ),
+            ),
             new Positioned(
               child:
                   new CreateArticleButton(saveList[index].article.data, this),
-              bottom: 20.0,
+              bottom: 0.0,
               right: 10.0,
-              top: 0.0,
               left: 20.0,
             ),
           ],
@@ -73,6 +109,33 @@ class OtherUserPageState extends State<OtherUserPage>
       );
     } else {
       return null;
+    }
+  }
+
+  showLoadingOrData() {
+    if (isLoading) {
+      return new Container(
+        child: new Center(
+          child: new CircularProgressIndicator(
+            strokeWidth: 2.0,
+          ),
+        ),
+      );
+    } else {
+      return new SingleChildScrollView(
+          padding: const EdgeInsets.only(left: 5.0, right: 5.0, top: 10.0),
+          controller: new ScrollController(),
+          scrollDirection: Axis.vertical,
+          child: new Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                new ListView.builder(
+                    itemBuilder: _buildOtherUserActivityItem,
+                    itemCount: saveList.length,
+                    scrollDirection: Axis.vertical,
+                    controller: new ScrollController(),
+                    shrinkWrap: true)
+              ]));
     }
   }
 
@@ -89,20 +152,7 @@ class OtherUserPageState extends State<OtherUserPage>
             style: new TextStyle(color: MyStyle.colorBlack, fontSize: 14.0),
           ),
         ),
-        body: new SingleChildScrollView(
-            padding: const EdgeInsets.only(left: 5.0, right: 5.0, top: 10.0),
-            controller: new ScrollController(),
-            scrollDirection: Axis.vertical,
-            child: new Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  new ListView.builder(
-                      itemBuilder: _buildOtherUserActivityItem,
-                      itemCount: saveList.length,
-                      scrollDirection: Axis.vertical,
-                      controller: new ScrollController(),
-                      shrinkWrap: true)
-                ])));
+        body: showLoadingOrData());
   }
 
   @override
@@ -113,13 +163,13 @@ class OtherUserPageState extends State<OtherUserPage>
   @override
   void onDoctorFavClick(Doctor doctor) {
     print('Other User Doctor Fav Click');
-    mPresenter.setFavoriteDoctor(Configs.TEST_CODE, doctor.id);
+    mPresenter.setFavoriteDoctor(accessCode, doctor.id);
   }
 
   @override
   void onDoctorSaveClick(Doctor doctor) {
     print('Other User Doctor Save Click');
-    mPresenter.saveDoctor(Configs.TEST_CODE, doctor.id);
+    mPresenter.saveDoctor(accessCode, doctor.id);
   }
 
   @override
@@ -133,7 +183,7 @@ class OtherUserPageState extends State<OtherUserPage>
   @override
   void onArticleFavClick(Article article) {
     print('Other User Article Fav Click');
-    mPresenter.setFavoriteArticle(Configs.TEST_CODE, article.id);
+    mPresenter.setFavoriteArticle(accessCode, article.id);
   }
 
   @override
@@ -144,7 +194,7 @@ class OtherUserPageState extends State<OtherUserPage>
   @override
   void onArticleSaveClick(Article article) {
     print('Other User Aritcle Save Click');
-    mPresenter.saveArticle(Configs.TEST_CODE, article.id);
+    mPresenter.saveArticle(accessCode, article.id);
   }
 
   @override
@@ -152,6 +202,7 @@ class OtherUserPageState extends State<OtherUserPage>
     setState(() {
       saveList.clear();
       saveList = s;
+      isLoading = false;
     });
   }
 
@@ -164,9 +215,7 @@ class OtherUserPageState extends State<OtherUserPage>
 
   @override
   void pagination(Pagination p) {
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   @override

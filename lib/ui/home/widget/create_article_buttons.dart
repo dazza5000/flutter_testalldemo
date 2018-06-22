@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:share/share.dart';
+import 'package:lyc_clinic/base/widget.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
+import 'package:lyc_clinic/utils/configs.dart';
+import 'package:lyc_clinic/utils/mySharedPreferences.dart';
 import 'package:lyc_clinic/ui/comment/page/comment_page.dart';
 import 'package:lyc_clinic/ui/article/data/article.dart';
-//import 'package:share/share.dart';
 
 class CreateArticleButton extends StatefulWidget {
   Article article;
@@ -23,6 +26,8 @@ class CreateArticleButtonState extends State<CreateArticleButton> {
   bool _isCommented = false;
   int _commentCount = 0;
   ArticleClickListener listener;
+  bool isLogin=true;
+  MySharedPreferences mySharedPreferences=new MySharedPreferences();
 
   @override
   void initState() {
@@ -32,9 +37,15 @@ class CreateArticleButtonState extends State<CreateArticleButton> {
     _isCommented = widget.article.commentCount > 0 ? true : false;
     _isBookMark = widget.article.save;
     listener = widget.articleClickListener;
+
+    mySharedPreferences
+        .getBooleanData(Configs.PREF_USER_LOGIN)
+        .then((val) => setState(() {
+      isLogin = val!=null?val:false;
+    }));
   }
 
-  Widget _getFloatButton(IconData ic, Color bgColor, Color icColor) {
+  /*Widget _getFloatButton(IconData ic, Color bgColor, Color icColor) {
     return new Container(
       width: 40.0,
       height: 40.0,
@@ -48,19 +59,24 @@ class CreateArticleButtonState extends State<CreateArticleButton> {
         color: icColor,
       ),
     );
-  }
+  }*/
 
   void _clickLikeButton() {
-    setState(() {
-      if (_isFavourite) {
-        _isFavourite = false;
-        _favCount -= 1;
-      } else {
-        _isFavourite = true;
-        _favCount += 1;
-      }
-    });
-    listener.onArticleFavClick(widget.article);
+    if(isLogin) {
+      setState(() {
+        if (_isFavourite) {
+          _isFavourite = false;
+          _favCount -= 1;
+        } else {
+          _isFavourite = true;
+          _favCount += 1;
+        }
+      });
+      listener.onArticleFavClick(widget.article);
+    }
+    else{
+      BaseWidgets.showLoginDialog(context);
+    }
   }
 
   _clickCommentButton() {
@@ -77,20 +93,24 @@ class CreateArticleButtonState extends State<CreateArticleButton> {
 
   _clickShareButton() {
     setState(() {
-      //share(widget.article.shareUrl);
+      Share.share(widget.article.shareUrl);
     });
     listener.onArticleShareClick(widget.article);
   }
 
   _clickBookMarkButton() {
-    setState(() {
-      if (_isBookMark) {
-        _isBookMark = false;
-      } else {
-        _isBookMark = true;
-      }
-    });
-    listener.onArticleSaveClick(widget.article);
+    if(isLogin) {
+      setState(() {
+        if (_isBookMark) {
+          _isBookMark = false;
+        } else {
+          _isBookMark = true;
+        }
+      });
+      listener.onArticleSaveClick(widget.article);
+    }else{
+      BaseWidgets.showLoginDialog(context);
+    }
   }
 
   Widget _showActivityCount(String activityCount) {
@@ -124,7 +144,7 @@ class CreateArticleButtonState extends State<CreateArticleButton> {
               child: new Padding(
                 padding:
                     const EdgeInsets.only(top: 10.0, left: 0.0, right: 10.0),
-                child: _getFloatButton(_favIcon, _favbgColor, _favicColor),
+                child: BaseWidgets.getFloatButton(_favIcon, _favbgColor, _favicColor),
               ),
               onTap: _clickLikeButton,
             ),
@@ -136,7 +156,7 @@ class CreateArticleButtonState extends State<CreateArticleButton> {
               child: new Padding(
                 padding:
                     const EdgeInsets.only(top: 10.0, left: 10.0, right: 0.0),
-                child: _getFloatButton(
+                child: BaseWidgets.getFloatButton(
                     _commentIcon, _commentbgcolor, _commenticColor),
               ),
               onTap: _clickCommentButton,
@@ -150,7 +170,7 @@ class CreateArticleButtonState extends State<CreateArticleButton> {
                   padding:
                       const EdgeInsets.only(top: 10.0, left: 10.0, right: 0.0),
                   child:
-                      _getFloatButton(Icons.share, Colors.white, Colors.grey)),
+                      BaseWidgets.getFloatButton(Icons.share, Colors.white, Colors.grey)),
               onTap: _clickShareButton,
             ),
             new Expanded(
@@ -161,7 +181,7 @@ class CreateArticleButtonState extends State<CreateArticleButton> {
               child: new Padding(
                 padding: const EdgeInsets.only(top: 10.0, right: 10.0),
                 child:
-                    _getFloatButton(_bookMarkIcon, _bookbgColor, _bookicColor),
+                    BaseWidgets.getFloatButton(_bookMarkIcon, _bookbgColor, _bookicColor),
                 /*new FloatingActionButton(
                     heroTag: 'ArticleBookMark',
                     onPressed: _clickBookMarkButton,

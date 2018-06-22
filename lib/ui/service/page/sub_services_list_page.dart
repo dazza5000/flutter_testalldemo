@@ -28,12 +28,12 @@ class ServiceListPageState extends State<SubServiceListPage>
   }
 
   _goToServicesDetails(
-      BuildContext context, int servicesId, int subServicesId,String title) {
+      BuildContext context, int servicesId, int subServicesId, String title) {
     Navigator.push(
         context,
         new MaterialPageRoute(
             builder: (_) =>
-                new SubServicesDetailsPage(servicesId, subServicesId,title)));
+                new SubServicesDetailsPage(servicesId, subServicesId, title)));
   }
 
   Widget _buildServicesList(BuildContext context, int index) {
@@ -46,8 +46,8 @@ class ServiceListPageState extends State<SubServiceListPage>
             height: 1.0,
           ),
           new ListTile(
-              onTap: () => _goToServicesDetails(
-                  context, widget.catId, servicesList[index].id,servicesList[index].name),
+              onTap: () => _goToServicesDetails(context, widget.catId,
+                  servicesList[index].id, servicesList[index].name),
               title: new Text(servicesList[index].name.toString())),
         ],
       ),
@@ -57,7 +57,7 @@ class ServiceListPageState extends State<SubServiceListPage>
   @override
   void initState() {
     super.initState();
-    mPresenter.getSubServices(Configs.TEST_CODE, widget.catId);
+    mPresenter.getSubServices(Configs.GUEST_CODE, widget.catId);
   }
 
   @override

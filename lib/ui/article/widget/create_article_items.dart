@@ -27,6 +27,7 @@ class CreateArticleItems extends StatelessWidget {
   }
 
   void _navigateToArticleDetails(BuildContext context, int type) {
+    print('Type >>$type');
     if (type == 1) {
       Navigator.push(
           context,

@@ -11,9 +11,10 @@ class ReviewListItem extends StatefulWidget {
   Comment comment;
   int doctorId;
   bool isArticle;
+  bool isLogin;
   AnimationController aniController;
 
-  ReviewListItem(this.comment, this.doctorId, this.isArticle);
+  ReviewListItem(this.comment, this.doctorId, this.isArticle, this.isLogin);
 
   @override
   ReviewListItemState createState() {
@@ -21,8 +22,7 @@ class ReviewListItem extends StatefulWidget {
   }
 }
 
-class ReviewListItemState extends State<ReviewListItem>
-    with TickerProviderStateMixin {
+class ReviewListItemState extends State<ReviewListItem> with SingleTickerProviderStateMixin {
   int reviewCount = 0;
   List<Review> reviewList = new List<Review>();
   AnimationController aniController;
@@ -30,8 +30,8 @@ class ReviewListItemState extends State<ReviewListItem>
   @override
   void initState() {
     super.initState();
-    aniController = new AnimationController(
-        duration: new Duration(microseconds: 500), vsync: this);
+    aniController = new AnimationController(vsync: this,
+        duration: new Duration(microseconds: 500));
     reviewCount = widget.comment.pagination.total;
     reviewList = widget.comment.data;
   }
@@ -71,15 +71,19 @@ class ReviewListItemState extends State<ReviewListItem>
   }
 
   Widget _roundButton(BuildContext context) {
-    return new RaisedButton(
-        color: MyStyle.colorGrey,
-        onPressed: () => _clickReview(context),
-        child: new Text(
-          "Review ေပးရန္",
-          style: new TextStyle(fontSize: 14.0, color: MyStyle.colorWhite),
-        ),
-        shape: new RoundedRectangleBorder(
-            borderRadius: new BorderRadius.circular(30.0)));
+    print("Login ${widget.isLogin}");
+
+    return new Opacity(
+        opacity: widget.isLogin ? 1.0 : 0.0,
+        child: new RaisedButton(
+            color: MyStyle.colorGrey,
+            onPressed: () => _clickReview(context),
+            child: new Text(
+              "Review ေပးရန္",
+              style: new TextStyle(fontSize: 14.0, color: MyStyle.colorWhite),
+            ),
+            shape: new RoundedRectangleBorder(
+                borderRadius: new BorderRadius.circular(30.0))));
   }
 
   Widget _buildReviewItem(BuildContext context, int index) {
@@ -151,7 +155,7 @@ class ReviewListItemState extends State<ReviewListItem>
   @override
   Widget build(BuildContext context) {
     return new Container(
-      margin: const EdgeInsets.only(top: 15.0),
+      margin: const EdgeInsets.only(top: 0.0),
       child: new Stack(
         children: <Widget>[
           _showSeeCommentItems(),

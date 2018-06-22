@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:lyc_clinic/ui/chat/page/chat_list_page.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:map_view/map_view.dart';
 import 'dart:async';
+import 'package:map_view/map_view.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:lyc_clinic/ui/chat/page/chat_list_page.dart';
 import 'package:lyc_clinic/utils/mySharedPreferences.dart';
 import 'package:lyc_clinic/utils/configs.dart';
 import 'package:lyc_clinic/ui/login/login_dialog_page.dart';
+import 'package:lyc_clinic/base/widget.dart';
 
-var API_KEY = "AIzaSyC5b4ygf2aPikhkstqxTgme891YjorFKg4";
+var API_KEY = "AIzaSyBGUKmOdeko8CL1pEblqW-aFFVHP0k7ddQ";
 
 class CustomBottomNavigationBar extends StatefulWidget {
   @override
@@ -34,7 +35,8 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   }
 
   _addressClick(BuildContext context) {
-    showMap();
+    //showMap();
+    _launchMaps();
   }
 
   _phoneClick(BuildContext context) {
@@ -43,15 +45,10 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
 
   _chatClick(BuildContext context) {
     if (isLogin)
-      Navigator.push(
-          context, new MaterialPageRoute(builder: (_) => new ChatListPage()));
+      Navigator.push(context,
+          new MaterialPageRoute(builder: (_) => new ChatListPage()));
     else
-      Navigator.of(context).push(new MaterialPageRoute<Null>(
-          builder: (BuildContext context) {
-            return new LoginDialogPage();
-          },
-          maintainState: false,
-          fullscreenDialog: true));
+      BaseWidgets.showLoginDialog(context);;
   }
 
   _callPhone() async {
@@ -134,6 +131,22 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         ],
       ),
     );
+  }
+
+  _launchMaps() async {
+    String googleUrl =
+        'comgooglemaps://?center=${16.786689798272366},${96.12492084503174}';
+    String appleUrl =
+        'https://maps.apple.com/?sll=${16.786689798272366},${96.12492084503174}';
+    if (await canLaunch("comgooglemaps://")) {
+      print('launching com googleUrl');
+      await launch(googleUrl);
+    } else if (await canLaunch(appleUrl)) {
+      print('launching apple url');
+      await launch(appleUrl);
+    } else {
+      throw 'Could not launch url';
+    }
   }
 
   showMap() {

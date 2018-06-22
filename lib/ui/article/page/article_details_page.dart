@@ -15,6 +15,8 @@ import 'package:lyc_clinic/ui/comment/data/comment.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
 import 'package:lyc_clinic/utils/mySharedPreferences.dart';
 import 'package:lyc_clinic/ui/login/login_dialog_page.dart';
+import 'package:share/share.dart';
+import 'package:lyc_clinic/base/widget.dart';
 
 class ArticleDetailsPage extends StatefulWidget {
   final int id;
@@ -33,11 +35,15 @@ class ArticleDetailsPageState extends State<ArticleDetailsPage>
   ArticleDetailsPresenter mPresenter;
   Article article = new Article();
   Comment comment = new Comment();
-  bool isGuest = false;
-  String accessCode;
+  bool isBookmark = false;
+  bool isFav = false;
   MySharedPreferences mySharedPreferences = new MySharedPreferences();
   var _scaffoldKey = new GlobalKey<ScaffoldState>();
   VoidCallback _showPersBottomSheetCallBack;
+  bool isLoading = true;
+  bool isLogin = false;
+  bool isGuest = true;
+  String accessCode;
 
   ArticleDetailsPageState() {
     mPresenter = new ArticleDetailsPresenter(this);
@@ -77,24 +83,43 @@ class ArticleDetailsPageState extends State<ArticleDetailsPage>
     }
   }
 
-  Future<Null> _askedToLead() async {
-    return await showDialog(
+  /* Future<Null> _showLoginDialog() async {
+    return await showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {
-          return new LoginDialogPage();
+          return new Container(
+              color: MyStyle.colorWhite,
+              height: 150.0,
+              child: new LoginDialogPage());
+          //return null;
         });
-  }
+  }*/
 
   _clickBookmark(BuildContext context) {
     if (!isGuest) {
+      setState(() {
+        isBookmark = !isBookmark;
+      });
+      mPresenter.saveArticle(accessCode, article.id);
     } else {
-      _askedToLead();
+      BaseWidgets.showLoginDialog(context);
     }
   }
 
-  _clickShare(BuildContext context) {}
+  _clickShare(BuildContext context) {
+    Share.share(article.shareUrl);
+  }
 
-  _clickFloatingButton(BuildContext context) {}
+  _clickFloatingButton(BuildContext context) {
+    if (!isGuest) {
+      setState(() {
+        isFav = !isFav;
+      });
+      mPresenter.setFavorite(accessCode, article.id);
+    } else {
+      BaseWidgets.showLoginDialog(context);
+    }
+  }
 
   _clickComment(BuildContext context) {
     Navigator.push(
@@ -103,32 +128,37 @@ class ArticleDetailsPageState extends State<ArticleDetailsPage>
             builder: (_) => new CommentPage(article.id, true, null)));
   }
 
-  Widget showArticleAndVideo(int type) {
-    if (type == 2) {
-      // return new VideoDetailsActivity();
-      return null;
-    } else {
-      return new ArticleDetailsItem(article, comment);
-    }
-  }
-
   @override
   void initState() {
     super.initState();
-    if (mySharedPreferences.isLogin()) {
+    mySharedPreferences
+        .getBooleanData(Configs.PREF_USER_LOGIN)
+        .then((val) => setState(() {
+              isLogin = val != null ? val : false;
+              getAccessCode(isLogin);
+            }));
+
+    _showPersBottomSheetCallBack = _showBottomSheet;
+  }
+
+  void getAccessCode(bool login) {
+    if (login) {
       isGuest = false;
-      mySharedPreferences
-          .getStringData(Configs.PREF_USER_ACCESSCODE)
-          .then((v) => accessCode = v);
+      mySharedPreferences.getStringData(Configs.PREF_USER_ACCESSCODE).then((v) {
+        accessCode = v;
+        getData();
+      });
     } else {
       isGuest = true;
       accessCode = Configs.GUEST_CODE;
+      getData();
     }
+  }
 
+  void getData() {
     print('Guest is>>$isGuest');
     mPresenter.getArticleDetail(accessCode, widget.id);
     mPresenter.getComment(accessCode, widget.id, 3);
-    _showPersBottomSheetCallBack = _showBottomSheet;
   }
 
   Widget _buildAppBar(BuildContext context) {
@@ -143,7 +173,7 @@ class ArticleDetailsPageState extends State<ArticleDetailsPage>
             highlightColor: MyStyle.colorBlack,
             icon: new Icon(
               Icons.arrow_back,
-              color: MyStyle.colorWhite,
+              color: MyStyle.colorBlack,
             ),
             iconSize: 30.0,
             onPressed: () => _clickBack(context),
@@ -155,8 +185,8 @@ class ArticleDetailsPageState extends State<ArticleDetailsPage>
           child: new IconButton(
             color: MyStyle.colorGrey,
             icon: new Icon(
-              Icons.bookmark_border,
-              color: MyStyle.colorWhite,
+              isBookmark ? Icons.bookmark : Icons.bookmark_border,
+              color: MyStyle.colorBlack,
             ),
             iconSize: 30.0,
             onPressed: () => _clickBookmark(context),
@@ -168,7 +198,7 @@ class ArticleDetailsPageState extends State<ArticleDetailsPage>
           child: new IconButton(
             icon: new Icon(
               Icons.share,
-              color: MyStyle.colorWhite,
+              color: MyStyle.colorBlack,
             ),
             iconSize: 30.0,
             onPressed: () => _clickShare(context),
@@ -237,7 +267,6 @@ class ArticleDetailsPageState extends State<ArticleDetailsPage>
   }
 
   _showHeaderImage() {
-    print('Article ${article.id}');
     if (article.id != null) {
       return new Container(
         constraints: new BoxConstraints.expand(
@@ -258,40 +287,52 @@ class ArticleDetailsPageState extends State<ArticleDetailsPage>
     }
   }
 
+  /*Widget loadingIndicator = new Container(
+      child: new CircularProgressIndicator(
+    strokeWidth: 2.0,
+  ));
+*/
+
   Widget _buildBody(BuildContext context) {
-    return new SingleChildScrollView(
-        controller: new ScrollController(),
-        scrollDirection: Axis.vertical,
-        child: new Padding(
-          padding: const EdgeInsets.only(top: 0.0, bottom: 5.0),
-          child: new Container(
-            child: new Column(
-              children: <Widget>[
-                _showHeaderImage(),
-                buildTitle(context),
-                new Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: showArticleAndVideo(article.type),
-                ),
-                new Stack(
-                  children: <Widget>[
-                    new Container(
-                      margin: const EdgeInsets.only(top: 20.0),
-                      //color: MyStyle.layoutBackground,
-                      child: new CommentItem(comment, article.id, true),
-                    ),
-                    new Positioned(
-                      child: _floatingBar(),
-                      top: 0.0,
-                      left: 5.0,
-                      right: 5.0,
-                    )
-                  ],
-                )
-              ],
+    if (!isLoading) {
+      return new SingleChildScrollView(
+          controller: new ScrollController(),
+          scrollDirection: Axis.vertical,
+          child: new Padding(
+            padding: const EdgeInsets.only(top: 0.0, bottom: 5.0),
+            child: new Container(
+              child: new Column(
+                children: <Widget>[
+                  _showHeaderImage(),
+                  buildTitle(context),
+                  new Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: new ArticleDetailsItem(article, comment),
+                  ),
+                  new Stack(
+                    children: <Widget>[
+                      new Container(
+                        margin: const EdgeInsets.only(top: 20.0),
+                        //color: MyStyle.layoutBackground,
+                        child: new CommentItem(comment, article.id, true),
+                      ),
+                      new Positioned(
+                        child: _floatingBar(),
+                        top: 0.0,
+                        left: 5.0,
+                        right: 5.0,
+                      )
+                    ],
+                  )
+                ],
+              ),
             ),
-          ),
-        ));
+          ));
+    } else {
+      return new Container(
+        child: Center(child: BaseWidgets.loadingIndicator),
+      );
+    }
   }
 
   Widget buildTitle(BuildContext context) {
@@ -388,8 +429,9 @@ class ArticleDetailsPageState extends State<ArticleDetailsPage>
       floatingActionButton: new FloatingActionButton(
           onPressed: () => _clickFloatingButton(context),
           elevation: 10.0,
-          child: new Icon(Icons.favorite_border, color: MyStyle.colorGrey),
-          backgroundColor: MyStyle.colorWhite),
+          child: new Icon(isFav ? Icons.favorite : Icons.favorite_border,
+              color: isFav ? MyStyle.colorWhite : MyStyle.colorGrey),
+          backgroundColor: isFav ? MyStyle.colorAccent : MyStyle.colorWhite),
       backgroundColor: MyStyle.colorWhite,
       bottomNavigationBar: new Material(child: new CustomBottomNavigationBar()),
     );
@@ -407,6 +449,9 @@ class ArticleDetailsPageState extends State<ArticleDetailsPage>
   void showArticle(Article a, int commentCount) {
     setState(() {
       article = a;
+      isBookmark = article.save;
+      isFav = article.fav;
+      isLoading = false;
     });
   }
 }

@@ -10,9 +10,9 @@ import 'package:lyc_clinic/ui/notification/widget/review_noti_widget.dart';
 import 'package:lyc_clinic/ui/notification/presenter/notification_presenter.dart';
 import 'package:lyc_clinic/ui/notification/contract/notification_contract.dart';
 import 'package:lyc_clinic/utils/configs.dart';
+import 'package:lyc_clinic/utils/mySharedPreferences.dart';
 
 class NotifiacationListPage extends StatefulWidget {
-
   @override
   NotificationListPageState createState() {
     return new NotificationListPageState();
@@ -23,15 +23,35 @@ class NotificationListPageState extends State<NotifiacationListPage>
     implements NotificationContract {
   NotificationPresenter mPresenter;
   List<Data> notiDataList = new List<Data>();
+  bool isLogin = false;
+  bool isGuest = true;
+  String accessCode;
+  MySharedPreferences mySharedPreferences = new MySharedPreferences();
 
   NotificationListPageState() {
     mPresenter = new NotificationPresenter(this);
+    mySharedPreferences
+        .getBooleanData(Configs.PREF_USER_LOGIN)
+        .then((val) => setState(() {
+              isLogin = val != null ? val : false;
+            }));
   }
 
   @override
   void initState() {
     super.initState();
-    mPresenter.getNoti(Configs.TEST_CODE);
+    if (isLogin) {
+      isGuest = false;
+      mySharedPreferences
+          .getStringData(Configs.PREF_USER_ACCESSCODE)
+          .then((val) => setState(() {
+                accessCode = val;
+              }));
+    } else {
+      isGuest = true;
+      accessCode = Configs.GUEST_CODE;
+    }
+    mPresenter.getNoti(accessCode);
   }
 
   Widget _buildNotificationData(BuildContext context, int index) {
@@ -66,7 +86,7 @@ class NotificationListPageState extends State<NotifiacationListPage>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 new ListView.builder(
-                  padding: const EdgeInsets.only(left: 10.0,right: 10.0),
+                  padding: const EdgeInsets.only(left: 10.0, right: 10.0),
                   itemBuilder: _buildNotificationData,
                   itemCount: notiDataList.length,
                   scrollDirection: Axis.vertical,

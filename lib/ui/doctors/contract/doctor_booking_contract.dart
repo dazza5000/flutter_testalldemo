@@ -13,6 +13,6 @@ abstract class DoctorBookingContract extends BaseContract{
   //void showAvailabeDates( List<Calen> availableDates);
   void showAvailableWeeks(List<int> weekDayColors);
 
-  void showBookingRequestForm(
-      int schedule, DateTime date, int rawTime, String time, Stringday);
+  void showBookingForm(
+      int schedule, DateTime date, int rawTime, String time, String day);
 }

@@ -23,4 +23,25 @@ class ArticleDetailsPresenter {
         .then((c) => _view.showComments(c))
         .catchError((e) => print(e.toString()));
   }
+
+  void saveArticle(String accessCode, int articleId) {
+    _repository
+        .saveArticle(accessCode, articleId)
+        .then((m) {})
+        .catchError((e) => print(e.toString()));
+  }
+
+  void setFavorite(String accessCode, int articleId) {
+    _repository
+        .setFavorite(accessCode, articleId)
+        .then((m) {})
+        .catchError((e) => print(e.toString()));
+  }
+
+  void setShareClick(String accessCode, int articleId) {
+    _repository
+        .setShareClick(accessCode, articleId)
+        .then((m) {})
+        .catchError((e) => print(e.toString()));
+  }
 }

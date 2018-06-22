@@ -19,14 +19,14 @@ class CommentItem extends StatefulWidget {
   }
 }
 
-class CommentItemState extends State<CommentItem> with TickerProviderStateMixin {
+class CommentItemState extends State<CommentItem> with SingleTickerProviderStateMixin{
   List<Review> reviewList;
   AnimationController aniController;
   @override
   void initState() {
     super.initState();
-    aniController = new AnimationController(
-        duration: new Duration(microseconds: 500), vsync: this);
+    aniController = new AnimationController(vsync: this,
+        duration: new Duration(microseconds: 500));
     reviewList = widget.comment.data;
   }
 

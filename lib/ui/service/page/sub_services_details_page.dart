@@ -34,23 +34,19 @@ class SubServicesDetailsPageState extends State<SubServicesDetailsPage>
   SubServicesDetailsPresenter mPresenter;
   List<Service> servicesList;
   SubServiceDetails subServiceDetails;
+  bool isLoading = true;
 
   SubServicesDetailsPageState() {
     mPresenter = new SubServicesDetailsPresenter(this);
   }
 
-  _clickBack(BuildContext context){
+  _clickBack(BuildContext context) {
     Navigator.pop(context);
   }
 
-  _clickShare(BuildContext context){
+  _clickShare(BuildContext context) {}
 
-  }
-
-  _clickNextDirection(BuildContext context){
-
-  }
-
+  _clickNextDirection(BuildContext context) {}
 
   @override
   void initState() {
@@ -73,7 +69,7 @@ class SubServicesDetailsPageState extends State<SubServicesDetailsPage>
               color: MyStyle.colorWhite,
             ),
             iconSize: 30.0,
-            onPressed:() => _clickBack(context),
+            onPressed: () => _clickBack(context),
           ),
         ),
         new Positioned(
@@ -93,74 +89,83 @@ class SubServicesDetailsPageState extends State<SubServicesDetailsPage>
   }
 
   Widget _buildBody(BuildContext context) {
-    return new SingleChildScrollView(
-        controller: new ScrollController(),
-        scrollDirection: Axis.vertical,
-        child: new Padding(
-          padding: const EdgeInsets.only(top: 0.0, bottom: 5.0),
-          child: new Container(
-            child: new Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                new Container(
-                  constraints: new BoxConstraints.expand(
-                    height: 250.0,
-                  ),
-                  padding:
-                      new EdgeInsets.only(left: 16.0, bottom: 8.0, right: 16.0),
-                  decoration: new BoxDecoration(
-                    image: new DecorationImage(
-                      image: new NetworkImage(subServiceDetails.image),
-                      fit: BoxFit.cover,
+    if (isLoading) {
+      return new Center(
+        child: new Container(
+          child: new CircularProgressIndicator(strokeWidth: 2.0),
+        ),
+      );
+    } else {
+      return new SingleChildScrollView(
+          controller: new ScrollController(),
+          scrollDirection: Axis.vertical,
+          child: new Padding(
+            padding: const EdgeInsets.only(top: 0.0, bottom: 5.0),
+            child: new Container(
+              child: new Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  new Container(
+                    constraints: new BoxConstraints.expand(
+                      height: 250.0,
+                    ),
+                    padding: new EdgeInsets.only(
+                        left: 16.0, bottom: 8.0, right: 16.0),
+                    decoration: new BoxDecoration(
+                      image: new DecorationImage(
+                        image: new NetworkImage(subServiceDetails.image),
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
-                ),
-                new Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 15.0, vertical: 5.0),
-                    child: new Text(
-                      widget.title.toString(),
-                      textAlign: TextAlign.left,
-                      style: MyStyle.headerStyle(),
-                    )),
-                new Padding(
-                    padding: const EdgeInsets.only(
-                        top: 15.0, left: 5.0, right: 5.0, bottom: 15.0),
-                    child: new Text(
-                      'ဝန္ေဆာင္မွဳမ်ား',
-                      textAlign: TextAlign.left,
-                      style: MyStyle.listItemTextStyle(),
-                    )),
-                new MarkdownBody(data: html2md.convert(subServiceDetails.desc)),
-                new Container(
-                  margin: const EdgeInsets.all(10.0),
-                  color: MyStyle.layoutBackground,
-                  child: new Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      new Row(
-                        children: <Widget>[
-                          new Text('အျခားဝန္ေဆာင္မွဳမ်ား'),
-                          new Expanded(
-                              child: new Row(
-                            children: <Widget>[],
-                          )),
-                          new IconButton(
-                              icon: new Icon(
-                                FontAwesomeIcons.handPointRight,
-                                color: MyStyle.colorGrey,
-                              ),
-                              onPressed: () => _clickNextDirection(context))
-                        ],
-                      ),
-                      new ServicesScroller(servicesList),
-                    ],
-                  ),
-                )
-              ],
+                  new Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 15.0, vertical: 5.0),
+                      child: new Text(
+                        widget.title.toString(),
+                        textAlign: TextAlign.left,
+                        style: MyStyle.headerStyle(),
+                      )),
+                  new Padding(
+                      padding: const EdgeInsets.only(
+                          top: 15.0, left: 5.0, right: 5.0, bottom: 15.0),
+                      child: new Text(
+                        'ဝန္ေဆာင္မွဳမ်ား',
+                        textAlign: TextAlign.left,
+                        style: MyStyle.listItemTextStyle(),
+                      )),
+                  new MarkdownBody(
+                      data: html2md.convert(subServiceDetails.desc)),
+                  new Container(
+                    margin: const EdgeInsets.all(10.0),
+                    color: MyStyle.layoutBackground,
+                    child: new Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        new Row(
+                          children: <Widget>[
+                            new Text('အျခားဝန္ေဆာင္မွဳမ်ား'),
+                            new Expanded(
+                                child: new Row(
+                              children: <Widget>[],
+                            )),
+                            new IconButton(
+                                icon: new Icon(
+                                  FontAwesomeIcons.handPointRight,
+                                  color: MyStyle.colorGrey,
+                                ),
+                                onPressed: () => _clickNextDirection(context))
+                          ],
+                        ),
+                        new ServicesScroller(servicesList),
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
-          ),
-        ));
+          ));
+    }
   }
 
   @override
@@ -199,6 +204,7 @@ class SubServicesDetailsPageState extends State<SubServicesDetailsPage>
   void showServiceDetail(SubServiceDetails sd) {
     setState(() {
       subServiceDetails = sd;
+      isLoading = false;
     });
   }
 }
