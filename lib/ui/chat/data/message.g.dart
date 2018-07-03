@@ -7,7 +7,7 @@
 part of 'message.dart';
 
 // **************************************************************************
-// Generator: JsonSerializableGenerator
+// JsonSerializableGenerator
 // **************************************************************************
 
 Message _$MessageFromJson(Map<String, dynamic> json) {

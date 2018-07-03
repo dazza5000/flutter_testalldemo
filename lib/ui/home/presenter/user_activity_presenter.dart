@@ -13,14 +13,20 @@ class UserActivityPresenter {
   void getUserActivity(String accessCode) {
     _repository
         .getUserActivities(accessCode)
-        .then((us) => _view.showUserActivities(us.data))
+        .then((us) {
+          _view.showUserActivities(us.data);
+          _view.setPagination(us.pagination);
+    })
         .catchError((e) => print(e.toString()));
   }
 
   void getMoreUserActivity(String accessCode, int page) {
     _repository
         .getMoreUserActivities(accessCode, page)
-        .then((us) => _view.showMoreUserActivities(us.data))
+        .then((us) {
+          _view.showMoreUserActivities(us.data);
+          _view.setPagination(us.pagination);
+    })
         .catchError((e) => print(e.toString()));
   }
 

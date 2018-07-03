@@ -7,7 +7,7 @@
 part of 'save.dart';
 
 // **************************************************************************
-// Generator: JsonSerializableGenerator
+// JsonSerializableGenerator
 // **************************************************************************
 
 Save _$SaveFromJson(Map<String, dynamic> json) {

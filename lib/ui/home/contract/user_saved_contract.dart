@@ -5,5 +5,5 @@ abstract class UserSavedContract{
   void onLoadError(String err);
   void showSavedList(  List<Save> s);
   void showMoreSavedList(  List<Save> s);
-  void pagination(  Pagination p);
+  void setPagination(  Pagination p);
 }

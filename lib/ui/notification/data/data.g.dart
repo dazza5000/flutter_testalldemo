@@ -7,7 +7,7 @@
 part of 'data.dart';
 
 // **************************************************************************
-// Generator: JsonSerializableGenerator
+// JsonSerializableGenerator
 // **************************************************************************
 
 Data _$DataFromJson(Map<String, dynamic> json) {

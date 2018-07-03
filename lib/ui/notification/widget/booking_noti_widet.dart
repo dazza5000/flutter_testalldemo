@@ -1,20 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
 import 'package:lyc_clinic/ui/notification/data/booking.dart';
 import 'package:lyc_clinic/ui/utils/time_utils.dart';
+import 'package:lyc_clinic/ui/doctors/page/doctor_details_page.dart';
 
-class BookingNotificationWidget extends StatefulWidget {
+class BookingNotificationWidget extends StatelessWidget {
   Booking booking;
 
   BookingNotificationWidget(this.booking);
 
-  @override
-  BookingNotiWidgetState createState() {
-    return new BookingNotiWidgetState();
-  }
-}
-
-class BookingNotiWidgetState extends State<BookingNotificationWidget> {
   String _you_have = "You have ";
   String _requested = "requested";
   String _booking_for = " booking for ";
@@ -55,117 +50,124 @@ class BookingNotiWidgetState extends State<BookingNotificationWidget> {
       fontWeight: FontWeight.bold,
       decoration: TextDecoration.underline);
 
-  Widget _getCustomMessage() {
-    if (widget.booking.customMesg != null && widget.booking.customMesg != '') {
-      return new Text(
-        widget.booking.customMesg,
-        style: MyStyle.listItemTextStyle(),
-      );
-    } else {
-      return _getSpannableString();
-    }
-  }
-
-  Widget _getSpannableString() {
-    var style = [
-      mConfirmSpan,
-      mRequestedSpan,
-      mUnavailableSpan,
-      mNormalSpan,
-      mUnavailableSpan
-    ];
-    _date = widget.booking.time;
-    _doctor = widget.booking.doctorName;
-    if (status == 1) {
-      return new RichText(
-        text: new TextSpan(
-          //style: DefaultTextStyle.of(this).style,
-          children: <TextSpan>[
-            new TextSpan(
-              text: _you_have,
-              style: mNormalSpan,
-            ),
-            new TextSpan(
-              text: _requested,
-              style: mBoldSpan,
-            ),
-            new TextSpan(
-              text: _booking_for,
-              style: mNormalSpan,
-            ),
-            new TextSpan(
-              text: _date,
-              style: mDateSpan,
-            ),
-            new TextSpan(
-              text: _with,
-              style: mNormalSpan,
-            ),
-            new TextSpan(
-              text: _doctor,
-              style: mDoctorSpan,
-            ),
-          ],
-        ),
-      );
-    } else {
-      return new RichText(
-        text: new TextSpan(
-          //style: DefaultTextStyle.of(context).style,
-          children: <TextSpan>[
-            new TextSpan(
-              text: _your_booking_for,
-              style: mNormalSpan,
-            ),
-            new TextSpan(
-              text: _date,
-              style: mDateSpan,
-            ),
-            new TextSpan(
-              text: _with,
-              style: mNormalSpan,
-            ),
-            new TextSpan(
-              text: _doctor,
-              style: mDoctorSpan,
-            ),
-            new TextSpan(
-              text: _is,
-              style: mNormalSpan,
-            ),
-            new TextSpan(
-              text: status[widget.booking.status],
-              style: style[widget.booking.status],
-            ),
-          ],
-        ),
-      );
-    }
-  }
-
-  Widget showDateAndTime() {
-    if (widget.booking.timeAgo > 88640) {
-      return new Text(
-        TimeUtils.getDateWithoutHours(widget.booking.createDate),
-        style: MyStyle.dateTimeTextStyle(),
-      );
-    } else {
-      return new Row(
-        children: <Widget>[
-          new Text(
-            TimeUtils.getTime(widget.booking.timeAgo),
-            style: MyStyle.dateTimeTextStyle(),
-          ),
-          new Text('.')
-        ],
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    var networkImage = new NetworkImage(widget.booking.image);
+    var networkImage = new NetworkImage(booking.image);
     var localImage = new AssetImage('assets/images/lyc.png');
+    var tapRecognizer = new TapGestureRecognizer()
+      ..onTap = () {
+        print('Doctor Link');
+        Navigator.push(
+            context,
+            new MaterialPageRoute(
+                builder: (_) => new DoctorDetailsPage(booking.doctor)));
+      };
+
+    Widget showDateAndTime() {
+      if (booking.timeAgo > 88640) {
+        return new Text(
+          TimeUtils.getDateWithoutHours(booking.createDate),
+          style: MyStyle.dateTimeTextStyle(),
+        );
+      } else {
+        return new Row(
+          children: <Widget>[
+            new Text(
+              TimeUtils.getTime(booking.timeAgo),
+              style: MyStyle.dateTimeTextStyle(),
+            ),
+            new Text('.')
+          ],
+        );
+      }
+    }
+
+    Widget _getSpannableString() {
+      var style = [
+        mConfirmSpan,
+        mRequestedSpan,
+        mUnavailableSpan,
+        mNormalSpan,
+        mUnavailableSpan
+      ];
+      _date = booking.time;
+      _doctor = booking.doctorName;
+      if (status == 1) {
+        return new RichText(
+          text: new TextSpan(
+            //style: DefaultTextStyle.of(this).style,
+            children: <TextSpan>[
+              new TextSpan(
+                text: _you_have,
+                style: mNormalSpan,
+              ),
+              new TextSpan(
+                text: _requested,
+                style: mBoldSpan,
+              ),
+              new TextSpan(
+                text: _booking_for,
+                style: mNormalSpan,
+              ),
+              new TextSpan(
+                text: _date,
+                style: mDateSpan,
+              ),
+              new TextSpan(
+                text: _with,
+                style: mNormalSpan,
+              ),
+              new TextSpan(
+                text: _doctor,
+                style: mDoctorSpan,
+                recognizer: tapRecognizer
+              ),
+            ],
+          ),
+        );
+      } else {
+        return new RichText(
+          text: new TextSpan(
+            //style: DefaultTextStyle.of(context).style,
+            children: <TextSpan>[
+              new TextSpan(
+                text: _your_booking_for,
+                style: mNormalSpan,
+              ),
+              new TextSpan(
+                text: _date,
+                style: mDateSpan,
+              ),
+              new TextSpan(
+                text: _with,
+                style: mNormalSpan,
+              ),
+              new TextSpan(
+                  text: _doctor, style: mDoctorSpan, recognizer: tapRecognizer),
+              new TextSpan(
+                text: _is,
+                style: mNormalSpan,
+              ),
+              new TextSpan(
+                text: status[booking.status],
+                style: style[booking.status],
+              ),
+            ],
+          ),
+        );
+      }
+    }
+
+    Widget _getCustomMessage() {
+      if (booking.customMesg != null && booking.customMesg != '') {
+        return new Text(
+          booking.customMesg,
+          style: MyStyle.listItemTextStyle(),
+        );
+      } else {
+        return _getSpannableString();
+      }
+    }
 
     return new Container(
         margin: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 10.0),
@@ -174,8 +176,7 @@ class BookingNotiWidgetState extends State<BookingNotificationWidget> {
           children: <Widget>[
             new CircleAvatar(
               backgroundColor: Colors.transparent,
-              backgroundImage:
-                  widget.booking.image == "" ? localImage : networkImage,
+              backgroundImage: booking.image == "" ? localImage : networkImage,
               radius: 20.0,
             ),
             new Expanded(

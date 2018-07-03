@@ -5,7 +5,7 @@ import 'package:lyc_clinic/base/mystyle.dart';
 
 final ThemeData themeData = new ThemeData(
     brightness: Brightness.light,
-    disabledColor: Colors.green,
+    disabledColor: MyStyle.colorGrey,
     primaryColorDark: MyStyle.colorPrimaryDark,
     textSelectionColor: MyStyle.colorAccent,
     textSelectionHandleColor:Colors.blue,

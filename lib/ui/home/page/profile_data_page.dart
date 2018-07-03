@@ -41,12 +41,6 @@ class ProfileDataPageState extends State<ProfileDataPage>
 
   }
 
-
-  @override
-  void didUpdateWidget(ProfileDataPage oldWidget) {
-
-  }
-
   @override
   void deactivate() {
 
@@ -89,6 +83,7 @@ class ProfileDataPageState extends State<ProfileDataPage>
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
+      resizeToAvoidBottomPadding: false,
       backgroundColor: MyStyle.layoutBackground,
       appBar: new PreferredSize(
         preferredSize: new Size.fromHeight(kTextTabBarHeight),
@@ -117,7 +112,7 @@ class ProfileDataPageState extends State<ProfileDataPage>
         new UserActivityListPage(),
         new UserSavedListPage(),
         new UserBookingListPage(),
-        new UserProfileInfoPage()
+        new UserProfileInfoPage(context)
       ], controller: controller),
     );
   }

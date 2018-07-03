@@ -18,6 +18,16 @@ class DoctorListPresenter {
     }).catchError((_) => _view.onLoadError());
   }
 
+  void getMoreDoctorList(String accessCode, List<int> roles, int perPage,
+      int page, String keyword) {
+    _repository
+        .loadMoreDoctorList(accessCode, roles, perPage, page, keyword)
+        .then((ds) {
+      _view.showMoreDoctorList(ds.doctor);
+      _view.showPagination(ds.pagination);
+    }).catchError(() => _view.onLoadError());
+  }
+
   void saveDoctor(String accessCode, int doctorId) {
     _repository
         .saveDoctor(accessCode, doctorId)

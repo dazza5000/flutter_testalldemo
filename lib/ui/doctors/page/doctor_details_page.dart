@@ -27,8 +27,6 @@ class DoctorDetailsPage extends StatefulWidget {
 
   DoctorDetailsPage(this.doctorId);
 
-
-
   @override
   DoctorDetailsPageState createState() {
     return new DoctorDetailsPageState();

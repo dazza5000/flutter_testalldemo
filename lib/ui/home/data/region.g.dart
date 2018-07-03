@@ -4,27 +4,25 @@
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'health_service.dart';
+part of 'region.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-HealthService _$HealthServiceFromJson(Map<String, dynamic> json) {
-  return new HealthService(
-      json['service'] == null
-          ? null
-          : new Service.fromJson(json['service'] as Map<String, dynamic>),
-      (json['subservice'] as List)
+Region _$RegionFromJson(Map<String, dynamic> json) {
+  return new Region(
+      json['title'] as String,
+      (json['items'] as List)
           ?.map((e) => e == null
               ? null
-              : new SubService.fromJson(e as Map<String, dynamic>))
+              : new SubLocation.fromJson(e as Map<String, dynamic>))
           ?.toList());
 }
 
-abstract class _$HealthServiceSerializerMixin {
-  Service get service;
-  List<SubService> get subservice;
+abstract class _$RegionSerializerMixin {
+  String get title;
+  List<SubLocation> get items;
   Map<String, dynamic> toJson() =>
-      <String, dynamic>{'service': service, 'subservice': subservice};
+      <String, dynamic>{'title': title, 'items': items};
 }

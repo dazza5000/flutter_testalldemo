@@ -7,7 +7,7 @@
 part of 'booking.dart';
 
 // **************************************************************************
-// Generator: JsonSerializableGenerator
+// JsonSerializableGenerator
 // **************************************************************************
 
 Booking _$BookingFromJson(Map<String, dynamic> json) {

@@ -38,7 +38,6 @@ class ChatDataRepository implements ChatRepository {
       print(statusCode);
       return;
     }
-
     print('Response is' + response.body);
   }
 
@@ -59,7 +58,28 @@ class ChatDataRepository implements ChatRepository {
   @override
   Future<Message> sendImage(String accessCode, String filePath, int articleId,
       int doctorId, int serviceId) async {
-    http.Response response =
+    bool complete = false;
+    var message;
+    if (!complete) {
+      var responseBody;
+      String strUrl = URL + accessCode + '/chat/send';
+      var uri = Uri.parse(strUrl);
+      var request = new http.MultipartRequest("POST", uri);
+      var multipartFile = await http.MultipartFile.fromPath("image", filePath);
+      request.files.add(multipartFile);
+      http.StreamedResponse response = await request.send();
+      response.stream.transform(utf8.decoder).listen((value) {
+        print(value);
+        responseBody = _decoder.convert(value);
+        message = new Message.fromJson(responseBody);
+        complete = true;
+        return message;
+      });
+    } else {
+      return message;
+    }
+
+    /*http.Response response =
         await http.post(URL + accessCode + '/chat/send', body: {});
     final responseBody = response.body;
     final statusCode = response.statusCode;
@@ -72,20 +92,20 @@ class ChatDataRepository implements ChatRepository {
 
     var message = new Message.fromJson(jsonBody);
 
-    return message;
+    return message;*/
   }
 
   @override
   Future<Message> sendMessage(String accessCode, String mesg, int articleId,
       int doctorId, int serviceId) async {
     print('Article $articleId Doctor $doctorId Service $serviceId');
-    http.Response response = await http.post(URL + accessCode + '/chat/send',
-        body: {
-          "mesg": mesg,
-          //"article": articleId,
-          //"doctor": doctorId,
-          //"service": serviceId
-        });
+    http.Response response =
+        await http.post(URL + accessCode + '/chat/send', body: {
+      "mesg": mesg,
+      //"article": articleId,
+      //"doctor": doctorId,
+      //"service": serviceId
+    });
     final responseBody = response.body;
     final statusCode = response.statusCode;
 
@@ -102,7 +122,7 @@ class ChatDataRepository implements ChatRepository {
 
   @override
   Future<Chat> getMoreChatHistory(String accessCode, int page) async {
-    http.Response response = await http.get(URL + accessCode + '/chat/list?');
+    http.Response response = await http.get(URL + accessCode + '/chat/list?page=${page}');
     final responseBody = response.body;
     final statusCode = response.statusCode;
 

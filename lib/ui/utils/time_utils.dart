@@ -45,6 +45,10 @@ class TimeUtils {
     return dateFormat;
   }
 
+  static String getYearMonthDay(DateTime d){
+    var dateFormat=DateFormat("yyyy-MM-dd");
+    return dateFormat.format(d);
+  }
   static String getTimeZone() {
     return null;
   }

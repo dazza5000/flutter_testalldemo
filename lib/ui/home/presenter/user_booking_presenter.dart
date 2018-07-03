@@ -13,6 +13,7 @@ class UserBookingPresenter {
   void getBookingList(String accessCode, int status, int page) {
     _repository.getBookingList(accessCode, status, page).then((b) {
       _view.showBookingList(b.data, status);
+      _view.setPagination(b.pagination);
     }).catchError((e) => print('Error  is ${e.toString()}'));
   }
 

@@ -138,6 +138,7 @@ class LoginDialogPageState extends State<LoginDialogPage>
 
   @override
   void showLandingPage() {
-    MyApp.restartApp(context);
+    print('Show Landing Page');
+    runApp(new MyApp());
   }
 }

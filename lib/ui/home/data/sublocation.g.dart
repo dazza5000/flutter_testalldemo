@@ -4,28 +4,26 @@
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'schedule.dart';
+part of 'sublocation.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-Schedule _$ScheduleFromJson(Map<String, dynamic> json) {
-  return new Schedule(json['id'] as int, json['time'] as String,
-      json['rawTime'], json['range'] as int, json['day'] as String);
+SubLocation _$SubLocationFromJson(Map<String, dynamic> json) {
+  return new SubLocation(json['id'] as int, json['name'] as String,
+      json['location'] as int, json['order'] as int);
 }
 
-abstract class _$ScheduleSerializerMixin {
+abstract class _$SubLocationSerializerMixin {
   int get id;
-  String get time;
-  dynamic get rawTime;
-  int get range;
-  String get day;
+  String get name;
+  int get location;
+  int get order;
   Map<String, dynamic> toJson() => <String, dynamic>{
         'id': id,
-        'time': time,
-        'rawTime': rawTime,
-        'range': range,
-        'day': day
+        'name': name,
+        'location': location,
+        'order': order
       };
 }

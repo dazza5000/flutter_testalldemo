@@ -7,7 +7,7 @@
 part of 'profile_info.dart';
 
 // **************************************************************************
-// Generator: JsonSerializableGenerator
+// JsonSerializableGenerator
 // **************************************************************************
 
 ProfileInfo _$ProfileInfoFromJson(Map<String, dynamic> json) {

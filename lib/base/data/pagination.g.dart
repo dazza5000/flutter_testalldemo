@@ -7,7 +7,7 @@
 part of 'pagination.dart';
 
 // **************************************************************************
-// Generator: JsonSerializableGenerator
+// JsonSerializableGenerator
 // **************************************************************************
 
 Pagination _$PaginationFromJson(Map<String, dynamic> json) {

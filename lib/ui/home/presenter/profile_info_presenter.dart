@@ -15,6 +15,7 @@ class ProfileInfoPresenter {
   void getProfileInfo(String accessCode) {
     _repository.getProfileInfo(accessCode).then((p) {
       _view.displayProfileLayout(p);
+      setProfileInfo(p);
     }).catchError((e) => print(e.toString()));
   }
 
@@ -24,9 +25,10 @@ class ProfileInfoPresenter {
     }).catchError((e) => print(e.toString()));
   }
 
-  void uploadProfileImage(String accessCode, String filePath) {
-    _repository.uploadProfilePhoto(accessCode, filePath).then((pi) {
-      setProfileInfo(pi);
+  void uploadProfileImage(String accessCode, String filePath) async {
+    var profileInfo = _repository.uploadProfilePhoto(accessCode, filePath);
+    await profileInfo.then((v) {
+      setProfileInfo(v);
     });
   }
 
@@ -66,7 +68,7 @@ class ProfileInfoPresenter {
     if (profileInfo.image != "") {
       _view.displayImage(profileInfo.image);
     }
-    if (profileInfo.gender > 0) {
+    if (profileInfo.gender >= 0) {
       _view.displayGender(profileInfo.gender);
     }
 

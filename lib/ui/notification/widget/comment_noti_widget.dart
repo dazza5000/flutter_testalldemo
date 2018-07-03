@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
 import 'package:lyc_clinic/ui/notification/data/comment.dart';
 import 'package:lyc_clinic/utils/configs.dart';
 import 'package:lyc_clinic/ui/utils/time_utils.dart';
+import 'package:lyc_clinic/ui/article/page/article_details_page.dart';
 
 class CommentNotiWidget extends StatelessWidget {
   Comment comment;
@@ -17,47 +19,6 @@ class CommentNotiWidget extends StatelessWidget {
       fontWeight: FontWeight.bold,
       decoration: TextDecoration.underline);
 
-  Widget _getSpannableString() {
-    return new RichText(
-      text: new TextSpan(
-        //style: DefaultTextStyle.of(context).style,
-        children: <TextSpan>[
-          new TextSpan(
-            text: comment.user + ' ',
-            style: mNormalSpan,
-          ),
-          new TextSpan(
-            text: comment.mesg + ' ',
-            style: mNormalSpan,
-          ),
-          new TextSpan(
-            text: comment.article,
-            style: mArticleSpan,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget showDateAndTime() {
-    if (comment.timeAgo > 88640) {
-      return new Text(
-        TimeUtils.getDateWithoutHours(comment.createDate),
-        style: MyStyle.dateTimeTextStyle(),
-      );
-    } else {
-      return new Row(
-        children: <Widget>[
-          new Text(
-            TimeUtils.getTime(comment.timeAgo),
-            style: MyStyle.dateTimeTextStyle(),
-          ),
-          new Text('.')
-        ],
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     if (comment.userId == 0 || comment.user == Configs.ADMIN_NAME) {
@@ -68,6 +29,56 @@ class CommentNotiWidget extends StatelessWidget {
       image = new NetworkImage(comment.image);
     }
 
+    Widget _getSpannableString() {
+      return new RichText(
+        text: new TextSpan(
+          //style: DefaultTextStyle.of(context).style,
+          children: <TextSpan>[
+            new TextSpan(
+              text: comment.user + ' ',
+              style: mNormalSpan,
+            ),
+            new TextSpan(
+              text: comment.mesg + ' ',
+              style: mNormalSpan,
+            ),
+            new TextSpan(
+              text: comment.article,
+              style: mArticleSpan,
+              recognizer: new TapGestureRecognizer()
+                ..onTap = () {
+                  print('Article Link');
+                  Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                          builder: (_) =>
+                              new ArticleDetailsPage(comment.articleId)));
+                },
+            ),
+          ],
+        ),
+      );
+    }
+
+    Widget showDateAndTime() {
+      if (comment.timeAgo > 88640) {
+        return new Text(
+          TimeUtils.getDateWithoutHours(comment.createDate),
+          style: MyStyle.dateTimeTextStyle(),
+        );
+      } else {
+        return new Row(
+          children: <Widget>[
+            new Text(
+              TimeUtils.getTime(comment.timeAgo),
+              style: MyStyle.dateTimeTextStyle(),
+            ),
+            new Text('.')
+          ],
+        );
+      }
+    }
+
     return new Container(
         margin: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 10.0),
         child: new Row(
@@ -75,7 +86,7 @@ class CommentNotiWidget extends StatelessWidget {
           children: <Widget>[
             new CircleAvatar(
               backgroundColor: Colors.transparent,
-              backgroundImage:image,
+              backgroundImage: image,
               radius: 20.0,
             ),
             new Expanded(

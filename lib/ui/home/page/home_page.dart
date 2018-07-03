@@ -15,6 +15,10 @@ import 'package:lyc_clinic/utils/mySharedPreferences.dart';
 import 'package:lyc_clinic/test/home_page.dart';
 
 class HomePage extends StatefulWidget {
+  SeeMoreClickListener listerner;
+
+  HomePage(this.listerner);
+
   @override
   HomePageState createState() {
     return new HomePageState();
@@ -29,13 +33,13 @@ class HomePageState extends State<HomePage>
   List<BannerData> bannerList = new List<BannerData>();
   String accessCode;
   bool isGuest = true;
-  bool isLogin ;
+  bool isLogin;
+
   MySharedPreferences mySharedPreferences = new MySharedPreferences();
 
   HomePageState() {
     mPresenter = new HomePresenter(this);
   }
-
 
   @override
   void initState() {
@@ -44,20 +48,20 @@ class HomePageState extends State<HomePage>
     mySharedPreferences
         .getBooleanData(Configs.PREF_USER_LOGIN)
         .then((val) => setState(() {
-      isLogin = val!=null?val:false;
-      _getAccessCode(isLogin);
-    }));
+              isLogin = val != null ? val : false;
+              _getAccessCode(isLogin);
+            }));
   }
 
-  _getAccessCode(bool login){
+  _getAccessCode(bool login) {
     if (login) {
       mySharedPreferences
           .getStringData(Configs.PREF_USER_ACCESSCODE)
           .then((val) => setState(() {
-        accessCode = val;
-        isGuest = false;
-        getHomeData();
-      }));
+                accessCode = val;
+                isGuest = false;
+                getHomeData();
+              }));
     } else {
       setState(() {
         isGuest = true;
@@ -75,8 +79,9 @@ class HomePageState extends State<HomePage>
   }
 
   _clickSeeMore(BuildContext context) {
-    Navigator.pop(
-        context, new MaterialPageRoute(builder: (_) => new DoctorListPage()));
+    widget.listerner.onSeeMoreClickListener();
+    /*Navigator.pop(
+        context, new MaterialPageRoute(builder: (_) => new DoctorListPage()));*/
   }
 
   _showImageBanner() {
@@ -110,7 +115,7 @@ class HomePageState extends State<HomePage>
 
   _showDoctorLists() {
     if (doctorList.length > 0) {
-      return new DoctorLists(doctorList,this);
+      return new DoctorLists(doctorList, this);
     } else {
       return new Container(
         child: new Center(
@@ -135,8 +140,7 @@ class HomePageState extends State<HomePage>
                   style: MyStyle.buttonTextStyle(),
                 ),
                 shape: new RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(7.0)
-                ),
+                    borderRadius: BorderRadius.circular(7.0)),
                 onPressed: () => _clickSeeMore(context),
                 color: MyStyle.colorAccent,
               )),
@@ -272,4 +276,8 @@ class HomePageState extends State<HomePage>
 
   @override
   void onDoctorItemClick(Doctor doctor) {}
+}
+
+abstract class SeeMoreClickListener {
+  void onSeeMoreClickListener();
 }

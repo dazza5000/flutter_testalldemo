@@ -7,7 +7,7 @@
 part of 'reply.dart';
 
 // **************************************************************************
-// Generator: JsonSerializableGenerator
+// JsonSerializableGenerator
 // **************************************************************************
 
 Reply _$ReplyFromJson(Map<String, dynamic> json) {

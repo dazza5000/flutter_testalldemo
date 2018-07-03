@@ -8,5 +8,5 @@ abstract class HealthEducationContract{
   void showMoreArticles( List<Article> a);
   void showFeaturedArticles( List<Article> a);
   void removeFeaturedArticles();
-  void pagination( Pagination p);
+  void setPagination( Pagination p);
 }

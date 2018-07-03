@@ -13,6 +13,15 @@ class HealthEducationPresenter {
   void getArticles(String accessCode, int type, List<int> category, int page) {
     _repository.getArticles(accessCode, type, category, page).then((a) {
       _view.showArticles(a.data);
+      _view.setPagination(a.pagination);
+    }).catchError((e) => print(e.toString()));
+  }
+
+  void getMoreArticles(
+      String accessCode, int type, List<int> category, int page) {
+    _repository.getMoreArticle(accessCode, type, category, page).then((a) {
+      _view.showMoreArticles(a.data);
+      _view.setPagination(a.pagination);
     }).catchError((e) => print(e.toString()));
   }
 

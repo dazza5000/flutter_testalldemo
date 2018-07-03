@@ -35,8 +35,8 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   }
 
   _addressClick(BuildContext context) {
-    //showMap();
-    _launchMaps();
+    showMap();
+    //_launchMaps();
   }
 
   _phoneClick(BuildContext context) {
@@ -155,17 +155,16 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
             mapViewType: MapViewType.normal,
             showUserLocation: true,
             initialCameraPosition: new CameraPosition(
-                new Location(45.5235258, -122.6732493), 14.0),
+                new Location(16.796961, 96.124222), 14.0),
             title: "Recently Visited"),
         toolbarActions: [new ToolbarAction("Close", 1)]);
 
     var sub = mapView.onMapReady.listen((_) {
       mapView.setMarkers(<Marker>[
-        new Marker("1", "Work", 45.523970, -122.663081, color: Colors.blue),
-        new Marker("2", "Nossa Familia Coffee", 45.528788, -122.684633),
+        new Marker("1", "Lin Yaung Chi", 16.797028,96.124407 , color: Colors.blue),
       ]);
-      mapView.addMarker(new Marker("3", "10 Barrel", 45.5259467, -122.687747,
-          color: Colors.purple));
+     /* mapView.addMarker(new Marker("3", "10 Barrel", 16.796961, 96.124222,
+          color: Colors.purple));*/
 
       mapView.zoomToFit(padding: 100);
     });

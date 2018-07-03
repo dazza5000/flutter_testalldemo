@@ -11,16 +11,16 @@ class NotificationPresenter {
   }
 
   void getNoti(String accessCode) {
-    _repository
-        .getNotifications(accessCode)
-        .then((n) => _view.showNotifications(n.data))
-        .catchError((e) => print(e.toString()));
+    _repository.getNotifications(accessCode).then((n) {
+      _view.showNotifications(n.data);
+      _view.setPagination(n.pagination);
+    }).catchError((e) => print(e.toString()));
   }
 
-  void getMoreNoti(String accessCode,int page) {
-    _repository
-        .getMoreNotifications(accessCode,page)
-        .then((n) => _view.showNotifications(n.data))
-        .catchError((e) => print(e.toString()));
+  void getMoreNoti(String accessCode, int page) {
+    _repository.getMoreNotifications(accessCode, page).then((n) {
+      _view.showMoreNotifications(n.data);
+      _view.setPagination(n.pagination);
+    }).catchError((e) => print(e.toString()));
   }
 }

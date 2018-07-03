@@ -13,6 +13,10 @@ import 'package:lyc_clinic/ui/doctors/widget/create_doctor_buttons.dart';
 import 'package:lyc_clinic/utils/mySharedPreferences.dart';
 
 class DoctorListPage extends StatefulWidget {
+  SendDoctorListener listener;
+
+  DoctorListPage([this.listener]);
+
   @override
   DoctorListPageState createState() {
     return new DoctorListPageState();
@@ -23,12 +27,14 @@ class DoctorListPageState extends State<DoctorListPage>
     implements DoctorListContract, FilterListener, DoctorClickListener {
   DoctorListPresenter mPresenter;
   List<Doctor> doctorsList;
-  Pagination pagination;
+  Pagination paginationData;
   String accessCode;
   bool isGuest = false;
   bool isLogin = false;
   bool isLoading = true;
+  int scrollDirection = 0;
   MySharedPreferences mySharedPreferences = new MySharedPreferences();
+  ScrollController controller = new ScrollController();
 
   DoctorListPageState() {
     mPresenter = new DoctorListPresenter(this);
@@ -43,6 +49,19 @@ class DoctorListPageState extends State<DoctorListPage>
               isLogin = val != null ? val : false;
               getAccessCode(isLogin);
             }));
+    controller.addListener(listen);
+  }
+
+  void listen() {
+    print("Listener>>${controller.position.userScrollDirection.index}");
+   // setState(() {
+      //scrollDirection = controller.position.userScrollDirection.index;
+    //});
+    if (controller.position.pixels == controller.position.maxScrollExtent) {
+      if (paginationData.currentPage < paginationData.lastPage)
+        mPresenter.getMoreDoctorList(
+            accessCode, null, null, paginationData.currentPage + 1, '');
+    }
   }
 
   void getAccessCode(bool login) {
@@ -74,11 +93,11 @@ class DoctorListPageState extends State<DoctorListPage>
       );
     } else {
       return new SingleChildScrollView(
-          controller: new ScrollController(),
+          controller: controller,
           scrollDirection: Axis.vertical,
           child: new Container(
               padding: const EdgeInsets.only(top: 40.0),
-              child: new DoctorLists(doctorsList, this)));
+              child: new DoctorLists(doctorsList, this, paginationData)));
     }
   }
 
@@ -90,28 +109,31 @@ class DoctorListPageState extends State<DoctorListPage>
       color: MyStyle.layoutBackground,
       child: new Stack(children: <Widget>[
         showLoadingOrData(),
-        new Align(
-          alignment: FractionalOffset.topRight,
-          child: new Padding(
-            padding: const EdgeInsets.only(top: 10.0),
-            child: new RaisedButton.icon(
-                color: Colors.white,
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      new MaterialPageRoute(
-                          builder: (_) => new DoctorFilterPage(this)));
-                },
-                icon: new Icon(
-                  Icons.filter_list,
-                  color: Colors.grey,
-                ),
-                label: new Text(
-                  "FILTER",
-                  style: new TextStyle(fontSize: 14.0, color: Colors.grey),
-                ),
-                shape: new RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(30.0))),
+        new Opacity(
+          opacity: scrollDirection == 2 ? 0.0 : 1.0,
+          child: new Align(
+            alignment: FractionalOffset.topRight,
+            child: new Padding(
+              padding: const EdgeInsets.only(top: 10.0),
+              child: new RaisedButton.icon(
+                  color: Colors.white,
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        new MaterialPageRoute(
+                            builder: (_) => new DoctorFilterPage(this)));
+                  },
+                  icon: new Icon(
+                    Icons.filter_list,
+                    color: Colors.grey,
+                  ),
+                  label: new Text(
+                    "FILTER",
+                    style: new TextStyle(fontSize: 14.0, color: Colors.grey),
+                  ),
+                  shape: new RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(30.0))),
+            ),
           ),
         ),
       ]),
@@ -126,12 +148,16 @@ class DoctorListPageState extends State<DoctorListPage>
 
   @override
   void showMoreDoctorList(List<Doctor> doctors) {
-    doctorsList.addAll(doctors);
+    setState(() {
+      doctorsList.addAll(doctors);
+    });
   }
 
   @override
   void showPagination(Pagination pagination) {
-    pagination = pagination;
+    setState(() {
+      paginationData=pagination;
+    });
   }
 
   @override
@@ -143,6 +169,7 @@ class DoctorListPageState extends State<DoctorListPage>
       doctorsList = doctors;
       isLoading = false;
     });
+    widget.listener.onSendDoctorListener(doctors);
     print('Doctor List$doctorsList');
   }
 
@@ -177,4 +204,8 @@ class DoctorListPageState extends State<DoctorListPage>
   void onDoctorItemClick(Doctor doctor) {
     print('Doctor Item Click');
   }
+}
+
+abstract class SendDoctorListener {
+  void onSendDoctorListener(List<Doctor> doctorlist);
 }

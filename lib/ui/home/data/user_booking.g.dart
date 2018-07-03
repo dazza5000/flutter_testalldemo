@@ -7,7 +7,7 @@
 part of 'user_booking.dart';
 
 // **************************************************************************
-// Generator: JsonSerializableGenerator
+// JsonSerializableGenerator
 // **************************************************************************
 
 UserBooking _$UserBookingFromJson(Map<String, dynamic> json) {

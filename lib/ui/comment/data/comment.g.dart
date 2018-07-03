@@ -7,7 +7,7 @@
 part of 'comment.dart';
 
 // **************************************************************************
-// Generator: JsonSerializableGenerator
+// JsonSerializableGenerator
 // **************************************************************************
 
 Comment _$CommentFromJson(Map<String, dynamic> json) {

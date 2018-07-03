@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
 import 'package:lyc_clinic/ui/notification/data/review.dart';
 import 'package:lyc_clinic/utils/configs.dart';
 import 'package:lyc_clinic/ui/utils/time_utils.dart';
+import 'package:lyc_clinic/ui/doctors/page/doctor_details_page.dart';
 
 class ReviewNotiWidget extends StatelessWidget {
   Review review;
@@ -62,6 +64,15 @@ class ReviewNotiWidget extends StatelessWidget {
             new TextSpan(
               text: review.doctor,
               style: mDoctorSpan,
+              recognizer: new TapGestureRecognizer()
+                ..onTap = () {
+                  print('Doctor Link');
+                  Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                          builder: (_) =>
+                          new DoctorDetailsPage(review.doctorId)));
+                },
             ),
           ],
         ),

@@ -28,7 +28,7 @@ class UserActivityDataRepository implements UserActivityRepository {
   @override
   Future<UserSaved> getMoreUserActivities(String accessCode, int page) async {
     http.Response response =
-        await http.get(URL + accessCode + '/account/activity');
+        await http.get(URL + accessCode + '/account/activity?page=${page}');
     final jsonBody = response.body;
     final statusCode = response.statusCode;
     if (statusCode < 200 || statusCode >= 300 || jsonBody == null) {

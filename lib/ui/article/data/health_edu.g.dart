@@ -7,7 +7,7 @@
 part of 'health_edu.dart';
 
 // **************************************************************************
-// Generator: JsonSerializableGenerator
+// JsonSerializableGenerator
 // **************************************************************************
 
 HealthEducation _$HealthEducationFromJson(Map<String, dynamic> json) {

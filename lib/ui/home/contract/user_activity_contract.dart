@@ -5,5 +5,5 @@ abstract class UserActivityContract{
   void loadError(String e);
   void showUserActivities( List<Save> s);
   void showMoreUserActivities( List<Save> s);
-  void pagination( Pagination p);
+  void setPagination( Pagination p);
 }

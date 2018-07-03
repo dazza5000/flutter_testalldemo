@@ -20,4 +20,11 @@ class Message {
 
 
   factory Message.fromJson(Map<String, dynamic> json) => _$MessageFromJson(json);
+
+  @override
+  String toString() {
+    return 'Message{id: $id, mesg: $mesg, mesgType: $mesgType, image: $image, adminIcon: $adminIcon, reply: $reply, date: $date, time: $time, rawTime: $rawTime, timeAgo: $timeAgo}';
+  }
+
+
 }

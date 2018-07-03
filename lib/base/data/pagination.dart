@@ -11,4 +11,11 @@ class Pagination{
   Pagination(this.from, this.total, this.currentPage, this.lastPage);
 
   factory Pagination.fromJson(Map<String, dynamic> json) => _$PaginationFromJson(json);
+
+  @override
+  String toString() {
+    return 'Pagination{from: $from, total: $total, currentPage: $currentPage, lastPage: $lastPage}';
+  }
+
+
 }

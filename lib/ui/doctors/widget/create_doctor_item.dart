@@ -28,18 +28,20 @@ class CreateDoctorItem extends StatelessWidget {
             color: Colors.white,
             child: new Container(
               child: new Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   new Container(
                     padding: const EdgeInsets.only(
                         left: 5.0, right: 5.0),
                     color: MyStyle.colorLightGrey,
-                    child: new Text(
-                      doctor.role,
-                      style: new TextStyle(
-                        fontSize: MyStyle.xmedium_fontSize,
+                    child: new Center(
+                      child: new Text(
+                        doctor.role,
+                        style: new TextStyle(
+                          fontSize: MyStyle.xmedium_fontSize,
+                        ),
+                        textAlign: TextAlign.left,
                       ),
-                      textAlign: TextAlign.left,
                     ),
                     height: 40.0,
                   ),

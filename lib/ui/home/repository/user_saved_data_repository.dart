@@ -85,7 +85,7 @@ class UserSavedDataRepository implements UserSavedRepository {
 
   @override
   Future<UserSaved> getMoreSavedList(String accessCode, int page) async {
-    http.Response response = await http.get(URL + accessCode + '/account/save');
+    http.Response response = await http.get(URL + accessCode + '/account/save?page=${page}');
     final jsonBody = response.body;
     final statusCode = response.statusCode;
     if (statusCode < 200 || statusCode >= 300 || jsonBody == null) {

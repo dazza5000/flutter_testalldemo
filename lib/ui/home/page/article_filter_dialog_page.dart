@@ -76,8 +76,8 @@ class FilterHealthEducationDialogFragmentState
       List<int> catList = List<int>();
       for (int i = 0; i < selectedLit.length; i++) {
         catList.add(selectedLit[i].id);
-        widget.filterListener.onChooseFilters(catList);
       }
+      widget.filterListener.onChooseFilters(catList);
     } else {
       widget.filterListener.onChooseFilters(null);
     }
@@ -102,6 +102,7 @@ class FilterHealthEducationDialogFragmentState
         onTap: () {
           setState(() {
             categoryList[index].isSelected = !alreadyChecked;
+            selectedLit.add(categoryList[index]);
           });
         },
       ),

@@ -14,8 +14,8 @@ class ProfileInfo {
   String subLocation;
   int subLocationId;
 
-  ProfileInfo(this.name, this.image, this.gender, this.phone, this.dob,
-      this.location, this.locationId, this.subLocation, this.subLocationId);
+  ProfileInfo([this.name, this.image, this.gender, this.phone, this.dob,
+      this.location, this.locationId, this.subLocation, this.subLocationId]);
 
   //factory ProfileInfo.fromJson(Map<String, dynamic> json) => _$ProfileInfoFromJson(json);
 

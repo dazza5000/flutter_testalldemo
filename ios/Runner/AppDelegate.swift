@@ -7,7 +7,7 @@ import GoogleMaps
   override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?
-    GMSServices.provideAPIKey("YOUR_API_KEY")
+    GMSServices.provideAPIKey("AIzaSyBGUKmOdeko8CL1pEblqW-aFFVHP0k7ddQ")
   ) -> Bool {
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)

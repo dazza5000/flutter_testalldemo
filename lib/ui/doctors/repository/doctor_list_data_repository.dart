@@ -13,7 +13,23 @@ class DoctorListDataRepository implements DoctorListRepository {
   @override
   Future<Doctors> getDoctorList(
       String accessCode, List<int> roles, int perpage, String keyword) async {
-    http.Response response = await http.get(URL + accessCode + '/doctor');
+    String filter="";
+    String url;
+    String roleName="role[]";
+    if(roles!=null && roles.length>0){
+      for(int i in roles){
+        if(filter.length==0)
+        filter+="?$roleName=${i}";
+        else
+          filter+="&$roleName=${i}";
+      }
+      print("Filter Text$filter");
+    }
+
+    url=URL+accessCode + '/doctor'+filter;
+    //url=await Uri.encodeComponent(url);
+
+    http.Response response = await http.get(url);
     final jsonBody = response.body;
     final statusCode = response.statusCode;
     if (statusCode < 200 || statusCode >= 300 || jsonBody == null) {

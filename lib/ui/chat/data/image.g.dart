@@ -7,7 +7,7 @@
 part of 'image.dart';
 
 // **************************************************************************
-// Generator: JsonSerializableGenerator
+// JsonSerializableGenerator
 // **************************************************************************
 
 Image _$ImageFromJson(Map<String, dynamic> json) {

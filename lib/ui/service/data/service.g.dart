@@ -7,7 +7,7 @@
 part of 'service.dart';
 
 // **************************************************************************
-// Generator: JsonSerializableGenerator
+// JsonSerializableGenerator
 // **************************************************************************
 
 Service _$ServiceFromJson(Map<String, dynamic> json) {

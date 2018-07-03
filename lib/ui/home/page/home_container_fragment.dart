@@ -7,7 +7,8 @@ import 'package:lyc_clinic/ui/home/page/health_education_page.dart';
 import 'package:lyc_clinic/test/custom_bottom_navigation_bar.dart';
 
 class HomeContainerFragment extends StatefulWidget {
-  const HomeContainerFragment({Key key}) : super(key: key);
+  SeeMoreClickListener listener;
+   HomeContainerFragment(this.listener,{Key key}) : super(key: key);
 
   @override
   HomeContainerFragmentState createState() => new HomeContainerFragmentState();
@@ -78,7 +79,7 @@ class HomeContainerFragmentState extends State<HomeContainerFragment>
         ),
       ),
       body: new TabBarView(
-        children: <Widget>[new HomePage(), new HealthEducationPage()],
+        children: <Widget>[new HomePage(widget.listener), new HealthEducationPage()],
         controller: controller,
       ),
       bottomNavigationBar: new CustomBottomNavigationBar(),

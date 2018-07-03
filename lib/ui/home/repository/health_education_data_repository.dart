@@ -13,20 +13,14 @@ class HealthEducationDataRepository implements HealthEducationRepository {
   @override
   Future<HealthEducation> getArticles(
       String accessCode, int type, List<int> category, int page) async {
-    print("URL${URL +
-        accessCode +
-        '/article' +
-        '?type=' +
-        type.toString() +
-        '&category=' +
-        category.toString() +
-        '&page=' +
-        page.toString()}");
+    String catList =
+        category != null ? "&category[]=" + category.toString() : "";
     http.Response response = await http.get(URL +
         accessCode +
         '/article' +
         '?type=' +
         type.toString() +
+        catList +
         '&page=' +
         page.toString());
     final jsonBody = response.body;

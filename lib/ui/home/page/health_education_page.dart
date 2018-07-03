@@ -26,6 +26,9 @@ class HealthEducationPageState extends State<HealthEducationPage>
   String accessCode;
   bool isGuest = false;
   bool isLogin = false;
+  int scrollDirection = 0;
+  ScrollController scrollController = new ScrollController();
+  Pagination paginationData;
   MySharedPreferences mySharedPreferences = new MySharedPreferences();
 
   HealthEducationPageState() {
@@ -35,6 +38,7 @@ class HealthEducationPageState extends State<HealthEducationPage>
   @override
   void initState() {
     super.initState();
+    scrollController.addListener(listen);
     mySharedPreferences
         .getBooleanData(Configs.PREF_USER_LOGIN)
         .then((val) => setState(() {
@@ -51,12 +55,12 @@ class HealthEducationPageState extends State<HealthEducationPage>
           .then((val) => setState(() {
                 isGuest = false;
                 accessCode = val;
-                mPresenter.getArticles(accessCode, 1, null, 2);
+                mPresenter.getArticles(accessCode, 0, null, null);
               }));
     } else {
       isGuest = true;
       accessCode = Configs.GUEST_CODE;
-      mPresenter.getArticles(accessCode, 1, null, 2);
+      mPresenter.getArticles(accessCode, 1, null, null);
     }
     print('islogin>>$isLogin And isGuest>>$isGuest');
   }
@@ -70,12 +74,25 @@ class HealthEducationPageState extends State<HealthEducationPage>
 
   Widget showArticleList() {
     if (articles.length > 0) {
-      return new ArticleLists(articles, this);
+      return new ArticleLists(articles, paginationData, this);
     } else {
       return new Container(
         child: Center(child: loadingIndicator),
         height: 100.0,
       );
+    }
+  }
+
+  void listen() {
+    print("Listener>>${scrollController.position.userScrollDirection.index}");
+    setState(() {
+      scrollDirection = scrollController.position.userScrollDirection.index;
+    });
+    if (scrollController.position.pixels ==
+        scrollController.position.maxScrollExtent) {
+      if (paginationData.currentPage < paginationData.lastPage)
+        mPresenter.getMoreArticles(
+            accessCode, 0, null, paginationData.currentPage + 1);
     }
   }
 
@@ -88,7 +105,7 @@ class HealthEducationPageState extends State<HealthEducationPage>
         child: new Stack(
           children: <Widget>[
             new SingleChildScrollView(
-              controller: new ScrollController(),
+              controller: scrollController,
               scrollDirection: Axis.vertical,
               child: new Container(
                 margin: const EdgeInsets.only(top: 30.0),
@@ -100,42 +117,44 @@ class HealthEducationPageState extends State<HealthEducationPage>
                 ),
               ),
             ),
-            new Align(
-              alignment: FractionalOffset.topRight,
-              child: new Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: new Row(
-                  children: <Widget>[
-                    new Text('Featured'),
-                    new Expanded(
-                        child: new Row(
-                      children: <Widget>[],
-                    )),
-                    new RaisedButton.icon(
-                        color: Colors.white,
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              new MaterialPageRoute(
-                                  builder: (_) =>
-                                      new FilterHealthEducationDialogFragment(
-                                          this)));
-                        },
-                        icon: new Icon(
-                          Icons.filter_list,
-                          color: Colors.grey,
-                        ),
-                        label: new Text(
-                          "FILTER",
-                          style:
-                              new TextStyle(fontSize: 14.0, color: Colors.grey),
-                        ),
-                        shape: new RoundedRectangleBorder(
-                            borderRadius: new BorderRadius.circular(30.0))),
-                  ],
-                ),
-              ),
-            )
+            new Opacity(
+                opacity: scrollDirection == 1 ? 1.0 : 0.0,
+                child: new Align(
+                  alignment: FractionalOffset.topRight,
+                  child: new Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: new Row(
+                      children: <Widget>[
+                        new Text('Featured'),
+                        new Expanded(
+                            child: new Row(
+                          children: <Widget>[],
+                        )),
+                        new RaisedButton.icon(
+                            color: Colors.white,
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  new MaterialPageRoute(
+                                      builder: (_) =>
+                                          new FilterHealthEducationDialogFragment(
+                                              this)));
+                            },
+                            icon: new Icon(
+                              Icons.filter_list,
+                              color: Colors.grey,
+                            ),
+                            label: new Text(
+                              "FILTER",
+                              style: new TextStyle(
+                                  fontSize: 14.0, color: Colors.grey),
+                            ),
+                            shape: new RoundedRectangleBorder(
+                                borderRadius: new BorderRadius.circular(30.0))),
+                      ],
+                    ),
+                  ),
+                ))
           ],
         ),
       ),
@@ -143,7 +162,9 @@ class HealthEducationPageState extends State<HealthEducationPage>
   }
 
   @override
-  void pagination(Pagination p) {}
+  void setPagination(Pagination p) {
+    paginationData = p;
+  }
 
   @override
   void removeFeaturedArticles() {}
@@ -152,11 +173,18 @@ class HealthEducationPageState extends State<HealthEducationPage>
   void showFeaturedArticles(List<Article> a) {}
 
   @override
-  void showMoreArticles(List<Article> a) {}
+  void showMoreArticles(List<Article> a) {
+    setState(() {
+      articles.addAll(a);
+      print(
+          'More Article List${a.length} and article length${articles.length}');
+    });
+  }
 
   @override
   void showArticles(List<Article> a) {
     setState(() {
+      articles.clear();
       articles = a;
     });
     print('Article List${a.toString()}');
@@ -173,6 +201,7 @@ class HealthEducationPageState extends State<HealthEducationPage>
   @override
   void onChooseFilters(List<int> roleList) {
     print('Filter Health & Education$roleList ');
+    mPresenter.getArticles(accessCode, 0, roleList, null);
   }
 
   @override

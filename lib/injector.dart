@@ -46,7 +46,8 @@ import 'package:lyc_clinic/ui/home/repository/profile_info_repository.dart';
 import 'package:lyc_clinic/ui/home/repository/profile_info_data_repository.dart';
 import 'package:lyc_clinic/ui/login/repository/login_repository.dart';
 import 'package:lyc_clinic/ui/login/repository/login_data_repository.dart';
-
+import 'package:lyc_clinic/ui/home/repository/location_repository.dart';
+import 'package:lyc_clinic/ui/home/repository/location_data_repository.dart';
 class Injector {
   static final Injector _singleton = new Injector._internal();
 
@@ -150,6 +151,10 @@ class Injector {
 
   LoginRepository get loginRepository{
     return new LoginDataRepository();
+  }
+
+  LocationRepository get locationRepository{
+    return new LocationDataRepository();
   }
 
 }

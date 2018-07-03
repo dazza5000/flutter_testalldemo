@@ -7,7 +7,7 @@
 part of 'about.dart';
 
 // **************************************************************************
-// Generator: JsonSerializableGenerator
+// JsonSerializableGenerator
 // **************************************************************************
 
 About _$AboutFromJson(Map<String, dynamic> json) {

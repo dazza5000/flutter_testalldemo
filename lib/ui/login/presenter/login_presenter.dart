@@ -13,6 +13,7 @@ class LoginPresenter {
   void sendAccessToken(String accessToken) {
     _repository.sendAccessToken(accessToken).then((a) {
       _view.saveDataToPrefs(a);
+      _view.showLandingPage();
     }).catchError((e) => print(e.toString()));
   }
 }

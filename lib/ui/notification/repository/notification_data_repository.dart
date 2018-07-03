@@ -28,7 +28,7 @@ class NotificationDataRepository implements NotificationRepository {
   @override
   Future<Noti> getMoreNotifications(String accessCode, int page) async {
     http.Response response = await http
-        .get(URL + accessCode + '/notification?page=' + page.toString());
+        .get(URL + accessCode + '/notification?page=${page}');
     final responseBody = response.body;
     final statusCode = response.statusCode;
     if (statusCode < 200 || statusCode >= 300 || responseBody == null) {

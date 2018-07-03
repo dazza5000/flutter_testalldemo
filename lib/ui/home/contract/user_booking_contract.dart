@@ -10,7 +10,7 @@ abstract class UserBookingContract{
   void showCompleteBookingList(  List<Booking> b );
   void showCancelledBookingList(  List<Booking> b );
   void showMoreBookingList(  List<Booking> b );
-  void pagination(  Pagination p );
+  void setPagination(  Pagination p );
   void showBookingList(  List<Booking> b,  int status );
   void showNoRecordLayout(  List<Booking> b );
 }

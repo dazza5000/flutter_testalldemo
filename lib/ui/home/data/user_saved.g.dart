@@ -7,7 +7,7 @@
 part of 'user_saved.dart';
 
 // **************************************************************************
-// Generator: JsonSerializableGenerator
+// JsonSerializableGenerator
 // **************************************************************************
 
 UserSaved _$UserSavedFromJson(Map<String, dynamic> json) {

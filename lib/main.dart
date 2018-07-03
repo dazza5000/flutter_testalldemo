@@ -5,6 +5,8 @@ import 'test/theme.dart';
 void main() => runApp(new MyApp());
 
 class MyApp extends StatelessWidget {
+  AppLifecycleState _state;
+
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
@@ -16,7 +18,4 @@ class MyApp extends StatelessWidget {
     );
   }
 
-  static restartApp(BuildContext context) {
-    MyApp.restartApp(context);
-  }
 }

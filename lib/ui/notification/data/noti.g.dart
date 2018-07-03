@@ -7,7 +7,7 @@
 part of 'noti.dart';
 
 // **************************************************************************
-// Generator: JsonSerializableGenerator
+// JsonSerializableGenerator
 // **************************************************************************
 
 Noti _$NotiFromJson(Map<String, dynamic> json) {

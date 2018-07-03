@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:lyc_clinic/test/vertical_divider.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
 import 'package:lyc_clinic/ui/home/data/booking.dart';
+import 'package:lyc_clinic/ui/doctors/page/doctor_details_page.dart';
 
 class BookingItems extends StatefulWidget {
   final Booking booking;
@@ -48,8 +50,8 @@ class BookingItemsState extends State<BookingItems> {
       fontSize: MyStyle.xmedium_fontSize,
       fontWeight: FontWeight.bold);
   var mDateSpan = new TextStyle(
-      color: MyStyle.colorDarkGrey,
-      fontWeight: FontWeight.bold,
+    color: MyStyle.colorDarkGrey,
+    fontWeight: FontWeight.bold,
   );
   var mDoctorSpan = new TextStyle(
       color: MyStyle.colorDarkGrey,
@@ -94,6 +96,15 @@ class BookingItemsState extends State<BookingItems> {
             new TextSpan(
               text: _doctor,
               style: mDoctorSpan,
+              recognizer: new TapGestureRecognizer()
+                ..onTap = () {
+                  print('Doctor Link');
+                  Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                          builder: (_) =>
+                              new DoctorDetailsPage(widget.booking.doctor)));
+                },
             ),
           ],
         ),
@@ -116,9 +127,17 @@ class BookingItemsState extends State<BookingItems> {
               style: mNormalSpan,
             ),
             new TextSpan(
-              text: _doctor,
-              style: mDoctorSpan,
-            ),
+                text: _doctor,
+                style: mDoctorSpan,
+                recognizer: new TapGestureRecognizer()
+                  ..onTap = () {
+                    print('Doctor Link');
+                    Navigator.push(
+                        context,
+                        new MaterialPageRoute(
+                            builder: (_) =>
+                                new DoctorDetailsPage(widget.booking.doctor)));
+                  }),
             new TextSpan(
               text: _is,
               style: mNormalSpan,

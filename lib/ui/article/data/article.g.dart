@@ -7,7 +7,7 @@
 part of 'article.dart';
 
 // **************************************************************************
-// Generator: JsonSerializableGenerator
+// JsonSerializableGenerator
 // **************************************************************************
 
 Article _$ArticleFromJson(Map<String, dynamic> json) {

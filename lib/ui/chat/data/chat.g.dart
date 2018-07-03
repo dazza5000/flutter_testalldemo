@@ -7,7 +7,7 @@
 part of 'chat.dart';
 
 // **************************************************************************
-// Generator: JsonSerializableGenerator
+// JsonSerializableGenerator
 // **************************************************************************
 
 Chat _$ChatFromJson(Map<String, dynamic> json) {

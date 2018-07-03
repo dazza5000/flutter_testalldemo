@@ -12,4 +12,11 @@ class Chat extends Object with _$ChatSerializerMixin{
   Chat(this.pagination, this.data);
 
   factory Chat.fromJson(Map<String, dynamic> json) => _$ChatFromJson(json);
+
+  @override
+  String toString() {
+    return 'Chat{pagination: $pagination, data: $data}';
+  }
+
+
 }

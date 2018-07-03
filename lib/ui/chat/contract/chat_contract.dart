@@ -24,5 +24,5 @@ abstract class ChatContract {
 
   void hideDialog();
 
-  void pagination(Pagination p);
+  void setPagination(Pagination p);
 }

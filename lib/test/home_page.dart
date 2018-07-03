@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter_search_bar/flutter_search_bar.dart';
-import 'package:lyc_clinic/base/base_menu.dart';
+
+//import 'package:flutter_search_bar/flutter_search_bar.dart';
+import 'package:material_search/material_search.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
 import 'package:lyc_clinic/base/widget.dart';
 import 'package:lyc_clinic/utils/configs.dart';
 import 'package:lyc_clinic/utils/mySharedPreferences.dart';
 import 'package:lyc_clinic/ui/home/data/drawer_item.dart';
 import 'package:lyc_clinic/ui/home/page/home_container_fragment.dart';
-import 'package:lyc_clinic/ui/home/page/user_profile_info_page.dart';
+import 'package:lyc_clinic/ui/home/page/home_page.dart';
 import 'package:lyc_clinic/ui/home/page/health_education_page.dart';
 import 'package:lyc_clinic/ui/home/page/profile_data_page.dart';
 import 'package:lyc_clinic/ui/notification/page/notification_list_page.dart';
 import 'package:lyc_clinic/ui/doctors/page/doctor_list_page.dart';
+import 'package:lyc_clinic/ui/doctors/page/doctor_details_page.dart';
 import 'package:lyc_clinic/ui/about/page/about_page.dart';
 import 'package:lyc_clinic/ui/chat/page/chat_list_page.dart';
-import 'package:lyc_clinic/ui/login/login_dialog_page.dart';
-
+import 'package:lyc_clinic/ui/doctors/data/doctor.dart';
 
 class MainPage extends StatefulWidget {
   List<DrawerItem> afterLoginDraweritems = [
@@ -45,49 +45,68 @@ class MainPage extends StatefulWidget {
   }
 }
 
-class MainPageState extends State<MainPage> {
+class MainPageState extends State<MainPage>
+    implements SendDoctorListener, SeeMoreClickListener {
   int selectedDrawerIndex = 0;
   String imageUrl =
       "https://avatars3.githubusercontent.com/u/16825392?s=460&v=4";
-  SearchBar searchBar;
+
+  //SearchBar searchBar;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   List<DrawerItem> draweritems = new List<DrawerItem>();
   bool isLogin = false;
+  String name = "";
+  String profilePhoto = "";
   MySharedPreferences mySharedPreferences = new MySharedPreferences();
+  String filterText = '';
+  List<Doctor> _doctorList = new List<Doctor>();
+
+  void onSubmitted(String value) {
+    setState(() => _scaffoldKey.currentState
+        .showSnackBar(new SnackBar(content: new Text('You wrote $value!'))));
+  }
 
   MainPageState() {
     mySharedPreferences
         .getBooleanData(Configs.PREF_USER_LOGIN)
         .then((val) => setState(() {
-      isLogin = val!=null?val:false;
-    }));
+              isLogin = val != null ? val : false;
+            }));
 
-    searchBar = new SearchBar(
+    /*searchBar = new SearchBar(
         inBar: false,
         buildDefaultAppBar: _buildAppBar,
         setState: setState,
-        onSubmitted: onSubmitted);
+        onSubmitted:onSubmitted,
+        onChanged: onSubmitted);*/
+  }
+
+  void getSharedPreferencesData() async {
+    name = await mySharedPreferences.getStringData(Configs.PREF_USER_NAME);
+    profilePhoto =
+        await mySharedPreferences.getStringData(Configs.PREF_USER_IMAGE);
   }
 
   @override
   void initState() {
     super.initState();
+    getSharedPreferencesData();
   }
 
   _getDrawerItemWidgets(int position) {
     print('Drawer Item $position');
     switch (position) {
       case 0:
-        return new HomeContainerFragment();
+        return new HomeContainerFragment(this);
       case 1:
         return new HealthEducationPage();
       case 2:
-        return new DoctorListPage();
+        return new DoctorListPage(this);
       case 3:
         if (isLogin) {
           return new ProfileDataPage(tabIndex: 2);
         } else {
-          _showLoginDialog();
+          BaseWidgets.showLoginDialog(context);
         }
         break;
       case 4:
@@ -95,17 +114,6 @@ class MainPageState extends State<MainPage> {
       default:
         return new Text("Eror");
     }
-  }
-
-  Future<Null> _showLoginDialog() async {
-    return await showModalBottomSheet(
-        context: context,
-        builder: (BuildContext context) {
-          return new Container(
-              color: MyStyle.colorWhite,
-              height: 150.0,
-              child: new LoginDialogPage());
-        });
   }
 
   _onSelectedItem(int index) {
@@ -116,19 +124,16 @@ class MainPageState extends State<MainPage> {
     _getDrawerItemWidgets(selectedDrawerIndex);
   }
 
-
   _clickNoti(BuildContext context) {
     Navigator.push(context,
-        new MaterialPageRoute(builder: (_) => new NotifiacationListPage()));
+        new MaterialPageRoute(builder: (_) => new NotificationListPage()));
   }
 
   _clickEditProfilel(BuildContext context) {
-    /*setState(() {
+    setState(() {
       selectedDrawerIndex = 4;
       Navigator.pop(context);
-    });*/
-    Navigator.push(context,
-        new MaterialPageRoute(builder: (_) => new UserProfileInfoPage()));
+    });
   }
 
   _clickBottomMenuItem(int index, BuildContext context) {
@@ -159,40 +164,53 @@ class MainPageState extends State<MainPage> {
     }
   }
 
-
-  /* _buildMaterialSearchPage(BuildContext context) {
+  _buildMaterialSearchPage(BuildContext context) {
     return new MaterialPageRoute<String>(
         settings: new RouteSettings(
           name: 'material_search',
-          isInitialRoute: true,
+          isInitialRoute: false,
         ),
         builder: (BuildContext context) {
           return new Material(
             child: new MaterialSearch<String>(
               placeholder: 'Search',
-              results: _names.map((String v) => new MaterialSearchResult<String>(
-                icon: Icons.person,
-                value: v,
-                text: "Mr(s). $v",
-              )).toList(),
+              results: _doctorList
+                  .map((Doctor v) => new MaterialSearchResult<String>(
+                        icon: Icons.info,
+                        value: v.name,
+                        text: v.name,
+                      ))
+                  .toList(),
               filter: (dynamic value, String criteria) {
-                return value.toLowerCase().trim()
-                    .contains(new RegExp(r'' + criteria.toLowerCase().trim() + ''));
+                return value.toLowerCase().trim().contains(
+                    new RegExp(r'' + criteria.toLowerCase().trim() + ''));
               },
-              onSelect: (dynamic value) => Navigator.of(context).pop(value),
+              onSelect: (dynamic value) {
+                Doctor d = _doctorList
+                    .singleWhere((dl) => dl.name == value.toString());
+                print('Value >>${d.name}');
+                Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                        builder: (_) => new DoctorDetailsPage(d.id)));
+              },
+              onSubmit: (String value) => Navigator.of(context).pop(value),
             ),
           );
-        }
-    );
-  }*/
+        });
+  }
 
-  /*_clickSearch(BuildContext context) {
-    Navigator.of(context)
+  _showMaterialSearch(BuildContext context) {
+    Navigator
+        .of(context)
         .push(_buildMaterialSearchPage(context))
         .then((dynamic value) {
-      setState(() => _name = value as String);
+      setState(() {
+        filterText = value as String;
+        print("Filter Text$filterText");
+      });
     });
-  }*/
+  }
 
   AppBar _buildAppBar(BuildContext context) {
     if (selectedDrawerIndex == 2) {
@@ -204,10 +222,14 @@ class MainPageState extends State<MainPage> {
         backgroundColor: MyStyle.colorWhite,
         iconTheme: new IconThemeData(color: MyStyle.colorGrey),
         actions: <Widget>[
-          searchBar.getSearchAction(context)
-          /*new IconButton(
-            icon: new Icon(Icons.search, color: MyStyle.colorBlack,),
-            onPressed: () => _clickSearch(context),)*/
+          new IconButton(
+            onPressed: () {
+              _showMaterialSearch(context);
+            },
+            tooltip: 'Search',
+            icon: new Icon(Icons.search),
+          )
+          //searchBar.getSearchAction(context)
         ],
         elevation: 2.0,
       );
@@ -231,17 +253,6 @@ class MainPageState extends State<MainPage> {
     }
   }
 
-  void onSubmitted(String value) {
-    Scaffold
-        .of(context)
-        .showSnackBar(new SnackBar(content: new Text('You wrote $value!')));
-    /*setState(() =>
-        _scaffoldKey.currentState
-            .showSnackBar(
-            new SnackBar(content: new Text('You wrote $value!'))));*/
-  }
-
-
   Widget _getNavHeader() {
     if (isLogin) {
       return new Padding(
@@ -250,7 +261,8 @@ class MainPageState extends State<MainPage> {
           children: <Widget>[
             new GestureDetector(
               child: new CircleAvatar(
-                backgroundImage: new NetworkImage(imageUrl),
+                backgroundImage: new NetworkImage(
+                    profilePhoto != null ? profilePhoto : imageUrl),
                 radius: 40.0,
               ),
             ),
@@ -258,7 +270,7 @@ class MainPageState extends State<MainPage> {
               children: <Widget>[
                 new Padding(
                   padding: const EdgeInsets.fromLTRB(15.0, 3.0, 0.0, 3.0),
-                  child: new Text('Hnin Nway Nway Hlaing',
+                  child: new Text(name != null ? name : "",
                       textAlign: TextAlign.left),
                 ),
                 new Padding(
@@ -347,7 +359,7 @@ class MainPageState extends State<MainPage> {
     var textTheme = Theme.of(context).textTheme;
 
     return new Scaffold(
-      appBar: searchBar.build(context),
+      appBar: _buildAppBar(context),
       drawer: new Drawer(
         child: new Scaffold(
           bottomNavigationBar: new Stack(
@@ -417,5 +429,17 @@ class MainPageState extends State<MainPage> {
       body: _getDrawerItemWidgets(selectedDrawerIndex),
       backgroundColor: MyStyle.colorWhite,
     );
+  }
+
+  @override
+  void onSendDoctorListener(List<Doctor> doctorList) {
+    _doctorList = doctorList;
+  }
+
+  @override
+  void onSeeMoreClickListener() {
+    setState(() {
+      selectedDrawerIndex = 2;
+    });
   }
 }

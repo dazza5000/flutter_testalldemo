@@ -7,7 +7,7 @@
 part of 'saved_doctor.dart';
 
 // **************************************************************************
-// Generator: JsonSerializableGenerator
+// JsonSerializableGenerator
 // **************************************************************************
 
 SavedDoctor _$SavedDoctorFromJson(Map<String, dynamic> json) {

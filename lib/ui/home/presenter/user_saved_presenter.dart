@@ -13,14 +13,20 @@ class UserSavedPresenter {
   void getSavedList(String accessCode) {
     _repository
         .getSavedList(accessCode)
-        .then((s) => _view.showSavedList(s.data))
+        .then((s) {
+          _view.showSavedList(s.data);
+          _view.setPagination(s.pagination);
+    })
         .catchError((e) => print(e.toString()));
   }
 
   void getMoreSavedList(String accessCode, int page) {
     _repository
         .getMoreSavedList(accessCode, page)
-        .then((s) => _view.showMoreSavedList(s.data))
+        .then((s) {
+          _view.showMoreSavedList(s.data);
+          _view.setPagination(s.pagination);
+    })
         .catchError((e) => print(e.toString()));
   }
 

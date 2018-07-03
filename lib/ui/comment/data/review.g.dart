@@ -7,7 +7,7 @@
 part of 'review.dart';
 
 // **************************************************************************
-// Generator: JsonSerializableGenerator
+// JsonSerializableGenerator
 // **************************************************************************
 
 Review _$ReviewFromJson(Map<String, dynamic> json) {

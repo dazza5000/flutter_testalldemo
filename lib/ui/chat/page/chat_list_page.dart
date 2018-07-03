@@ -4,11 +4,12 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'dart:async';
+import 'package:lyc_clinic/base/widget.dart';
+import 'package:lyc_clinic/utils/mySharedPreferences.dart';
 import 'package:lyc_clinic/ui/chat/contract/chat_contract.dart';
 import 'package:lyc_clinic/ui/chat/presenter/chat_presenter.dart';
 import 'package:lyc_clinic/utils/configs.dart';
 import 'package:lyc_clinic/base/data/pagination.dart';
-import 'package:lyc_clinic/base/mystyle.dart';
 import 'package:lyc_clinic/ui/chat/data/message.dart';
 
 class ChatListPage extends StatefulWidget {
@@ -18,16 +19,26 @@ class ChatListPage extends StatefulWidget {
   }
 }
 
-class ChatListPageState extends State<ChatListPage> implements ChatContract {
+class ChatListPageState extends State<ChatListPage>
+    with TickerProviderStateMixin
+    implements ChatContract {
   final mController = new TextEditingController();
-  Future<File> _imageFile;
-  ChatPresenter mPresenter;
+  File _imageFile;
   int mArticleId;
   int mServiceId;
   int mDoctorId;
-  List<Message> messageList = new List<Message>();
   String message;
+  bool isLogin = false;
+  bool isGuest = true;
+  String accessCode;
   ChatContract mView;
+  ChatPresenter mPresenter;
+  AnimationController animationController;
+  MySharedPreferences mySharedPreferences = new MySharedPreferences();
+  ScrollController controller = new ScrollController();
+
+  List<Message> messageList = new List<Message>();
+  Pagination pagination;
 
   ChatListPageState() {
     mPresenter = new ChatPresenter(this);
@@ -48,13 +59,15 @@ class ChatListPageState extends State<ChatListPage> implements ChatContract {
   }
 
   _sendClick() {
+    message=mController.text;
     mPresenter.sendMessage(
-        Configs.TEST_CODE, message, mArticleId, mDoctorId, mServiceId);
+        accessCode, message, mArticleId, mDoctorId, mServiceId);
   }
 
   void _onImageButtonPressed(ImageSource source) {
-    setState(() {
-      _imageFile = ImagePicker.pickImage(source: source);
+    setState(() async {
+      _imageFile = await ImagePicker.pickImage(source: source);
+      mPresenter.sendImage(accessCode, _imageFile.path, null, null, null);
     });
   }
 
@@ -68,23 +81,14 @@ class ChatListPageState extends State<ChatListPage> implements ChatContract {
 
   void _submitMessage(String text) {
     //mController.clear();
-    setState(() {
       message = text;
-    });
     print('Message is$message');
-  }
-
-  void _handleMessageChanged(String text) {
-    setState(() {
-      //_isComposing = text.length > 0;
-    });
   }
 
   Widget getChatImageAndChatView(Message m, int type) {
     var bgColor =
         type == 0 ? MyStyle.defaultGrey : MyStyle.chatRespondBackground;
-    var logo = type == 0 ? 'assets/images/lyc.png' : 'assets/images/lyc.png';
-
+    //var logo = type == 0 ? 'assets/images/lyc.png' : 'assets/images/lyc.png';
     if (m.image.small != '' && m.image.thumb != '' && m.mesg == '') {
       return new Container(
           margin: const EdgeInsets.only(left: 5.0, right: 5.0),
@@ -111,8 +115,8 @@ class ChatListPageState extends State<ChatListPage> implements ChatContract {
   }
 
   Widget getChatView(Message m, int type) {
-    var bgColor =
-        type == 0 ? MyStyle.defaultGrey : MyStyle.chatRespondBackground;
+    //var bgColor =
+    //  type == 0 ? MyStyle.defaultGrey : MyStyle.chatRespondBackground;
     var imgLogo = type == 0 ? 'assets/images/lyc.png' : 'assets/images/lyc.png';
 
     if (type == 0) {
@@ -201,47 +205,83 @@ class ChatListPageState extends State<ChatListPage> implements ChatContract {
   }
 
   Widget _buildChartItem(BuildContext context, int index) {
-    Message msg = messageList[index];
-    int type = msg.reply ? 1 : 0;
-    return new Container(
-      child: getChatView(msg, type),
-    );
+    if (index == messageList.length) {
+      if (pagination.currentPage == pagination.lastPage) {
+        return new Container(
+          child: null,
+        );
+      } else {
+        return new Container(
+          padding: const EdgeInsets.symmetric(vertical: 5.0),
+          child: new Center(
+            child: BaseWidgets.loadingIndicator,
+          ),
+        );
+      }
+    } else {
+      Message msg = messageList[index];
+      int type = msg.reply ? 1 : 0;
+      return new SizeTransition(
+          sizeFactor:
+              new CurvedAnimation(parent: animationController, curve: Curves.elasticIn),
+          child: new Container(
+            child: getChatView(msg, type),
+          ));
+    }
   }
 
   @override
   void initState() {
     super.initState();
     mView = this;
-    mPresenter.getChatHistory(Configs.TEST_CODE);
+    mySharedPreferences
+        .getBooleanData(Configs.PREF_USER_LOGIN)
+        .then((val) => setState(() {
+              isLogin = val != null ? val : false;
+              getAccessCode(isLogin);
+            }));
+
+    controller.addListener(() {
+      if (controller.position.pixels == controller.position.maxScrollExtent) {
+        if (pagination.currentPage < pagination.lastPage)
+          mPresenter.getMoreChatHistory(accessCode, pagination.currentPage + 1);
+      }
+    });
+
+    animationController = new AnimationController(
+        duration: new Duration(microseconds: 200), vsync: this);
+
+    animationController.forward();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        backgroundColor: MyStyle.colorWhite,
-        leading: new IconButton(
-            icon: new Icon(Icons.arrow_back, color: MyStyle.colorBlack),
-            onPressed: () => Navigator.pop(context)),
-        title: new Text(
-          'Chat Box',
-          style: new TextStyle(color: MyStyle.colorBlack, fontSize: 14.0),
-        ),
-        actions: <Widget>[
-          new IconButton(
-              icon: new Icon(Icons.phone, color: MyStyle.colorAccent),
-              onPressed: () => _clickPhone(context))
-        ],
-      ),
-      body: new Container(
+  void getAccessCode(bool login) {
+    if (login) {
+      isGuest = false;
+      mySharedPreferences.getStringData(Configs.PREF_USER_ACCESSCODE).then((v) {
+        accessCode = v;
+        mPresenter.getChatHistory(accessCode);
+      });
+    } else {
+      isGuest = true;
+      accessCode = Configs.GUEST_CODE;
+      mPresenter.getChatHistory(accessCode);
+    }
+  }
+
+  Widget _showLoadingOrData() {
+    if (messageList != null || messageList.length > 0) {
+      return new Container(
           color: MyStyle.layoutBackground,
           child: new Column(
             children: <Widget>[
               new Flexible(
                 child: new ListView.builder(
+                  reverse: true,
                   itemBuilder: _buildChartItem,
-                  itemCount: messageList.length,
-                  controller: new ScrollController(),
+                  itemCount: pagination != null
+                      ? messageList.length + 1
+                      : messageList.length,
+                  controller: controller,
                   scrollDirection: Axis.vertical,
                 ),
               ),
@@ -280,12 +320,42 @@ class ChatListPageState extends State<ChatListPage> implements ChatContract {
                 ),
               ),
             ],
-          )),
-    );
+          ));
+    } else {
+      return new Container(
+        child: new Center(child: BaseWidgets.loadingIndicator),
+      );
+    }
   }
 
   @override
-  void pagination(Pagination p) {}
+  Widget build(BuildContext context) {
+    return new Scaffold(
+        appBar: new AppBar(
+          backgroundColor: MyStyle.colorWhite,
+          leading: new IconButton(
+              icon: new Icon(Icons.arrow_back, color: MyStyle.colorBlack),
+              onPressed: () => Navigator.pop(context)),
+          title: new Text(
+            'Chat Box',
+            style: new TextStyle(color: MyStyle.colorBlack, fontSize: 14.0),
+          ),
+          actions: <Widget>[
+            new IconButton(
+                icon: new Icon(Icons.phone, color: MyStyle.colorAccent),
+                onPressed: () => _clickPhone(context))
+          ],
+        ),
+        body: _showLoadingOrData());
+  }
+
+  @override
+  void setPagination(Pagination p) {
+    setState(() {
+      pagination = p;
+    });
+    print(pagination.toString());
+  }
 
   @override
   void hideDialog() {}
@@ -320,7 +390,9 @@ class ChatListPageState extends State<ChatListPage> implements ChatContract {
     mController.clear();
     message = "";
     setState(() {
-      messageList.add(m);
+      //messageList.add(m);
+      messageList.insert(0, m);
+      print("New Message");
     });
   }
 
