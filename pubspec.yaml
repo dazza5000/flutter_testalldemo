@@ -30,6 +30,7 @@ dependencies:
   path_provider: ^0.4.1
   image: ^2.0.4
   event_bus: ^0.4.1
+  pusher_flutter: ^0.0.5
   google_maps_flutter:
      git:
        url: git://github.com/flutter/plugins

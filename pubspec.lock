@@ -465,6 +465,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.2"
+  pusher_flutter:
+    dependency: "direct main"
+    description:
+      name: pusher_flutter
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.5"
   quiver:
     dependency: transitive
     description:

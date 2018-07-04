@@ -1,5 +1,5 @@
 import 'package:lyc_clinic/ui/doctors/data/active_booking.dart';
-import 'package:lyc_clinic/base/basecontract.dart';
+import 'package:lyc_clinic/base/contract/basecontract.dart';
 
 abstract class DoctorBookingContract extends BaseContract{
   void onLoadError();

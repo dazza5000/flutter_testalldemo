@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lyc_clinic/test/home_page.dart';
-import 'test/theme.dart';
+import 'package:lyc_clinic/base/page/home_page.dart';
+import 'package:lyc_clinic/base/theme.dart';
 
 void main() => runApp(new MyApp());
 

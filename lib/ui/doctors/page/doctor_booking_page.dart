@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:small_calendar/small_calendar.dart';
-import 'package:lyc_clinic/base/widget.dart';
+import 'package:lyc_clinic/base/widget/base_widget.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
 import 'package:lyc_clinic/ui/utils/time_utils.dart';
-import 'package:lyc_clinic/test/custom_bottom_navigation_bar.dart';
+import 'package:lyc_clinic/base/widget/custom_bottom_navigation_bar.dart';
 import 'package:lyc_clinic/ui/doctors/presenter/doctor_booking_presenter.dart';
 import 'package:lyc_clinic/ui/doctors/contract/doctor_booking_contract.dart';
 import 'package:lyc_clinic/ui/doctors/data/active_booking.dart';

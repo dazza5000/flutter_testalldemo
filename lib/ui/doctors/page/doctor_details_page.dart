@@ -9,7 +9,7 @@ import 'package:lyc_clinic/ui/comment/data/comment.dart';
 import 'package:lyc_clinic/ui/doctors/data/active_booking.dart';
 import 'package:lyc_clinic/ui/doctors/page/doctor_booking_page.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
-import 'package:lyc_clinic/test/custom_bottom_navigation_bar.dart';
+import 'package:lyc_clinic/base/widget/custom_bottom_navigation_bar.dart';
 import 'package:lyc_clinic/ui/doctors/contract/doctor_profile_contract.dart';
 import 'package:lyc_clinic/ui/doctors/presenter/doctor_profile_presenter.dart';
 import 'package:lyc_clinic/ui/doctors/data/doctor_profile.dart';
@@ -19,7 +19,7 @@ import 'package:lyc_clinic/ui/comment/data/review.dart';
 import 'package:lyc_clinic/utils/configs.dart';
 import 'package:lyc_clinic/ui/home/page/profile_data_page.dart';
 import 'package:lyc_clinic/utils/mySharedPreferences.dart';
-import 'package:lyc_clinic/base/widget.dart';
+import 'package:lyc_clinic/base/widget/base_widget.dart';
 
 
 class DoctorDetailsPage extends StatefulWidget {

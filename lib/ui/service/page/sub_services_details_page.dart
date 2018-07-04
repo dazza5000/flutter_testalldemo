@@ -10,21 +10,15 @@ import 'package:lyc_clinic/base/mystyle.dart';
 import 'package:html2md/html2md.dart' as html2md;
 import 'package:flutter_markdown/flutter_markdown.dart';
 
-const double _kAppBarHeight = 250.0;
-const double _kFabHalfSize =
-    28.0; // TODO(mpcomplete): needs to adapt to screen size
-const double _kRecipePageMaxWidth = 500.0;
-
 class SubServicesDetailsPage extends StatefulWidget {
-  int servicesId;
-  int subServicesId;
-  String title;
+  final int servicesId;
+  final int subServicesId;
+  final String title;
 
   SubServicesDetailsPage(this.servicesId, this.subServicesId, this.title);
 
   @override
   SubServicesDetailsPageState createState() {
-    // TODO: implement createState
     return new SubServicesDetailsPageState();
   }
 }

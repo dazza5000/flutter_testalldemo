@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lyc_clinic/base/data/pagination.dart';
-import 'package:lyc_clinic/base/widget.dart';
+import 'package:lyc_clinic/base/widget/base_widget.dart';
 import 'package:lyc_clinic/ui/doctors/data/doctor.dart';
 import 'package:lyc_clinic/ui/doctors/widget/create_doctor_buttons.dart';
 import 'package:lyc_clinic/ui/doctors/widget/create_doctor_item.dart';

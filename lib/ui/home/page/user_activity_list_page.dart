@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
 import 'package:lyc_clinic/utils/mySharedPreferences.dart';
-import 'package:lyc_clinic/base/widget.dart';
+import 'package:lyc_clinic/base/widget/base_widget.dart';
 import 'package:lyc_clinic/ui/home/data/save.dart';
 import 'package:lyc_clinic/ui/home/data/saved_article.dart';
 import 'package:lyc_clinic/ui/home/data/saved_doctor.dart';

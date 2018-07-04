@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:lyc_clinic/base/mystyle.dart';
+import 'dart:io';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
-import 'dart:async';
-import 'package:lyc_clinic/base/widget.dart';
+import 'package:pusher_flutter/pusher_flutter.dart';
+import 'package:lyc_clinic/base/mystyle.dart';
+import 'package:lyc_clinic/base/data/pagination.dart';
+import 'package:lyc_clinic/base/widget/base_widget.dart';
 import 'package:lyc_clinic/utils/mySharedPreferences.dart';
+import 'package:lyc_clinic/utils/configs.dart';
 import 'package:lyc_clinic/ui/chat/contract/chat_contract.dart';
 import 'package:lyc_clinic/ui/chat/presenter/chat_presenter.dart';
-import 'package:lyc_clinic/utils/configs.dart';
-import 'package:lyc_clinic/base/data/pagination.dart';
 import 'package:lyc_clinic/ui/chat/data/message.dart';
 
 class ChatListPage extends StatefulWidget {
@@ -36,6 +36,11 @@ class ChatListPageState extends State<ChatListPage>
   AnimationController animationController;
   MySharedPreferences mySharedPreferences = new MySharedPreferences();
   ScrollController controller = new ScrollController();
+  Map _latestMessage;
+  PusherError _lastError;
+  PusherConnectionState pusherConnectionState;
+  PusherFlutter pusher = new PusherFlutter(Configs.PUSHER_KEY);
+
 
   List<Message> messageList = new List<Message>();
   Pagination pagination;
@@ -59,7 +64,7 @@ class ChatListPageState extends State<ChatListPage>
   }
 
   _sendClick() {
-    message=mController.text;
+    message = mController.text;
     mPresenter.sendMessage(
         accessCode, message, mArticleId, mDoctorId, mServiceId);
   }
@@ -81,7 +86,7 @@ class ChatListPageState extends State<ChatListPage>
 
   void _submitMessage(String text) {
     //mController.clear();
-      message = text;
+    message = text;
     print('Message is$message');
   }
 
@@ -222,8 +227,8 @@ class ChatListPageState extends State<ChatListPage>
       Message msg = messageList[index];
       int type = msg.reply ? 1 : 0;
       return new SizeTransition(
-          sizeFactor:
-              new CurvedAnimation(parent: animationController, curve: Curves.elasticIn),
+          sizeFactor: new CurvedAnimation(
+              parent: animationController, curve: Curves.elasticIn),
           child: new Container(
             child: getChatView(msg, type),
           ));
@@ -234,6 +239,17 @@ class ChatListPageState extends State<ChatListPage>
   void initState() {
     super.initState();
     mView = this;
+
+    /*pusher.onConnectivityChanged.listen((s) {
+      //pusherConnectionState =  s;
+
+      if (s == PusherConnectionState.connected) {
+        _lastError = null;
+      }
+    });
+    pusher.onError.listen((err) => _lastError = err);
+    pusherConnectionState = PusherConnectionState.disconnected;*/
+
     mySharedPreferences
         .getBooleanData(Configs.PREF_USER_LOGIN)
         .then((val) => setState(() {
@@ -254,13 +270,35 @@ class ChatListPageState extends State<ChatListPage>
     animationController.forward();
   }
 
+  void connect() {
+    pusher.connect();
+    pusher.subscribe("notification$accessCode", "message");
+    //pusher.subscribeAll("notification$accessCode", ["message"]);
+
+    pusher.onMessage.listen((m) => print(m.toString()));
+
+      /*setState(() {
+        _latestMessage = pusher.body;
+        print('Last Message$_latestMessage');
+      });*/
+    //});
+  }
+
+  void disconnect() {
+    pusher.unsubscribe("test_channel");
+    pusher.unsubscribe("test_channel2");
+    pusher.disconnect();
+  }
+
   void getAccessCode(bool login) {
     if (login) {
       isGuest = false;
       mySharedPreferences.getStringData(Configs.PREF_USER_ACCESSCODE).then((v) {
         accessCode = v;
+        connect();
         mPresenter.getChatHistory(accessCode);
       });
+
     } else {
       isGuest = true;
       accessCode = Configs.GUEST_CODE;

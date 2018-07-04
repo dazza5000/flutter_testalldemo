@@ -4,7 +4,7 @@ import 'dart:async';
 import 'package:lyc_clinic/ui/comment/page/comment_page.dart';
 import 'package:lyc_clinic/ui/article/widget/video_details_item.dart';
 import 'package:lyc_clinic/ui/comment/widget/create_comment_items.dart';
-import 'package:lyc_clinic/test/custom_bottom_navigation_bar.dart';
+import 'package:lyc_clinic/base/widget/custom_bottom_navigation_bar.dart';
 import 'package:lyc_clinic/ui/article/contract/video_details_contract.dart';
 import 'package:lyc_clinic/ui/article/presenter/video_details_presenter.dart';
 import 'package:lyc_clinic/utils/configs.dart';
@@ -13,7 +13,7 @@ import 'package:lyc_clinic/ui/comment/data/comment.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
 import 'package:lyc_clinic/utils/mySharedPreferences.dart';
 import 'package:lyc_clinic/ui/login/login_dialog_page.dart';
-import 'package:lyc_clinic/base/widget.dart';
+import 'package:lyc_clinic/base/widget/base_widget.dart';
 
 class VideoDetailsPage extends StatefulWidget {
   final int id;

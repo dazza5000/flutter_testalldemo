@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
-import 'package:lyc_clinic/base/widget.dart';
+import 'package:lyc_clinic/base/widget/base_widget.dart';
 import 'package:lyc_clinic/base/data/pagination.dart';
 import 'package:lyc_clinic/ui/notification/data/data.dart';
 import 'package:lyc_clinic/ui/notification/widget/booking_noti_widet.dart';

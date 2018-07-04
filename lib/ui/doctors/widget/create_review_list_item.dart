@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lyc_clinic/ui/doctors/widget/create_doctor_buttons.dart';
 import 'package:lyc_clinic/ui/comment/page/comment_page.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
-import 'package:lyc_clinic/test/test_page.dart';
 import 'package:lyc_clinic/ui/comment/data/comment.dart';
 import 'package:lyc_clinic/ui/comment/data/review.dart';
 import 'package:lyc_clinic/ui/comment/widget/comment_item_widget.dart';

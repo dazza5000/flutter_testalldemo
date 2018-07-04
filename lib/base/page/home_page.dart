@@ -5,10 +5,15 @@ import 'package:url_launcher/url_launcher.dart';
 //import 'package:flutter_search_bar/flutter_search_bar.dart';
 import 'package:material_search/material_search.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
-import 'package:lyc_clinic/base/widget.dart';
+import 'package:lyc_clinic/base/widget/base_widget.dart';
 import 'package:lyc_clinic/utils/configs.dart';
 import 'package:lyc_clinic/utils/mySharedPreferences.dart';
+import 'package:lyc_clinic/ui/map_ui_page.dart';
 import 'package:lyc_clinic/ui/home/data/drawer_item.dart';
+import 'package:lyc_clinic/ui/base/contract/home_container_contract.dart';
+import 'package:lyc_clinic/ui/base/presenter/home_container_presenter.dart';
+import 'package:lyc_clinic/ui/base/data/site_info.dart';
+import 'package:lyc_clinic/ui/base/data/unread_status.dart';
 import 'package:lyc_clinic/ui/home/page/home_container_fragment.dart';
 import 'package:lyc_clinic/ui/home/page/home_page.dart';
 import 'package:lyc_clinic/ui/home/page/health_education_page.dart';
@@ -21,17 +26,16 @@ import 'package:lyc_clinic/ui/chat/page/chat_list_page.dart';
 import 'package:lyc_clinic/ui/doctors/data/doctor.dart';
 
 class MainPage extends StatefulWidget {
-  List<DrawerItem> afterLoginDraweritems = [
+  final List<DrawerItem> afterLoginDraweritems = [
     new DrawerItem("HOME", Icons.home),
     new DrawerItem("က်န္းမာေရးပညာေပး", Icons.library_books),
     new DrawerItem(
         "ျပသေဆြးေႏြးႏိုင္ေသာဆရာဝန္မ်ား", FontAwesomeIcons.stethoscope),
     new DrawerItem("BOOKINGS", Icons.event_available),
     new DrawerItem("MY PROFILE", Icons.account_box),
-    //new DrawerItem("Login", Icons.account_box),
   ];
 
-  List<DrawerItem> beforeLoginDraweritems = [
+  final List<DrawerItem> beforeLoginDraweritems = [
     new DrawerItem("HOME", Icons.home),
     new DrawerItem("က်န္းမာေရးပညာေပး", Icons.library_books),
     new DrawerItem(
@@ -46,20 +50,20 @@ class MainPage extends StatefulWidget {
 }
 
 class MainPageState extends State<MainPage>
-    implements SendDoctorListener, SeeMoreClickListener {
-  int selectedDrawerIndex = 0;
-  String imageUrl =
-      "https://avatars3.githubusercontent.com/u/16825392?s=460&v=4";
-
+    implements HomeContainerContract, SendDoctorListener, SeeMoreClickListener {
   //SearchBar searchBar;
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  List<DrawerItem> draweritems = new List<DrawerItem>();
   bool isLogin = false;
   String name = "";
   String profilePhoto = "";
-  MySharedPreferences mySharedPreferences = new MySharedPreferences();
+  int selectedDrawerIndex = 0;
   String filterText = '';
+  String accessCode;
+  HomeContainerPresenter mPresenter;
+  MySharedPreferences mySharedPreferences = new MySharedPreferences();
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  List<DrawerItem> drawerItems = new List<DrawerItem>();
   List<Doctor> _doctorList = new List<Doctor>();
+  SiteInfo siteInfo;
 
   void onSubmitted(String value) {
     setState(() => _scaffoldKey.currentState
@@ -67,10 +71,12 @@ class MainPageState extends State<MainPage>
   }
 
   MainPageState() {
+    mPresenter = new HomeContainerPresenter(this);
     mySharedPreferences
         .getBooleanData(Configs.PREF_USER_LOGIN)
         .then((val) => setState(() {
               isLogin = val != null ? val : false;
+              getAccessCode(isLogin);
             }));
 
     /*searchBar = new SearchBar(
@@ -79,6 +85,12 @@ class MainPageState extends State<MainPage>
         setState: setState,
         onSubmitted:onSubmitted,
         onChanged: onSubmitted);*/
+  }
+
+  void getAccessCode(isLogin) async {
+    if (isLogin)
+      accessCode =
+          await mySharedPreferences.getStringData(Configs.PREF_USER_ACCESSCODE);
   }
 
   void getSharedPreferencesData() async {
@@ -90,6 +102,7 @@ class MainPageState extends State<MainPage>
   @override
   void initState() {
     super.initState();
+    mPresenter.getSiteInfo(Configs.GUEST_CODE);
     getSharedPreferencesData();
   }
 
@@ -139,6 +152,11 @@ class MainPageState extends State<MainPage>
   _clickBottomMenuItem(int index, BuildContext context) {
     switch (index) {
       case 0:
+        Navigator.of(context).push(MaterialPageRoute<void>(
+            builder: (_) => Scaffold(
+                  appBar: AppBar(title: Text("Ma")),
+                  body: PlaceMarkerPage(),
+                )));
         break;
       case 1:
         _callPhone();
@@ -216,7 +234,7 @@ class MainPageState extends State<MainPage>
     if (selectedDrawerIndex == 2) {
       return new AppBar(
         title: new Text(
-          draweritems[selectedDrawerIndex].title,
+          drawerItems[selectedDrawerIndex].title,
           style: MyStyle.appbarTitleStyle(),
         ),
         backgroundColor: MyStyle.colorWhite,
@@ -262,7 +280,7 @@ class MainPageState extends State<MainPage>
             new GestureDetector(
               child: new CircleAvatar(
                 backgroundImage: new NetworkImage(
-                    profilePhoto != null ? profilePhoto : imageUrl),
+                    profilePhoto != null ? profilePhoto : Configs.imageUrl),
                 radius: 40.0,
               ),
             ),
@@ -306,13 +324,13 @@ class MainPageState extends State<MainPage>
   @override
   Widget build(BuildContext context) {
     if (isLogin) {
-      draweritems = widget.afterLoginDraweritems;
+      drawerItems = widget.afterLoginDraweritems;
     } else {
-      draweritems = widget.beforeLoginDraweritems;
+      drawerItems = widget.beforeLoginDraweritems;
     }
     List<Widget> drawerOptions = new List<Widget>();
-    for (var i = 0; i < draweritems.length; i++) {
-      var d = draweritems[i];
+    for (var i = 0; i < drawerItems.length; i++) {
+      var d = drawerItems[i];
       drawerOptions.add(new ListTile(
           leading: new Icon(d.icon),
           title: new Text(d.title),
@@ -430,6 +448,20 @@ class MainPageState extends State<MainPage>
       backgroundColor: MyStyle.colorWhite,
     );
   }
+
+  @override
+  void showSiteInfo(SiteInfo siteInfo) {
+    print('Site info??${siteInfo.toString()}');
+    setState(() {
+      this.siteInfo = siteInfo;
+    });
+  }
+
+  @override
+  void showUnreadStatus(UnreadStatus u) {}
+
+  @override
+  void showEnterPhoneNo() {}
 
   @override
   void onSendDoctorListener(List<Doctor> doctorList) {

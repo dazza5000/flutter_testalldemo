@@ -12,7 +12,7 @@ import 'package:lyc_clinic/ui/home/contract/home_contract.dart';
 import 'package:lyc_clinic/utils/configs.dart';
 import 'package:lyc_clinic/ui/doctors/widget/create_doctor_buttons.dart';
 import 'package:lyc_clinic/utils/mySharedPreferences.dart';
-import 'package:lyc_clinic/test/home_page.dart';
+import 'package:lyc_clinic/base/page/home_page.dart';
 
 class HomePage extends StatefulWidget {
   SeeMoreClickListener listerner;

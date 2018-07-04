@@ -5,10 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:lyc_clinic/ui/chat/page/chat_list_page.dart';
 import 'package:lyc_clinic/utils/mySharedPreferences.dart';
 import 'package:lyc_clinic/utils/configs.dart';
-import 'package:lyc_clinic/ui/login/login_dialog_page.dart';
-import 'package:lyc_clinic/base/widget.dart';
-
-var API_KEY = "AIzaSyBGUKmOdeko8CL1pEblqW-aFFVHP0k7ddQ";
+import 'package:lyc_clinic/base/widget/base_widget.dart';
 
 class CustomBottomNavigationBar extends StatefulWidget {
   @override
@@ -21,10 +18,14 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   MapView mapView = new MapView();
   CameraPosition cameraPosition;
   var compositeSubscription = new CompositeSubscription();
-  var staticMapProvider = new StaticMapProvider(API_KEY);
+  var staticMapProvider = new StaticMapProvider(Configs.GOOGLE_MAP_API_KEY);
   MySharedPreferences mySharedPreferences = new MySharedPreferences();
   Uri staticMapUri;
   bool isLogin = false;
+  String address;
+  double lat;
+  double lon;
+  String phone;
 
   CustomBottomNavigationBarState() {
     mySharedPreferences
@@ -32,10 +33,23 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         .then((val) => setState(() {
               isLogin = val != null ? val : false;
             }));
+    getAddress(isLogin);
+  }
+
+  getAddress(bool isLogin) async {
+      address =
+          await mySharedPreferences.getStringData(Configs.PREF_LYC_ADDRESS);
+      print('GET Address??$address');
+      lat = await mySharedPreferences.getDoubleData(Configs.PREF_LYC_LAT);
+      lon = await mySharedPreferences.getDoubleData(Configs.PREF_LYC_LON);
+      phone = await mySharedPreferences.getStringData(Configs.PREF_PHONE_ONE);
   }
 
   _addressClick(BuildContext context) {
-    showMap();
+    if (isLogin)
+      showMap();
+    else
+      BaseWidgets.showLoginDialog(context);
     //_launchMaps();
   }
 
@@ -45,15 +59,15 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
 
   _chatClick(BuildContext context) {
     if (isLogin)
-      Navigator.push(context,
-          new MaterialPageRoute(builder: (_) => new ChatListPage()));
+      Navigator.push(
+          context, new MaterialPageRoute(builder: (_) => new ChatListPage()));
     else
-      BaseWidgets.showLoginDialog(context);;
+      BaseWidgets.showLoginDialog(context);
   }
 
   _callPhone() async {
     print('Custom Bottom Nav Phone call');
-    const phoneNo = 'tel:09421234567';
+    var phoneNo = 'tel:$phone';
     if (await canLaunch(phoneNo)) {
       await launch(phoneNo);
     } else {
@@ -101,7 +115,7 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   @override
   void initState() {
     super.initState();
-    MapView.setApiKey(API_KEY);
+    MapView.setApiKey(Configs.GOOGLE_MAP_API_KEY);
     cameraPosition = new CameraPosition(Locations.portland, 12.0);
     staticMapUri = staticMapProvider.getStaticUri(Locations.portland, 12,
         width: 900, height: 400);
@@ -134,10 +148,8 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   }
 
   _launchMaps() async {
-    String googleUrl =
-        'comgooglemaps://?center=${16.786689798272366},${96.12492084503174}';
-    String appleUrl =
-        'https://maps.apple.com/?sll=${16.786689798272366},${96.12492084503174}';
+    String googleUrl = 'comgooglemaps://?center=${16.797035},${96.126425}';
+    String appleUrl = 'https://maps.apple.com/?sll=${16.797035},${96.126425}';
     if (await canLaunch("comgooglemaps://")) {
       print('launching com googleUrl');
       await launch(googleUrl);
@@ -150,23 +162,21 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   }
 
   showMap() {
+    print(address);
     mapView.show(
         new MapOptions(
             mapViewType: MapViewType.normal,
             showUserLocation: true,
-            initialCameraPosition: new CameraPosition(
-                new Location(16.796961, 96.124222), 14.0),
-            title: "Recently Visited"),
+            initialCameraPosition:
+                new CameraPosition(new Location(16.796969, 96.126417), 15.0),
+            title: address),
         toolbarActions: [new ToolbarAction("Close", 1)]);
 
     var sub = mapView.onMapReady.listen((_) {
       mapView.setMarkers(<Marker>[
-        new Marker("1", "Lin Yaung Chi", 16.797028,96.124407 , color: Colors.blue),
+        new Marker("1", address, 16.796969, 96.126417, color: Colors.red),
       ]);
-     /* mapView.addMarker(new Marker("3", "10 Barrel", 16.796961, 96.124222,
-          color: Colors.purple));*/
-
-      mapView.zoomToFit(padding: 100);
+      mapView.zoomToFit(padding: 200);
     });
     compositeSubscription.add(sub);
 

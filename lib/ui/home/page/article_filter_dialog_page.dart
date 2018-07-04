@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
 import 'package:lyc_clinic/ui/article/data/category.dart';
-import 'package:lyc_clinic/test/vertical_divider.dart';
+import 'package:lyc_clinic/base/widget/vertical_divider.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
 import 'package:lyc_clinic/ui/home/presenter/health_education_filter_presenter.dart';
 import 'package:lyc_clinic/ui/home/contract/health_education_filter_contract.dart';

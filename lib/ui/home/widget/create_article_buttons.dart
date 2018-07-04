@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:share/share.dart';
-import 'package:lyc_clinic/base/widget.dart';
+import 'package:lyc_clinic/base/widget/base_widget.dart';
 import 'package:lyc_clinic/base/mystyle.dart';
 import 'package:lyc_clinic/utils/configs.dart';
 import 'package:lyc_clinic/utils/mySharedPreferences.dart';

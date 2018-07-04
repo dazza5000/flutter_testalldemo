@@ -7,7 +7,7 @@ import 'package:lyc_clinic/ui/home/presenter/user_booking_presenter.dart';
 import 'package:lyc_clinic/ui/home/contract/user_booking_contract.dart';
 import 'package:lyc_clinic/utils/configs.dart';
 import 'package:lyc_clinic/base/data/pagination.dart';
-import 'package:lyc_clinic/base/widget.dart';
+import 'package:lyc_clinic/base/widget/base_widget.dart';
 
 class UserBookingListPage extends StatefulWidget {
   @override

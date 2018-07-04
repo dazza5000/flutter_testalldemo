@@ -4,7 +4,7 @@ import 'package:lyc_clinic/ui/home/page/home_page.dart';
 import 'package:lyc_clinic/ui/doctors/page/doctor_list_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lyc_clinic/ui/home/page/health_education_page.dart';
-import 'package:lyc_clinic/test/custom_bottom_navigation_bar.dart';
+import 'package:lyc_clinic/base/widget/custom_bottom_navigation_bar.dart';
 
 class HomeContainerFragment extends StatefulWidget {
   SeeMoreClickListener listener;

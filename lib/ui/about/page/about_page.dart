@@ -8,7 +8,7 @@ import 'package:lyc_clinic/utils/mySharedPreferences.dart';
 import 'package:lyc_clinic/ui/about/data/about.dart';
 import 'package:lyc_clinic/ui/about/presenter/about_presenter.dart';
 import 'package:lyc_clinic/ui/about/contract/about_contract.dart';
-import 'package:lyc_clinic/test/custom_bottom_navigation_bar.dart';
+import 'package:lyc_clinic/base/widget/custom_bottom_navigation_bar.dart';
 
 
 class AboutPage extends StatefulWidget {
